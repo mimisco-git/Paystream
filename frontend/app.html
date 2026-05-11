@@ -6,7 +6,7 @@
   <title>PayStream App</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cantarell:ital,wght@0,400;0,700;1,400&family=Space+Mono:wght@400;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet"/>
 
   <style>
     :root {
@@ -34,7 +34,7 @@
       --g2:         #7A90AE;
       --g3:         #3D526A;
       --g4:         #1E293B;
-      --ff-display: 'Syne', sans-serif;
+      --ff-display: 'Cantarell', 'DM Sans', sans-serif;
       --ff-mono:    'Space Mono', monospace;
       --ff-body:    'DM Sans', sans-serif;
       --r:          10px;
@@ -748,16 +748,153 @@
 </head>
 <body>
 
+<!-- ============================================================
+     PAYSTREAM PREMIUM INTRO SEQUENCER
+     Displays on first load, fades out after ~3.2 seconds.
+     Shows logo mark, wordmark, tagline, Arc + Circle badges.
+============================================================ -->
+<div id="ps-intro" style="
+  position:fixed;inset:0;z-index:99999;
+  background:#070B14;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:0;
+  font-family:'Cantarell','DM Sans',sans-serif;
+">
+  <!-- Ambient glow -->
+  <div style="
+    position:absolute;top:50%;left:50%;
+    transform:translate(-50%,-50%);
+    width:600px;height:600px;
+    background:radial-gradient(ellipse,rgba(245,166,35,.09) 0%,transparent 65%);
+    pointer-events:none;
+    animation:ps-pulse 3s ease-in-out infinite;
+  "></div>
+
+  <!-- Fine grid -->
+  <div style="
+    position:absolute;inset:0;
+    background-image:linear-gradient(rgba(255,255,255,.016) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.016) 1px,transparent 1px);
+    background-size:56px 56px;
+    pointer-events:none;
+  "></div>
+
+  <!-- Logo mark -->
+  <div id="ps-mark" style="opacity:0;transform:scale(.8);transition:opacity .6s ease,transform .6s cubic-bezier(.34,1.56,.64,1);margin-bottom:24px">
+    <svg width="88" height="88" viewBox="0 0 52 52" fill="none">
+      <rect width="52" height="52" rx="13" fill="#F5A623"/>
+      <circle cx="22" cy="26" r="10" fill="none" stroke="#000" stroke-width="2.2"/>
+      <text x="22" y="31" text-anchor="middle" font-family="Cantarell,Arial,sans-serif" font-weight="700" font-size="14" fill="#000">$</text>
+      <line x1="35" y1="22" x2="46" y2="22" stroke="#000" stroke-width="1.8" stroke-linecap="round"/>
+      <line x1="35" y1="26" x2="48" y2="26" stroke="#000" stroke-width="2.2" stroke-linecap="round"/>
+      <line x1="35" y1="30" x2="46" y2="30" stroke="#000" stroke-width="1.8" stroke-linecap="round"/>
+      <path d="M44 20L49 26L44 32" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <line x1="15" y1="12" x2="15" y2="16" stroke="#000" stroke-width="1.4" stroke-linecap="round" opacity=".4"/>
+      <line x1="19" y1="11" x2="19" y2="15" stroke="#000" stroke-width="1.4" stroke-linecap="round" opacity=".65"/>
+      <line x1="22" y1="10" x2="22" y2="15" stroke="#000" stroke-width="1.4" stroke-linecap="round" opacity="1"/>
+      <line x1="26" y1="11" x2="26" y2="15" stroke="#000" stroke-width="1.4" stroke-linecap="round" opacity=".65"/>
+      <line x1="30" y1="12" x2="30" y2="16" stroke="#000" stroke-width="1.4" stroke-linecap="round" opacity=".4"/>
+    </svg>
+  </div>
+
+  <!-- Wordmark -->
+  <div id="ps-word" style="opacity:0;transform:translateY(14px);transition:opacity .55s ease,transform .55s ease;margin-bottom:10px">
+    <span style="font-family:'Cantarell',sans-serif;font-weight:700;font-size:52px;letter-spacing:-.02em;line-height:1;color:#F5A623">Pay</span><span style="font-family:'Cantarell',sans-serif;font-weight:700;font-size:52px;letter-spacing:-.02em;line-height:1;color:#fff">Stream</span>
+  </div>
+
+  <!-- Tagline -->
+  <div id="ps-tag" style="opacity:0;transform:translateY(10px);transition:opacity .5s ease,transform .5s ease;margin-bottom:40px">
+    <span style="font-family:'DM Sans',sans-serif;font-weight:300;font-size:14px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.38)">Earn every second</span>
+  </div>
+
+  <!-- Progress bar -->
+  <div id="ps-bar-wrap" style="opacity:0;transition:opacity .4s ease;width:160px;height:1px;background:rgba(255,255,255,.08);border-radius:1px;position:relative;overflow:hidden;margin-bottom:28px">
+    <div id="ps-bar" style="position:absolute;top:0;left:0;height:100%;width:0%;background:linear-gradient(90deg,#F5A623,#FCD34D);border-radius:1px;transition:width 2s cubic-bezier(.4,0,.2,1)"></div>
+  </div>
+
+  <!-- Built on badges -->
+  <div id="ps-badges" style="opacity:0;transform:translateY(8px);transition:opacity .5s ease,transform .5s ease;display:flex;align-items:center;gap:10px">
+    <div style="display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:7px 14px">
+      <div style="width:7px;height:7px;border-radius:50%;background:#F5A623"></div>
+      <span style="font-family:'DM Sans',sans-serif;font-size:11.5px;font-weight:500;color:rgba(255,255,255,.55);letter-spacing:.04em">Built on Arc</span>
+    </div>
+    <div style="width:1px;height:20px;background:rgba(255,255,255,.08)"></div>
+    <div style="display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:7px 14px">
+      <div style="width:7px;height:7px;border-radius:50%;background:#2775CA"></div>
+      <span style="font-family:'DM Sans',sans-serif;font-size:11.5px;font-weight:500;color:rgba(255,255,255,.55);letter-spacing:.04em">Powered by Circle</span>
+    </div>
+    <div style="width:1px;height:20px;background:rgba(255,255,255,.08)"></div>
+    <div style="display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:7px 14px">
+      <div style="width:7px;height:7px;border-radius:50%;background:#10B981;animation:ps-blink 1.2s ease-in-out infinite"></div>
+      <span style="font-family:'DM Sans',sans-serif;font-size:11.5px;font-weight:500;color:rgba(255,255,255,.55);letter-spacing:.04em">USDC · Testnet</span>
+    </div>
+  </div>
+
+</div>
+
+<style>
+  @keyframes ps-pulse { 0%,100%{opacity:.6;transform:translate(-50%,-50%) scale(1)} 50%{opacity:1;transform:translate(-50%,-50%) scale(1.12)} }
+  @keyframes ps-blink { 0%,100%{opacity:1} 50%{opacity:.25} }
+  @keyframes ps-fade-out { from{opacity:1;pointer-events:all} to{opacity:0;pointer-events:none} }
+</style>
+
+<script>
+(function() {
+  // Sequence timings
+  setTimeout(() => {
+    document.getElementById('ps-mark').style.opacity = '1'
+    document.getElementById('ps-mark').style.transform = 'scale(1)'
+  }, 80)
+
+  setTimeout(() => {
+    document.getElementById('ps-word').style.opacity = '1'
+    document.getElementById('ps-word').style.transform = 'translateY(0)'
+  }, 380)
+
+  setTimeout(() => {
+    document.getElementById('ps-tag').style.opacity = '1'
+    document.getElementById('ps-tag').style.transform = 'translateY(0)'
+  }, 620)
+
+  setTimeout(() => {
+    document.getElementById('ps-bar-wrap').style.opacity = '1'
+    setTimeout(() => {
+      document.getElementById('ps-bar').style.width = '100%'
+    }, 60)
+  }, 820)
+
+  setTimeout(() => {
+    document.getElementById('ps-badges').style.opacity = '1'
+    document.getElementById('ps-badges').style.transform = 'translateY(0)'
+  }, 1000)
+
+  // Fade out and remove
+  setTimeout(() => {
+    const intro = document.getElementById('ps-intro')
+    intro.style.animation = 'ps-fade-out .7s ease forwards'
+    setTimeout(() => intro.remove(), 720)
+  }, 2800)
+})()
+</script>
+
+
   <!-- TOP BAR -->
   <div class="topbar">
     <a href="index.html" class="tb-logo">
       <div class="tb-mark">
-        <svg viewBox="0 0 15 15" fill="none">
-          <circle cx="7.5" cy="7.5" r="4" stroke="#000" stroke-width="1.3"/>
-          <path d="M7.5 4.5V7.5L9.5 9.5" stroke="#000" stroke-width="1.3" stroke-linecap="round"/>
-        </svg>
+<svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="52" height="52" rx="13" fill="#F5A623"/>
+        <circle cx="22" cy="26" r="10" fill="none" stroke="#000" stroke-width="2.2"/>
+        <text x="22" y="31" text-anchor="middle" font-family="Cantarell,Arial,sans-serif" font-weight="800" font-size="14" fill="#000">$</text>
+        <line x1="35" y1="22" x2="46" y2="22" stroke="#000" stroke-width="1.8" stroke-linecap="round"/>
+        <line x1="35" y1="26" x2="48" y2="26" stroke="#000" stroke-width="2.2" stroke-linecap="round"/>
+        <line x1="35" y1="30" x2="46" y2="30" stroke="#000" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M44 20L49 26L44 32" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <line x1="15" y1="12" x2="15" y2="16" stroke="#000" stroke-width="1.4" stroke-linecap="round" opacity=".4"/>
+        <line x1="22" y1="10" x2="22" y2="15" stroke="#000" stroke-width="1.4" stroke-linecap="round" opacity="1"/>
+        <line x1="30" y1="12" x2="30" y2="16" stroke="#000" stroke-width="1.4" stroke-linecap="round" opacity=".4"/>
+      </svg>
       </div>
-      PayStream
+      <span style="color:#F5A623;font-family:'Cantarell',sans-serif;font-weight:800;letter-spacing:-.025em">Pay</span><span style="font-family:'Cantarell',sans-serif;font-weight:800;letter-spacing:-.025em">Stream</span>
     </a>
     <div class="tb-center">
       <button class="tb-tab active" onclick="switchView('worker', this)">Worker View</button>
