@@ -1,0 +1,14 @@
+{
+  "name": "paystream-contracts",
+  "version": "1.0.0",
+  "description": "PayStream smart contracts for Arc testnet",
+  "scripts": {
+    "compile": "hardhat compile",
+    "deploy":  "hardhat run scripts/deploy.js --network arc-testnet",
+    "verify":  "hardhat verify --network arc-testnet"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "hardhat": "^2.22.0"
+  }
+}
