@@ -1,0 +1,23 @@
+{
+  "name": "paystream-backend",
+  "version": "1.0.0",
+  "description": "PayStream backend: real-time USDC salary streaming on Arc using Circle SDK",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "dev":   "node --watch src/index.js",
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "@circle-fin/developer-controlled-wallets": "^3.0.0",
+    "@circle-fin/circle-sdk":                  "^2.0.0",
+    "viem":                                    "^2.0.0",
+    "@supabase/supabase-js":                   "^2.0.0",
+    "express":                                 "^4.18.0",
+    "dotenv":                                  "^16.0.0",
+    "cors":                                    "^2.8.5",
+    "node-cron":                               "^3.0.0",
+    "uuid":                                    "^9.0.0",
+    "zod":                                     "^3.22.0"
+  }
+}
