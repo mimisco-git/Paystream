@@ -1,38 +1,19 @@
 // src/services/streamService.js
-// -------------------------------------------------------
-// A "stream" is a database row that tracks the ongoing
-// salary relationship between one employer and one worker.
-//
-// The actual USDC movement is triggered by the cron job
-// (src/jobs/payoutCron.js) every 60 seconds, which reads
-// all active streams and dispatches nanopayments for the
-// USDC earned since the last payout.
-// -------------------------------------------------------
 import { db }              from '../config/db.js'
 import { getWalletByUserId, getWalletBalance } from './walletService.js'
 
-// -------------------------------------------------------
-// createStream
-// Starts a new salary stream from employer to worker.
-// Validates that the employer has enough USDC float first.
-// -------------------------------------------------------
-export async function createStream({
-  employerId,
-  workerId,
-  ratePerHour,   // e.g. 18.50
-}) {
-  // Resolve wallets
+export async function createStream({ employerId, workerId, ratePerHour }) {
   const [empWallet, workerWallet] = await Promise.all([
     getWalletByUserId(employerId),
     getWalletByUserId(workerId),
   ])
 
-  // Safety: require at least 24h of runway in employer float
-  const balance   = await getWalletBalance(empWallet.circle_wallet_id)
-  const minFloat  = ratePerHour * 24
+  // 1h runway for testnet (change to 24 for production)
+  const balance  = await getWalletBalance(empWallet.circle_wallet_id)
+  const minFloat = ratePerHour * 1
   if (balance < minFloat) {
     throw new Error(
-      `Employer float too low. Need $${minFloat.toFixed(2)} USDC for 24h runway, `
+      `Employer float too low. Need $${minFloat.toFixed(2)} USDC for 1h runway, `
       + `current balance: $${balance.toFixed(2)} USDC`
     )
   }
@@ -42,9 +23,8 @@ export async function createStream({
     .from('streams')
     .update({ status: 'stopped' })
     .eq('worker_id', workerId)
-    .eq('status',    'active')
+    .eq('status', 'active')
 
-  // Create new stream
   const { data, error } = await db
     .from('streams')
     .insert({
@@ -64,19 +44,14 @@ export async function createStream({
   return data
 }
 
-// -------------------------------------------------------
-// pauseStream / resumeStream
-// Controlled by the AI agent when work activity drops.
-// -------------------------------------------------------
 export async function pauseStream(streamId) {
   const { data, error } = await db
     .from('streams')
     .update({ status: 'paused' })
-    .eq('id',     streamId)
+    .eq('id', streamId)
     .eq('status', 'active')
     .select()
     .single()
-
   if (error) throw new Error('Pause failed: ' + error.message)
   console.log(`[Stream] Paused: ${streamId}`)
   return data
@@ -85,15 +60,11 @@ export async function pauseStream(streamId) {
 export async function resumeStream(streamId) {
   const { data, error } = await db
     .from('streams')
-    .update({
-      status:         'active',
-      last_payout_at: new Date().toISOString(), // reset clock on resume
-    })
-    .eq('id',     streamId)
+    .update({ status: 'active', last_payout_at: new Date().toISOString() })
+    .eq('id', streamId)
     .eq('status', 'paused')
     .select()
     .single()
-
   if (error) throw new Error('Resume failed: ' + error.message)
   console.log(`[Stream] Resumed: ${streamId}`)
   return data
@@ -106,22 +77,17 @@ export async function stopStream(streamId) {
     .eq('id', streamId)
     .select()
     .single()
-
   if (error) throw new Error('Stop failed: ' + error.message)
   console.log(`[Stream] Stopped: ${streamId}`)
   return data
 }
 
-// -------------------------------------------------------
-// getStreamById / listStreams
-// -------------------------------------------------------
 export async function getStreamById(streamId) {
   const { data, error } = await db
     .from('streams')
     .select('*')
     .eq('id', streamId)
     .single()
-
   if (error) throw new Error('Stream not found: ' + streamId)
   return data
 }
@@ -136,11 +102,6 @@ export async function listStreams(filters = {}) {
   return data
 }
 
-// -------------------------------------------------------
-// getEarnedSince
-// Calculates USDC earned between lastPayoutAt and now.
-// This is the amount the cron dispatches per tick.
-// -------------------------------------------------------
 export function getEarnedSince(stream) {
   const lastPayout = new Date(stream.last_payout_at)
   const now        = new Date()
