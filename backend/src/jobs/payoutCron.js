@@ -8,7 +8,6 @@ import { getWalletBalance } from '../services/walletService.js'
 
 const MIN_PAYOUT_USDC = 0.000001
 
-// Reads worker address directly from Supabase — no Circle API call needed
 async function getWorkerAddress(workerWalletId) {
   const { data, error } = await db
     .from('wallets')
@@ -22,7 +21,7 @@ async function getWorkerAddress(workerWalletId) {
 }
 
 async function dispatchNanopayment({ stream, amountUsdc }) {
-  const amountStr        = amountUsdc.toFixed(6)
+  const amountStr          = amountUsdc.toFixed(6)
   const destinationAddress = await getWorkerAddress(stream.worker_wallet)
 
   const res = await circleClient.createTransaction({
@@ -35,18 +34,20 @@ async function dispatchNanopayment({ stream, amountUsdc }) {
     fee: { type: 'level', config: { feeLevel: 'LOW' } },
   })
 
-  const tx = res.data?.transaction
-  if (!tx?.id) throw new Error('Circle createTransaction returned no tx id')
-  return tx
+  // Circle SDK returns { id, state } directly at res.data
+  const txId = res.data?.id
+  if (!txId) throw new Error('Circle createTransaction returned no tx id')
+  return { id: txId, state: res.data?.state }
 }
 
 async function confirmOnChain(circleTxId, maxWaitMs = 30000) {
   const start = Date.now()
   while (Date.now() - start < maxWaitMs) {
     const res = await circleClient.getTransaction({ id: circleTxId })
-    const tx  = res.data?.transaction
-    if (tx?.state === 'CONFIRMED') return tx
-    if (tx?.state === 'FAILED')    throw new Error('Transaction failed on chain')
+    const tx  = res.data
+    if (!tx) { await sleep(800); continue }
+    if (tx.state === 'CONFIRMED') return tx
+    if (tx.state === 'FAILED')    throw new Error('Transaction failed on chain')
     await sleep(800)
   }
   throw new Error(`Transaction not confirmed within ${maxWaitMs}ms`)
@@ -61,10 +62,7 @@ async function processStream(stream) {
 
   const float = await getWalletBalance(stream.employer_wallet)
   if (float < earned) {
-    console.warn(
-      `[Cron] Float insufficient for stream ${stream.id}. `
-      + `Need: $${earned}, have: $${float}. Pausing.`
-    )
+    console.warn(`[Cron] Float insufficient for stream ${stream.id}. Need: $${earned}, have: $${float}. Pausing.`)
     await db.from('streams').update({ status: 'paused' }).eq('id', stream.id)
     return { skipped: true, reason: 'insufficient_float' }
   }
@@ -77,10 +75,10 @@ async function processStream(stream) {
 
   try {
     const circleTx = await dispatchNanopayment({ stream, amountUsdc: earned })
-    console.log(`[Cron] Nanopayment dispatched: $${earned} USDC | tx: ${circleTx.id}`)
+    console.log(`[Cron] Nanopayment dispatched: $${earned} USDC | circle tx: ${circleTx.id}`)
 
     const confirmedTx = await confirmOnChain(circleTx.id)
-    const arcHash     = confirmedTx.txHash
+    const arcHash     = confirmedTx.txHash || confirmedTx.transactionHash || null
 
     await db
       .from('payouts')
