@@ -14,6 +14,7 @@ app.use(cors({
   origin: [
     process.env.FRONTEND_URL || 'http://localhost:3000',
     'http://localhost:3001',
+    'https://paystream.vercel.app',
   ],
   credentials: true,
 }))
@@ -48,6 +49,20 @@ app.listen(PORT, () => {
   ║  Webhooks: /webhooks/circle           ║
   ╚═══════════════════════════════════════╝
   `)
+
   startPayoutCron()
   startAgentMonitor()
+
+  // Self-ping every 10 minutes to prevent Render free tier sleep
+  if (process.env.RENDER_EXTERNAL_URL) {
+    setInterval(async () => {
+      try {
+        await fetch(process.env.RENDER_EXTERNAL_URL + '/api/v1/health')
+        console.log('[Keep-alive] Pinged self')
+      } catch (e) {
+        console.warn('[Keep-alive] Ping failed:', e.message)
+      }
+    }, 10 * 60 * 1000)
+    console.log('[Keep-alive] Self-ping started — service will not sleep')
+  }
 })
