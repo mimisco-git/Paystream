@@ -34,7 +34,7 @@ async function dispatchNanopayment({ stream, amountUsdc }) {
     fee: { type: 'level', config: { feeLevel: 'LOW' } },
   })
 
-  // Circle SDK returns { id, state } directly at res.data
+  // createTransaction returns { id, state } at res.data directly
   const txId = res.data?.id
   if (!txId) throw new Error('Circle createTransaction returned no tx id')
   return { id: txId, state: res.data?.state }
@@ -44,9 +44,13 @@ async function confirmOnChain(circleTxId, maxWaitMs = 30000) {
   const start = Date.now()
   while (Date.now() - start < maxWaitMs) {
     const res = await circleClient.getTransaction({ id: circleTxId })
-    const tx  = res.data
+
+    // getTransaction returns { transaction: { id, state, txHash, ... } } at res.data
+    const tx = res.data?.transaction
     if (!tx) { await sleep(800); continue }
-    if (tx.state === 'CONFIRMED') return tx
+
+    // Circle uses COMPLETE (not CONFIRMED) for successful transactions
+    if (tx.state === 'COMPLETE' || tx.state === 'CONFIRMED') return tx
     if (tx.state === 'FAILED')    throw new Error('Transaction failed on chain')
     await sleep(800)
   }
@@ -78,7 +82,7 @@ async function processStream(stream) {
     console.log(`[Cron] Nanopayment dispatched: $${earned} USDC | circle tx: ${circleTx.id}`)
 
     const confirmedTx = await confirmOnChain(circleTx.id)
-    const arcHash     = confirmedTx.txHash || confirmedTx.transactionHash || null
+    const arcHash     = confirmedTx.txHash || null
 
     await db
       .from('payouts')
