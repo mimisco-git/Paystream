@@ -53,16 +53,24 @@ app.listen(PORT, () => {
   startPayoutCron()
   startAgentMonitor()
 
-  // Self-ping every 10 minutes to prevent Render free tier sleep
-  if (process.env.RENDER_EXTERNAL_URL) {
+  // Self-ping every 10 minutes to prevent free tier sleep
+  // Works on Railway, Render, or any platform — just set BACKEND_URL env var
+  const selfUrl =
+    process.env.BACKEND_URL ||
+    process.env.RENDER_EXTERNAL_URL ||
+    process.env.RAILWAY_STATIC_URL ||
+    null
+
+  if (selfUrl) {
+    const pingUrl = selfUrl.startsWith('http') ? selfUrl : 'https://' + selfUrl
     setInterval(async () => {
       try {
-        await fetch(process.env.RENDER_EXTERNAL_URL + '/api/v1/health')
-        console.log('[Keep-alive] Pinged self')
+        await fetch(pingUrl + '/api/v1/health')
+        console.log('[Keep-alive] Pinged self:', pingUrl)
       } catch (e) {
         console.warn('[Keep-alive] Ping failed:', e.message)
       }
     }, 10 * 60 * 1000)
-    console.log('[Keep-alive] Self-ping started — service will not sleep')
+    console.log('[Keep-alive] Self-ping started —', pingUrl)
   }
 })
