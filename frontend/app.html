@@ -170,7 +170,7 @@
     .chain-opt{border:1px solid var(--border);border-radius:10px;padding:12px 10px;text-align:center;cursor:pointer;transition:all .18s;background:var(--obs3)}
     .chain-opt:hover{border-color:rgba(200,122,16,.25)}
     .chain-opt.selected{border-color:var(--amber);background:var(--amber-dim);box-shadow:0 0 16px rgba(200,122,16,.12)}
-    .chain-opt-icon{font-size:22px;margin-bottom:5px}
+    .chain-opt-icon{font-size:22px;margin-bottom:6px;display:flex;align-items:center;justify-content:center;height:36px;width:100%}
     .chain-opt-name{font-size:11px;font-weight:600;color:var(--g1)}
     .chain-opt.selected .chain-opt-name{color:var(--amber-lt)}
     .modal-summary{background:var(--obs3);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:20px}
@@ -430,16 +430,16 @@
       <div class="sb-stream-row"><div class="stream-dot"></div><div class="sb-stream-txt">Stream active · $18.50/hr</div></div>
     </div>
     <div class="sb-label">Navigation</div>
-    <div class="sb-item active" onclick="switchView('worker',null);setActive(this)"><div class="sb-icon">◎</div>My Earnings<div class="sb-badge">LIVE</div></div>
-    <div class="sb-item" onclick="switchView('history',null);setActive(this)"><div class="sb-icon">≡</div>Transactions</div>
-    <div class="sb-item" onclick="switchView('employer',null);setActive(this)"><div class="sb-icon">⬡</div>Employer View</div>
+    <div class="sb-item active" onclick="switchView('worker',null);setActive(this)"><div class="sb-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="8" cy="8" r="3"/><circle cx="8" cy="8" r="6" opacity=".35"/></svg></div>My Earnings<div class="sb-badge">LIVE</div></div>
+    <div class="sb-item" onclick="switchView('history',null);setActive(this)"><div class="sb-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M2 4h12M2 8h12M2 12h8"/></svg></div>Transactions</div>
+    <div class="sb-item" onclick="switchView('employer',null);setActive(this)"><div class="sb-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><rect x="2" y="7" width="12" height="7" rx="1.5"/><path d="M5 7V5a3 3 0 0 1 6 0v2"/></svg></div>Employer View</div>
     <div class="sb-label">Circle Tools</div>
-    <div class="sb-item"><div class="sb-icon">→</div>Circle Gateway</div>
-    <div class="sb-item"><div class="sb-icon">⬡</div>Circle Wallets</div>
-    <div class="sb-item"><div class="sb-icon">∿</div>Nanopayments</div>
-    <div class="sb-item"><div class="sb-icon">⇌</div>CCTP Bridge</div>
+    <div class="sb-item"><div class="sb-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="8" cy="8" r="6"/><path d="M5 8h5M8 5l3 3-3 3" opacity=".8"/></svg></div>Circle Gateway</div>
+    <div class="sb-item"><div class="sb-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><rect x="2" y="5" width="12" height="9" rx="2"/><path d="M5 5V4a3 3 0 0 1 6 0v1"/><circle cx="10.5" cy="9.5" r="1" fill="currentColor" opacity=".5"/></svg></div>Circle Wallets</div>
+    <div class="sb-item"><div class="sb-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M1 8 Q4 5 7 8 Q10 11 13 8"/><circle cx="13" cy="8" r="1.5" fill="currentColor"/><path d="M11.5 6l2 2-2 2" opacity=".7"/></svg></div>Nanopayments</div>
+    <div class="sb-item"><div class="sb-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="4" cy="8" r="2.5"/><circle cx="12" cy="8" r="2.5"/><path d="M6.5 7h3M9 5l2 2-2 2M7 9l-2-2 2-2" opacity=".7"/></svg></div>CCTP Bridge</div>
     <div class="sb-label">Network</div>
-    <div class="sb-item"><div class="sb-icon">◎</div>Arc Testnet</div>
+    <div class="sb-item"><div class="sb-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="8" cy="8" r="6"/><ellipse cx="8" cy="8" rx="3" ry="6" opacity=".5"/><line x1="2" y1="8" x2="14" y2="8" opacity=".5"/></svg></div>Arc Testnet</div>
   </div>
 
   <div class="main">
@@ -493,9 +493,9 @@
         <div class="gateway-card">
           <div class="gw-label">Circle Gateway · Unified Balance</div>
           <div class="gw-chain-row">
-            <div class="gw-chain"><span style="color:var(--amber-lt)">●</span> Arc <div class="gw-bal">$1,247.84</div></div>
-            <div class="gw-chain"><span style="color:#8B8BFF">◆</span> Ethereum <div class="gw-bal">$312.00</div></div>
-            <div class="gw-chain"><span style="color:#8247E5">●</span> Polygon <div class="gw-bal">$85.50</div></div>
+            <div class="gw-chain"><svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5" fill="#C87A10"/></svg> Arc <div class="gw-bal">$1,247.84</div></div>
+            <div class="gw-chain"><svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5" fill="#627EEA"/></svg> Ethereum <div class="gw-bal">$312.00</div></div>
+            <div class="gw-chain"><svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5" fill="#8247E5"/></svg> Polygon <div class="gw-bal">$85.50</div></div>
           </div>
           <div class="gw-unified">
             <div class="gw-total-lbl">Total unified USDC balance</div>
@@ -550,7 +550,7 @@
           <div class="worker-row"><div class="w-avatar" style="background:linear-gradient(135deg,#C87A10,#A86510)">AK</div><div><div class="w-name">Ahmad Karimi</div><div class="w-role">Senior Web Developer</div></div><div class="w-rate">$18.50/hr</div><div class="w-paid" style="color:var(--g2)">$92.10 today</div><div class="w-status active"><div class="stream-dot"></div>Streaming</div></div>
           <div class="worker-row"><div class="w-avatar" style="background:linear-gradient(135deg,#10B981,#00CC80)">PM</div><div><div class="w-name">Priya Mehta</div><div class="w-role">UI/UX Designer</div></div><div class="w-rate">$22.00/hr</div><div class="w-paid" style="color:var(--g2)">$110.00 today</div><div class="w-status active"><div class="stream-dot"></div>Streaming</div></div>
           <div class="worker-row"><div class="w-avatar" style="background:linear-gradient(135deg,#3B82F6,#60A5FA)">CR</div><div><div class="w-name">Carlos Reyes</div><div class="w-role">Backend Engineer</div></div><div class="w-rate">$25.00/hr</div><div class="w-paid" style="color:var(--g2)">$125.00 today</div><div class="w-status active"><div class="stream-dot"></div>Streaming</div></div>
-          <div class="worker-row"><div class="w-avatar" style="background:linear-gradient(135deg,#C87A10,#A86510)">JO</div><div><div class="w-name">James Okafor</div><div class="w-role">DevOps Engineer</div></div><div class="w-rate">$21.00/hr</div><div class="w-paid" style="color:var(--g2)">$55.30 today</div><div class="w-status paused">⏸ Paused</div></div>
+          <div class="worker-row"><div class="w-avatar" style="background:linear-gradient(135deg,#C87A10,#A86510)">JO</div><div><div class="w-name">James Okafor</div><div class="w-role">DevOps Engineer</div></div><div class="w-rate">$21.00/hr</div><div class="w-paid" style="color:var(--g2)">$55.30 today</div><div class="w-status paused"><svg width="11" height="11" viewBox="0 0 11 11" fill="currentColor"><rect x="2" y="2" width="3" height="7" rx="1"/><rect x="6" y="2" width="3" height="7" rx="1"/></svg>Paused</div></div>
         </div>
       </div>
     </div>
@@ -561,14 +561,14 @@
         <div class="card-title">Transaction History</div>
         <div class="card-sub" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
           <span>All USDC movements on Arc testnet · Verified on-chain</span>
-          <button class="btn-secondary" onclick="exportCSV()" style="font-size:12px;padding:7px 16px">⬇ Download CSV Report</button>
+          <button class="btn-secondary" onclick="exportCSV()" style="font-size:12px;padding:7px 16px"><svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:5px"><path d="M6.5 1v7M3 5.5l3.5 3.5L10 5.5"/><path d="M1 11h11"/></svg>Download CSV</button>
         </div>
         <table class="tx-table">
           <thead><tr><th>Type</th><th>Tx Hash</th><th>Chain</th><th>Time</th><th>Status</th><th>Amount</th></tr></thead>
           <tbody>
-            <tr><td><div class="tx-type"><div class="tx-icon in"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M7 1v8M3 6l4 4 4-4"/></svg></div>Nanopayment</div></td><td><div class="tx-hash" onclick="window.open('https://testnet.arcscan.app/tx/0x4105a47561c63d3721735c6bbbb4d42154dca9d447ab43672ffece0f7f22abe7')">0x4105...abe7 ↗</div></td><td><span class="tx-chain">Arc</span></td><td><div class="tx-time">2 min ago</div></td><td><div class="tx-status-dot">Confirmed</div></td><td><div class="tx-amount-pos">+$0.126</div></td></tr>
-            <tr><td><div class="tx-type"><div class="tx-icon in"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M7 1v8M3 6l4 4 4-4"/></svg></div>Nanopayment</div></td><td><div class="tx-hash" onclick="window.open('https://testnet.arcscan.app/tx/0x79d62fae971f1b0852c566b513d29383afefa30e606863b89bda3168e6914036')">0x79d6...4036 ↗</div></td><td><span class="tx-chain">Arc</span></td><td><div class="tx-time">4 min ago</div></td><td><div class="tx-status-dot">Confirmed</div></td><td><div class="tx-amount-pos">+$0.263</div></td></tr>
-            <tr><td><div class="tx-type"><div class="tx-icon in"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M7 1v8M3 6l4 4 4-4"/></svg></div>Nanopayment</div></td><td><div class="tx-hash" onclick="window.open('https://testnet.arcscan.app/tx/0x058bc751cbf943e21a0159825104147b246a958ac7ae1699a458db676effd8ec')">0x058b...d8ec ↗</div></td><td><span class="tx-chain">Arc</span></td><td><div class="tx-time">6 min ago</div></td><td><div class="tx-status-dot">Confirmed</div></td><td><div class="tx-amount-pos">+$0.283</div></td></tr>
+            <tr><td><div class="tx-type"><div class="tx-icon in"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M7 1v8M3 6l4 4 4-4"/></svg></div>Nanopayment</div></td><td><div class="tx-hash" onclick="window.open('https://testnet.arcscan.app/tx/0x4105a47561c63d3721735c6bbbb4d42154dca9d447ab43672ffece0f7f22abe7')">0x4105...abe7 <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" style="margin-left:3px"><path d="M2 8L8 2M4 2h4v4"/></svg></div></td><td><span class="tx-chain">Arc</span></td><td><div class="tx-time">2 min ago</div></td><td><div class="tx-status-dot">Confirmed</div></td><td><div class="tx-amount-pos">+$0.126</div></td></tr>
+            <tr><td><div class="tx-type"><div class="tx-icon in"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M7 1v8M3 6l4 4 4-4"/></svg></div>Nanopayment</div></td><td><div class="tx-hash" onclick="window.open('https://testnet.arcscan.app/tx/0x79d62fae971f1b0852c566b513d29383afefa30e606863b89bda3168e6914036')">0x79d6...4036 <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" style="margin-left:3px"><path d="M2 8L8 2M4 2h4v4"/></svg></div></td><td><span class="tx-chain">Arc</span></td><td><div class="tx-time">4 min ago</div></td><td><div class="tx-status-dot">Confirmed</div></td><td><div class="tx-amount-pos">+$0.263</div></td></tr>
+            <tr><td><div class="tx-type"><div class="tx-icon in"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M7 1v8M3 6l4 4 4-4"/></svg></div>Nanopayment</div></td><td><div class="tx-hash" onclick="window.open('https://testnet.arcscan.app/tx/0x058bc751cbf943e21a0159825104147b246a958ac7ae1699a458db676effd8ec')">0x058b...d8ec <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" style="margin-left:3px"><path d="M2 8L8 2M4 2h4v4"/></svg></div></td><td><span class="tx-chain">Arc</span></td><td><div class="tx-time">6 min ago</div></td><td><div class="tx-status-dot">Confirmed</div></td><td><div class="tx-amount-pos">+$0.283</div></td></tr>
             <tr><td><div class="tx-type"><div class="tx-icon out"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M7 13V5M3 8l4-4 4 4"/></svg></div>Withdrawal</div></td><td><div class="tx-hash">0x4b9e...a182</div></td><td><span class="tx-chain">Ethereum</span></td><td><div class="tx-time">48 min ago</div></td><td><div class="tx-status-dot">Confirmed</div></td><td><div class="tx-amount-neg">-$200.00</div></td></tr>
             <tr><td><div class="tx-type"><div class="tx-icon xchain"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="4" cy="7" r="2"/><circle cx="10" cy="7" r="2"/><path d="M6 7h2"/></svg></div>CCTP Bridge</div></td><td><div class="tx-hash">0x2a7c...e401</div></td><td><span class="tx-chain">Polygon</span></td><td><div class="tx-time">2h ago</div></td><td><div class="tx-status-dot">Confirmed</div></td><td><div class="tx-amount-neg">-$85.50</div></td></tr>
           </tbody>
@@ -581,7 +581,11 @@
 <!-- WITHDRAW MODAL -->
 <div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
   <div class="modal" id="modal">
-    <button class="modal-close" onclick="closeWithdraw()">✕</button>
+    <button class="modal-close" onclick="closeWithdraw()" aria-label="Close">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+        <path d="M1 1L11 11M11 1L1 11"/>
+      </svg>
+    </button>
     <div id="modal-form">
       <div class="modal-title">Withdraw USDC</div>
       <div class="modal-sub">Choose your destination chain. CCTP Fast Transfer completes in 8 to 20 seconds.</div>
@@ -589,12 +593,69 @@
       <input class="field-input" id="wd-amount" type="number" placeholder="0.00" value="200.00"/>
       <div class="field-lbl">Destination Chain</div>
       <div class="chain-grid">
-        <div class="chain-opt selected" onclick="selectChain(this,'Arc')"><div class="chain-opt-icon">🔵</div><div class="chain-opt-name">Arc</div></div>
-        <div class="chain-opt" onclick="selectChain(this,'Ethereum')"><div class="chain-opt-icon">⟠</div><div class="chain-opt-name">Ethereum</div></div>
-        <div class="chain-opt" onclick="selectChain(this,'Polygon')"><div class="chain-opt-icon">🟣</div><div class="chain-opt-name">Polygon</div></div>
-        <div class="chain-opt" onclick="selectChain(this,'Base')"><div class="chain-opt-icon">🔷</div><div class="chain-opt-name">Base</div></div>
-        <div class="chain-opt" onclick="selectChain(this,'Arbitrum')"><div class="chain-opt-icon">🌀</div><div class="chain-opt-name">Arbitrum</div></div>
-        <div class="chain-opt" onclick="selectChain(this,'Avalanche')"><div class="chain-opt-icon">🔺</div><div class="chain-opt-name">Avalanche</div></div>
+        <div class="chain-opt selected" onclick="selectChain(this,'Arc')">
+          <div class="chain-opt-icon"><svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+  <circle cx="13" cy="16" r="7" fill="none" stroke="#C87A10" stroke-width="1.8"/>
+  <text x="13" y="20.5" text-anchor="middle" font-family="Cantarell,sans-serif" font-weight="700" font-size="9" fill="#C87A10">$</text>
+  <line x1="22" y1="13" x2="29" y2="13" stroke="#C87A10" stroke-width="1.6" stroke-linecap="round"/>
+  <line x1="22" y1="16" x2="31" y2="16" stroke="#C87A10" stroke-width="2" stroke-linecap="round"/>
+  <line x1="22" y1="19" x2="29" y2="19" stroke="#C87A10" stroke-width="1.6" stroke-linecap="round"/>
+  <path d="M27.5 11L31 16L27.5 21" fill="none" stroke="#C87A10" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg></div>
+          <div class="chain-opt-name">Arc</div>
+        </div>
+        <div class="chain-opt" onclick="selectChain(this,'Ethereum')">
+          <div class="chain-opt-icon"><svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+  <g opacity="0.9">
+    <path d="M16 4.5L7 16.5L16 13.5L25 16.5L16 4.5Z" fill="#627EEA"/>
+    <path d="M16 4.5L7 16.5L16 13.5V4.5Z" fill="#8EA4F5"/>
+    <path d="M16 21L7 16.5L16 13.5L25 16.5L16 21Z" fill="#627EEA"/>
+    <path d="M16 21L7 16.5L16 13.5V21Z" fill="#8EA4F5"/>
+    <path d="M16 22.5L7 18L16 21L25 18L16 22.5Z" fill="#627EEA"/>
+    <path d="M16 22.5L7 18L16 21V22.5Z" fill="#8EA4F5"/>
+    <path d="M16 27.5L7 18L16 22.5L25 18L16 27.5Z" fill="#627EEA"/>
+    <path d="M16 27.5L7 18L16 22.5V27.5Z" fill="#8EA4F5"/>
+  </g>
+</svg></div>
+          <div class="chain-opt-name">Ethereum</div>
+        </div>
+        <div class="chain-opt" onclick="selectChain(this,'Polygon')">
+          <div class="chain-opt-icon"><svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+  <path d="M21.5 12.5L17.5 10.2C16.9 9.87 16.1 9.87 15.5 10.2L11.5 12.5L7.5 14.8C6.9 15.13 6.5 15.77 6.5 16.43V21C6.5 21.67 6.9 22.3 7.5 22.63L11.5 24.93C12.1 25.27 12.9 25.27 13.5 24.93L16 23.5L18.5 24.93C19.1 25.27 19.9 25.27 20.5 24.93L24.5 22.63C25.1 22.3 25.5 21.67 25.5 21V16.43C25.5 15.77 25.1 15.13 24.5 14.8L21.5 12.5Z" fill="none" stroke="#8247E5" stroke-width="1.5"/>
+  <path d="M13.5 14.8L16 13.37L18.5 14.8V17.63L16 19.07L13.5 17.63V14.8Z" fill="#8247E5"/>
+  <line x1="16" y1="10.2" x2="16" y2="13.37" stroke="#8247E5" stroke-width="1.5"/>
+  <line x1="16" y1="19.07" x2="16" y2="25" stroke="#8247E5" stroke-width="1.5"/>
+  <line x1="7.5" y1="14.8" x2="13.5" y2="14.8" stroke="#8247E5" stroke-width="1.5"/>
+  <line x1="18.5" y1="14.8" x2="24.5" y2="14.8" stroke="#8247E5" stroke-width="1.5"/>
+</svg></div>
+          <div class="chain-opt-name">Polygon</div>
+        </div>
+        <div class="chain-opt" onclick="selectChain(this,'Base')">
+          <div class="chain-opt-icon"><svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+  <circle cx="16" cy="16" r="13" fill="#0052FF"/>
+  <path d="M16.15 8C11.62 8 7.95 11.67 7.95 16.2C7.95 20.73 11.62 24.4 16.15 24.4C19.89 24.4 23.05 22.04 24.08 18.76H19.55C18.78 19.84 17.55 20.56 16.15 20.56C13.71 20.56 11.73 18.58 11.73 16.2C11.73 13.82 13.71 11.84 16.15 11.84C17.55 11.84 18.78 12.56 19.55 13.64H24.08C23.05 10.36 19.89 8 16.15 8Z" fill="white"/>
+</svg></div>
+          <div class="chain-opt-name">Base</div>
+        </div>
+        <div class="chain-opt" onclick="selectChain(this,'Arbitrum')">
+          <div class="chain-opt-icon"><svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+  <circle cx="16" cy="16" r="13" fill="#1B4ADD"/>
+  <path d="M16 7L22.5 19H9.5L16 7Z" fill="none" stroke="#12AAFF" stroke-width="1.8" stroke-linejoin="round"/>
+  <line x1="16" y1="7" x2="16" y2="19" stroke="#12AAFF" stroke-width="1.5"/>
+  <line x1="11" y1="16" x2="21" y2="16" stroke="#12AAFF" stroke-width="1.3" opacity="0.7"/>
+  <path d="M12 19L10 24H14L16 19H12Z" fill="#9DCCED"/>
+  <path d="M20 19L22 24H18L16 19H20Z" fill="#9DCCED"/>
+</svg></div>
+          <div class="chain-opt-name">Arbitrum</div>
+        </div>
+        <div class="chain-opt" onclick="selectChain(this,'Avalanche')">
+          <div class="chain-opt-icon"><svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+  <circle cx="16" cy="16" r="13" fill="#E84142"/>
+  <path d="M20.8 21.5H23.8C24.5 21.5 24.9 20.7 24.5 20.1L17.2 9.1C16.8 8.5 15.9 8.5 15.5 9.1L8.2 20.1C7.8 20.7 8.2 21.5 8.9 21.5H17.1C17.5 21.5 17.9 21.3 18.1 20.9L19.4 18.7L20.7 20.9C20.9 21.3 20.5 21.5 20.8 21.5Z" fill="white"/>
+  <path d="M19.4 18.7L17.5 15.5L15.6 18.7H19.4Z" fill="#E84142"/>
+</svg></div>
+          <div class="chain-opt-name">Avalanche</div>
+        </div>
       </div>
       <div class="modal-summary">
         <div class="ms-row"><span>You withdraw</span><span class="ms-val violet" id="ms-amount">$200.00 USDC</span></div>
@@ -605,14 +666,24 @@
       <button class="btn-primary btn-full" onclick="doWithdraw()">Confirm Withdrawal →</button>
     </div>
     <div id="modal-processing" style="display:none;text-align:center;padding:20px 0">
-      <div style="font-size:52px;margin-bottom:18px;animation:spin 1.2s linear infinite">⚡</div>
+      <div style="margin-bottom:18px;display:flex;justify-content:center">
+        <svg width="52" height="52" viewBox="0 0 52 52" fill="none" style="animation:spin 1.2s linear infinite">
+          <circle cx="26" cy="26" r="20" stroke="rgba(200,122,16,0.15)" stroke-width="4"/>
+          <path d="M26 6 A20 20 0 0 1 46 26" stroke="#C87A10" stroke-width="4" stroke-linecap="round"/>
+          <path d="M36 16L26 6L32 18" fill="#C87A10" opacity="0.6"/>
+        </svg>
+      </div>
       <div style="font-family:var(--ff);font-weight:700;font-size:20px;margin-bottom:8px">Processing withdrawal</div>
       <div style="font-size:13px;color:var(--g2);margin-bottom:20px">Broadcasting to Arc testnet via CCTP...</div>
       <div style="background:var(--obs3);border-radius:8px;padding:14px;font-family:var(--ff-mono);font-size:11px;color:var(--g2);text-align:left"><div id="proc-log"></div></div>
     </div>
     <div id="modal-success" style="display:none">
       <div class="success-view">
-        <div class="success-icon">✓</div>
+        <div class="success-icon">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="#10B981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 16L13 23L26 9"/>
+        </svg>
+      </div>
         <div class="success-title">Withdrawal Complete</div>
         <div class="success-sub">Your USDC has been sent successfully. Confirmed on-chain in <strong style="color:var(--green)" id="s-time">—</strong>.</div>
         <div class="success-hash" id="s-hash">—</div>
@@ -659,7 +730,7 @@ function closeWithdraw(){document.getElementById('modal-overlay').classList.remo
 function handleOverlayClick(e){if(e.target===document.getElementById('modal-overlay'))closeWithdraw()}
 function showForm(){document.getElementById('modal-form').style.display='';document.getElementById('modal-processing').style.display='none';document.getElementById('modal-success').style.display='none'}
 
-const pLines=['Signing with Circle developer wallet...','Broadcasting to Arc testnet...','CCTP burn confirmed on source chain...','Attestation received from Circle...','Minting USDC on destination chain...','Transaction finalized ✓']
+const pLines=['Signing with Circle developer wallet...','Broadcasting to Arc testnet...','CCTP burn confirmed on source chain...','Attestation received from Circle...','Minting USDC on destination chain...','Transaction finalized &#10003;']
 function doWithdraw(){
   document.getElementById('modal-form').style.display='none'
   document.getElementById('modal-processing').style.display=''
@@ -732,12 +803,12 @@ setTimeout(fireNanopay,5000)
 setInterval(fireNanopay,60000)
 
 setTimeout(()=>{
-  showToast({title:'AI Agent: Stream paused',sub:'Activity score 0.18 below threshold',amount:'⏸',type:'arc'})
+  showToast({title:'AI Agent: Stream paused',sub:'Activity score 0.18 below threshold',amount:'PAUSED',type:'arc'})
   pushNotif({title:'AI Agent paused stream',sub:'Activity score 0.18 below threshold (0.25) · Clockify API · Will resume when activity recovers',type:'agent'})
 },35000)
 
 setTimeout(()=>{
-  showToast({title:'AI Agent: Stream resumed',sub:'GitHub commit detected · Streaming restored',amount:'▶',type:'pay'})
+  showToast({title:'AI Agent: Stream resumed',sub:'GitHub commit detected · Streaming restored',amount:'LIVE',type:'pay'})
   pushNotif({title:'AI Agent resumed stream',sub:'Activity score 0.74 above threshold (0.60) · GitHub commit detected · Stream reactivated',type:'agent'})
 },90000)
 
@@ -787,7 +858,7 @@ function setMobileActive(el){
   <button class="mob-nav-item" onclick="openWithdraw()">
     <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
       <path d="M10 3v9M6 9l4 4 4-4"/>
-      <line x1="3" y1="17" x2="17" y2="17"/>
+      <line x1="3" y1="17" x2="17" y2="17" opacity=".6"/>
     </svg>
     Withdraw
   </button>
