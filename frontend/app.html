@@ -241,8 +241,138 @@
     .toast-sub{font-size:11.5px;color:var(--g2)}
     .toast-amount{font-family:var(--ff-mono);font-size:15px;font-weight:700}
 
-    @media(max-width:900px){.sidebar{display:none}.main{padding:18px}.grid-3{grid-template-columns:1fr 1fr}.worker-row{grid-template-columns:38px 1fr auto}.w-rate,.w-paid{display:none}}
-    @media(max-width:600px){.grid-3{grid-template-columns:1fr}.grid-2{grid-template-columns:1fr}.tb-center{display:none}}
+
+    /* =============================================
+       FULL MOBILE RESPONSIVE — app.html
+       Breakpoints: 900px (tablet), 600px (phone)
+    ============================================= */
+
+    @media(max-width:900px){
+      /* TOPBAR */
+      .tb-logo{font-size:17px}
+      .tb-right{gap:8px}
+      .tb-wallet{display:none}
+
+      /* SIDEBAR — hidden, replaced by bottom nav */
+      .sidebar{display:none}
+
+      /* MAIN */
+      .main{padding:16px;padding-bottom:80px}
+
+      /* EARN CARD */
+      .earn-card{padding:22px 18px;border-radius:16px}
+      .earn-amount{font-size:clamp(32px,8vw,52px)}
+      .earn-aed{font-size:13px}
+      .earn-sub{gap:14px}
+      .earn-sub-item{font-size:11.5px}
+      .earn-actions{flex-wrap:wrap;gap:8px}
+      .btn-primary,.btn-secondary,.btn-ghost{font-size:12.5px;padding:9px 16px}
+
+      /* GRIDS */
+      .grid-3{grid-template-columns:1fr 1fr;gap:12px}
+      .grid-2{grid-template-columns:1fr;gap:12px}
+
+      /* STAT MINI */
+      .sm-val{font-size:20px}
+
+      /* GATEWAY */
+      .gw-chain-row{flex-direction:column;gap:8px}
+
+      /* WORKER ROWS */
+      .worker-row{grid-template-columns:36px 1fr auto;gap:10px;padding:14px 16px}
+      .w-rate,.w-paid{display:none}
+
+      /* DEPOSIT */
+      .deposit-row{grid-template-columns:1fr;gap:10px}
+      .deposit-row .btn-primary{margin-top:0;width:100%;justify-content:center}
+      .treasury-bar{flex-wrap:wrap;gap:12px;justify-content:space-around}
+      .tb-divider{display:none}
+
+      /* AGENT LOG */
+      .agent-line{flex-wrap:wrap}
+      .al-time{width:100%;font-size:10px}
+
+      /* TX TABLE */
+      .tx-table th:nth-child(2),
+      .tx-table td:nth-child(2),
+      .tx-table th:nth-child(3),
+      .tx-table td:nth-child(3){display:none}
+
+      /* NOTIF PANEL */
+      .notif-panel{width:calc(100vw - 32px);right:16px}
+
+      /* MODAL */
+      .modal{padding:22px 18px;border-radius:18px;max-height:90vh;overflow-y:auto}
+      .chain-grid{grid-template-columns:repeat(3,1fr);gap:6px}
+      .chain-opt{padding:10px 6px}
+      .chain-opt-icon{font-size:18px}
+      .chain-opt-name{font-size:10px}
+    }
+
+    @media(max-width:600px){
+      /* TOPBAR */
+      .tb-center{display:none}
+      .topbar{padding:0 14px}
+
+      /* MAIN */
+      .main{padding:14px;padding-bottom:76px}
+
+      /* EARN CARD */
+      .earn-card{padding:18px 16px}
+      .earn-amount{font-size:clamp(28px,9vw,44px)}
+      .earn-top{flex-direction:column;gap:8px}
+      .earn-live{align-self:flex-start}
+
+      /* GRIDS */
+      .grid-3{grid-template-columns:1fr}
+      .grid-2{grid-template-columns:1fr}
+
+      /* PROGRESS */
+      .progress-wrap{margin-top:8px}
+
+      /* HISTORY TABLE — show only 3 cols */
+      .tx-table th:nth-child(4),
+      .tx-table td:nth-child(4){display:none}
+
+      /* MODAL full screen */
+      .modal-overlay{padding:0;align-items:flex-end}
+      .modal{border-radius:20px 20px 0 0;padding:24px 18px;max-height:92vh}
+      .btn-full{font-size:14px;padding:13px}
+
+      /* TOAST */
+      .toast-container{bottom:80px;right:12px;left:12px}
+      .toast{min-width:auto;width:100%}
+    }
+
+    /* MOBILE BOTTOM NAVIGATION BAR */
+    @media(max-width:900px){
+      .mobile-nav{
+        display:flex;
+        position:fixed;
+        bottom:0;left:0;right:0;
+        height:64px;
+        background:var(--obs2);
+        border-top:1px solid var(--border);
+        z-index:200;
+        align-items:center;
+        justify-content:space-around;
+        padding:0 8px;
+        backdrop-filter:blur(24px);
+      }
+      .mob-nav-item{
+        display:flex;flex-direction:column;align-items:center;gap:4px;
+        padding:8px 16px;border-radius:10px;cursor:pointer;
+        color:var(--g3);font-size:10px;font-weight:600;letter-spacing:.04em;
+        text-transform:uppercase;transition:color .2s;border:none;background:none;
+        font-family:var(--ff-body);flex:1;
+      }
+      .mob-nav-item.active{color:var(--amber)}
+      .mob-nav-item svg{width:20px;height:20px}
+    }
+    @media(min-width:901px){
+      .mobile-nav{display:none}
+    }
+
   </style>
 </head>
 <body>
@@ -620,6 +750,55 @@ function exportCSV(){
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='paystream-'+new Date().toISOString().slice(0,10)+'.csv';a.click()
   showToast({title:'Report Downloaded',sub:'paystream.csv saved to your downloads',amount:'',type:'arc'})
 }
+
+function setMobileActive(el){
+  document.querySelectorAll('.mob-nav-item').forEach(b=>b.classList.remove('active'))
+  el.classList.add('active')
+}
+
 </script>
+
+<!-- MOBILE BOTTOM NAVIGATION -->
+<div class="mobile-nav">
+  <button class="mob-nav-item active" id="mn-worker" onclick="switchView('worker',null);setMobileActive(this)">
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+      <circle cx="10" cy="10" r="3.5"/>
+      <circle cx="10" cy="10" r="8" opacity=".35"/>
+      <line x1="2" y1="10" x2="3.5" y2="10" opacity=".5"/>
+      <line x1="16.5" y1="10" x2="18" y2="10" opacity=".5"/>
+    </svg>
+    Earn
+  </button>
+  <button class="mob-nav-item" id="mn-employer" onclick="switchView('employer',null);setMobileActive(this)">
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+      <rect x="3" y="8" width="14" height="9" rx="1.5"/>
+      <path d="M7 8V6a3 3 0 0 1 6 0v2"/>
+    </svg>
+    Employer
+  </button>
+  <button class="mob-nav-item" id="mn-history" onclick="switchView('history',null);setMobileActive(this)">
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+      <rect x="3" y="4" width="14" height="12" rx="2"/>
+      <line x1="7" y1="9" x2="13" y2="9"/>
+      <line x1="7" y1="13" x2="11" y2="13"/>
+    </svg>
+    History
+  </button>
+  <button class="mob-nav-item" onclick="openWithdraw()">
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+      <path d="M10 3v9M6 9l4 4 4-4"/>
+      <line x1="3" y1="17" x2="17" y2="17"/>
+    </svg>
+    Withdraw
+  </button>
+  <button class="mob-nav-item" onclick="toggleNotifPanel()">
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+      <path d="M10 3a4 4 0 0 1 4 4c0 3.5 1.5 4.5 1.5 4.5h-11S6 10.5 6 7a4 4 0 0 1 4-4z"/>
+      <path d="M11.7 16a2 2 0 0 1-3.4 0"/>
+    </svg>
+    Alerts
+  </button>
+</div>
+
 </body>
 </html>

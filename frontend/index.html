@@ -186,21 +186,120 @@
     .footer-mid{font-size:13px;color:var(--g3)}
     .footer-badge{font-size:11.5px;color:var(--amber-lt);background:var(--amber-dim);border:1px solid rgba(200,122,16,.15);padding:5px 14px;border-radius:6px;font-weight:600;letter-spacing:.03em}
 
+
+    /* =============================================
+       FULL MOBILE RESPONSIVE — index.html
+       Breakpoints: 900px (tablet), 600px (phone)
+    ============================================= */
+
     @media(max-width:900px){
-      nav{padding:16px 24px}
+      /* NAV */
+      nav{padding:14px 20px;top:33px}
       nav ul li:not(:last-child){display:none}
-      section{padding:76px 24px}
-      .hero{padding:130px 24px 80px}
-      .prob-grid{grid-template-columns:1fr}
-      .stats-grid{grid-template-columns:1fr 1fr}
-      .flow-grid{grid-template-columns:1fr}
-      .sequencer{flex-direction:column;align-items:flex-start;gap:32px}
+      .logo{font-size:18px}
+
+      /* HERO */
+      .hero{padding:120px 20px 80px;min-height:auto}
+      h1{font-size:clamp(36px,10vw,56px);letter-spacing:-.025em}
+      .hero-lead{font-size:15px;margin-bottom:36px}
+      .pill{font-size:11px;padding:5px 14px;margin-bottom:22px}
+
+      /* COUNTER */
+      .counter-wrap{padding:22px 28px 18px;border-radius:18px;width:100%}
+      .counter-val{font-size:clamp(32px,9vw,48px)}
+      .counter-sub{gap:12px;flex-wrap:wrap;justify-content:center}
+      .c-rate{font-size:11px}
+
+      /* CTA */
+      .cta-row{flex-direction:column;align-items:stretch;gap:10px}
+      .btn-p,.btn-g{justify-content:center;padding:14px 20px}
+
+      /* SCROLL HINT */
+      .scroll-hint{display:none}
+
+      /* SECTIONS */
+      section{padding:64px 20px}
+
+      /* PROBLEM */
+      .prob-grid{grid-template-columns:1fr;gap:14px}
+      .prob-card{padding:28px 22px}
+
+      /* SEQUENCER */
+      .seq-head{margin-bottom:48px}
+      .sec-h2{font-size:clamp(28px,7vw,42px)}
+      .sequencer{flex-direction:column;align-items:stretch;gap:0}
       .seq-track{display:none}
-      .seq-col{flex-direction:row;align-items:center;text-align:left;gap:20px;padding:0}
-      .seq-col .seq-node{margin-bottom:0;flex-shrink:0;width:80px;height:80px}
-      .seq-col p{max-width:100%}
-      footer{flex-direction:column;text-align:center;padding:24px}
+      .seq-col{flex-direction:row;align-items:center;text-align:left;gap:16px;padding:16px 0;border-bottom:1px solid var(--border)}
+      .seq-col:last-child{border-bottom:none}
+      .seq-col .seq-node{margin-bottom:0;flex-shrink:0;width:64px;height:64px;font-size:20px}
+      .seq-col h4{font-size:16px;margin-bottom:5px}
+      .seq-col p{font-size:13px;max-width:100%}
+      .seq-pill{margin-top:8px;font-size:10px}
+      .seq-controls{margin-top:28px}
+
+      /* STATS */
+      .stats-grid{grid-template-columns:1fr 1fr;gap:12px}
+      .stat-val{font-size:36px}
+      .stat-lbl{font-size:12px}
+
+      /* FLOW */
+      .flow-grid{grid-template-columns:1fr;gap:24px}
+      .flow-code{font-size:11.5px;padding:20px}
+
+      /* STACK */
+      .pills{gap:8px}
+      .sp-pill{font-size:13px;padding:9px 16px}
+
+      /* CTA SECTION */
+      .cta-box{padding:56px 24px;border-radius:20px}
+      .cta-box h2{font-size:clamp(30px,7vw,48px)}
+      .cta-btns{flex-direction:column;align-items:stretch;gap:10px}
+      .cta-btns .btn-p,.cta-btns .btn-g{justify-content:center}
+
+      /* FOOTER */
+      footer{flex-direction:column;text-align:center;padding:20px;gap:12px}
     }
+
+    @media(max-width:600px){
+      /* NAV */
+      nav{padding:12px 16px;top:33px}
+      .nav-btn{font-size:12px;padding:8px 14px}
+
+      /* TICKER */
+      .ticker-inner{font-size:10px}
+
+      /* HERO */
+      .hero{padding:110px 16px 70px}
+      h1{font-size:clamp(32px,11vw,48px)}
+      .hero-lead{font-size:14px;margin-bottom:28px}
+      .counter-wrap{padding:18px 20px 16px;border-radius:14px}
+      .counter-val{font-size:clamp(28px,10vw,40px)}
+      .counter-sub{flex-direction:column;align-items:center;gap:6px}
+      .live-badge{font-size:10.5px}
+
+      /* PROBLEM */
+      .prob-card{padding:22px 18px}
+      .prob-card h3{font-size:18px}
+      .ptxt{font-size:13.5px}
+
+      /* STATS */
+      .stats-grid{grid-template-columns:1fr}
+      .stat-card{padding:22px 20px}
+
+      /* INTRO SEQUENCER badges */
+      #i-badges{flex-direction:column;align-items:center;gap:8px}
+      #i-badges > div[style*="width:1px"]{display:none}
+
+      /* INTRO */
+      #i-word span{font-size:40px}
+
+      /* FLOW CODE */
+      .flow-code{overflow-x:auto}
+
+      /* PILLS */
+      .sp-pill{font-size:12px;padding:8px 14px}
+    }
+
   </style>
 </head>
 <body>
