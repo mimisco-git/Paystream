@@ -827,6 +827,210 @@ function setMobileActive(el){
   el.classList.add('active')
 }
 
+
+    /* ========================================================
+       REAL BACKEND WIRING
+       Fetches live data from Render backend every 5 seconds
+    ======================================================== */
+    const API        = 'https://paystream-9xtb.onrender.com'
+    const STREAM_ID  = 'e5858b46-9604-4ec8-aed2-651e92fb9838'
+    const WORKER_ID  = 'worker_001'
+    const EMPLOYER_ID = 'employer_001'
+    const AED_RATE   = 3.6725
+
+    let liveEarned    = 0
+    let liveBalance   = 0
+    let liveRate      = 18.50
+    let liveStatus    = 'active'
+    let liveTotalPaid = 0
+    let lastFetch     = Date.now()
+
+    // Smooth real-time counter between API fetches
+    function smoothTick() {
+      if (liveStatus === 'active') {
+        const elapsed = (Date.now() - lastFetch) / 1000
+        const projected = liveEarned + (elapsed * liveRate / 3600)
+        const aed = projected * AED_RATE
+
+        const ea = document.getElementById('earn-amount')
+        const eae = document.getElementById('earn-aed')
+        const sb = document.getElementById('sb-bal')
+        const sa = document.getElementById('sb-aed')
+
+        if (ea) ea.textContent = '$' + projected.toFixed(6)
+        if (eae) eae.textContent = 'AED ' + aed.toFixed(2) + ' · 1 USD = 3.6725 AED'
+        if (sb) sb.textContent = '$' + (liveBalance + projected).toFixed(2)
+        if (sa) sa.textContent = 'AED ' + ((liveBalance + projected) * AED_RATE).toFixed(2)
+      }
+    }
+
+    // Fetch live stream earned amount
+    async function fetchEarned() {
+      try {
+        const res  = await fetch(API + '/api/v1/streams/' + STREAM_ID + '/earned')
+        const json = await res.json()
+        if (json.success) {
+          liveEarned  = parseFloat(json.data.earned) || 0
+          liveRate    = parseFloat(json.data.rate_per_hour) || 18.50
+          liveStatus  = json.data.status || 'active'
+          liveTotalPaid = parseFloat(json.data.total_paid) || 0
+          lastFetch   = Date.now()
+
+          // Update session time display
+          const st = document.getElementById('session-time')
+          if (st) st.textContent = new Date().toLocaleTimeString()
+
+          // Update rate per second
+          const rs = document.getElementById('rate-per-sec')
+          if (rs) rs.textContent = '$' + (liveRate / 3600).toFixed(7) + '/s'
+
+          // Update stream status badge
+          const liveBadge = document.querySelector('.earn-live')
+          if (liveBadge) {
+            liveBadge.innerHTML = liveStatus === 'active'
+              ? '<div class="stream-dot"></div>STREAMING LIVE'
+              : '<div style="width:6px;height:6px;border-radius:50%;background:var(--amber)"></div>PAUSED'
+          }
+        }
+      } catch(e) { console.warn('[API] fetchEarned failed:', e.message) }
+    }
+
+    // Fetch live worker wallet balance
+    async function fetchWorkerBalance() {
+      try {
+        const res  = await fetch(API + '/api/v1/wallets/' + WORKER_ID)
+        const json = await res.json()
+        if (json.success) {
+          liveBalance = parseFloat(json.data.balance_usdc) || 0
+
+          // Update gateway panel
+          const arcBal = document.querySelector('.gw-bal')
+          if (arcBal) arcBal.textContent = '$' + liveBalance.toFixed(2)
+
+          // Update total earned stat
+          const totalEl = document.querySelector('.sm-val.neon')
+          if (totalEl) totalEl.textContent = '$' + (liveBalance + liveTotalPaid).toFixed(2)
+        }
+      } catch(e) { console.warn('[API] fetchWorkerBalance failed:', e.message) }
+    }
+
+    // Fetch employer wallet balance and update treasury
+    async function fetchEmployerBalance() {
+      try {
+        const res  = await fetch(API + '/api/v1/wallets/' + EMPLOYER_ID)
+        const json = await res.json()
+        if (json.success) {
+          const bal = parseFloat(json.data.balance_usdc) || 0
+          const runwayDays = (bal / (18.50 * 24)).toFixed(1)
+
+          // Update treasury bar
+          const floatEls = document.querySelectorAll('.tb-stat-val')
+          if (floatEls[0]) floatEls[0].textContent = '$' + bal.toFixed(2)
+          if (floatEls[2]) floatEls[2].style.color = bal < 10 ? 'var(--red)' : 'var(--amber)'
+
+          // Update employer stat card
+          const empStat = document.querySelector('#view-employer .sm-val.neon')
+          if (empStat) empStat.textContent = '$' + bal.toFixed(2)
+        }
+      } catch(e) { console.warn('[API] fetchEmployerBalance failed:', e.message) }
+    }
+
+    // Fetch real payouts and update history table
+    async function fetchPayouts() {
+      try {
+        const res  = await fetch(API + '/api/v1/payouts?streamId=' + STREAM_ID + '&limit=10')
+        const json = await res.json()
+        if (json.success && json.data.length) {
+          const tbody = document.querySelector('.tx-table tbody')
+          if (!tbody) return
+
+          const rows = json.data.slice(0, 6).map(p => {
+            const shortHash = p.arc_tx_hash
+              ? p.arc_tx_hash.slice(0,6) + '...' + p.arc_tx_hash.slice(-4)
+              : 'pending'
+            const arcLink = p.arc_tx_hash
+              ? `onclick="window.open('https://testnet.arcscan.app/tx/${p.arc_tx_hash}')" style="cursor:pointer"`
+              : ''
+            const timeAgo = p.created_at
+              ? timeSince(new Date(p.created_at))
+              : 'just now'
+            const statusDot = p.status === 'confirmed'
+              ? '<div class="tx-status-dot">Confirmed</div>'
+              : '<div style="color:var(--amber);font-size:11px">Pending</div>'
+
+            return `<tr>
+              <td><div class="tx-type"><div class="tx-icon in"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M7 1v8M3 6l4 4 4-4"/></svg></div>Nanopayment</div></td>
+              <td><div class="tx-hash" ${arcLink}>${shortHash} <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" style="margin-left:2px"><path d="M2 8L8 2M4 2h4v4"/></svg></div></td>
+              <td><span class="tx-chain">Arc</span></td>
+              <td><div class="tx-time">${timeAgo}</div></td>
+              <td>${statusDot}</td>
+              <td><div class="tx-amount-pos">+$${parseFloat(p.amount_usdc).toFixed(4)}</div></td>
+            </tr>`
+          }).join('')
+
+          tbody.innerHTML = rows
+
+          // Update total paid stat card
+          const totalPaidEl = document.querySelectorAll('.sm-val')[1]
+          if (totalPaidEl) totalPaidEl.textContent = '$' + liveTotalPaid.toFixed(2)
+        }
+      } catch(e) { console.warn('[API] fetchPayouts failed:', e.message) }
+    }
+
+    // Fetch agent log and update the AI monitor panel
+    async function fetchAgentLog() {
+      try {
+        const res  = await fetch(API + '/api/v1/agent-log?streamId=' + STREAM_ID + '&limit=4')
+        const json = await res.json()
+        if (json.success && json.data.length) {
+          const logEl = document.getElementById('agent-log')
+          if (!logEl) return
+          logEl.innerHTML = json.data.map(entry => {
+            const t = new Date(entry.created_at).toLocaleTimeString()
+            const icon = entry.action === 'pause'
+              ? '<svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor" style="color:var(--amber)"><rect x="2" y="2" width="3" height="8" rx="1"/><rect x="7" y="2" width="3" height="8" rx="1"/></svg>'
+              : entry.action === 'resume'
+              ? '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="var(--green)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6L5 9L10 3"/></svg>'
+              : '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="var(--green)" stroke-width="1.4" stroke-linecap="round"><circle cx="6" cy="6" r="5"/><path d="M6 4v3M6 8v.5"/></svg>'
+            return `<div class="agent-line">
+              <div class="al-time">${t}</div>
+              <div style="flex-shrink:0">${icon}</div>
+              <div class="al-text">${entry.reason || entry.action} · score <em>${parseFloat(entry.activity_score||0).toFixed(2)}</em></div>
+            </div>`
+          }).join('')
+        }
+      } catch(e) { console.warn('[API] fetchAgentLog failed:', e.message) }
+    }
+
+    function timeSince(date) {
+      const s = Math.floor((Date.now() - date) / 1000)
+      if (s < 60)  return s + 's ago'
+      if (s < 3600) return Math.floor(s/60) + 'm ago'
+      return Math.floor(s/3600) + 'h ago'
+    }
+
+    // Boot: fetch all data immediately
+    async function bootLiveData() {
+      await Promise.allSettled([
+        fetchEarned(),
+        fetchWorkerBalance(),
+        fetchEmployerBalance(),
+        fetchPayouts(),
+        fetchAgentLog(),
+      ])
+      console.log('[PayStream] Live data loaded from backend')
+    }
+
+    // Poll every 5 seconds for earned amount
+    // Poll every 15 seconds for balances and history
+    bootLiveData()
+    setInterval(fetchEarned, 5000)
+    setInterval(smoothTick, 80)
+    setInterval(fetchWorkerBalance,   15000)
+    setInterval(fetchEmployerBalance, 15000)
+    setInterval(fetchPayouts,         15000)
+    setInterval(fetchAgentLog,        30000)
+
 </script>
 
 <!-- MOBILE BOTTOM NAVIGATION -->
