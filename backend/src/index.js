@@ -3,6 +3,7 @@ import 'dotenv/config'
 import express  from 'express'
 import cors     from 'cors'
 import routes   from './routes/index.js'
+import authRoutes from './routes/auth.js'
 import webhooks from './routes/webhooks.js'
 import { startPayoutCron }   from './jobs/payoutCron.js'
 import { startAgentMonitor } from './services/agentService.js'
@@ -15,6 +16,7 @@ app.use(cors({
     process.env.FRONTEND_URL || 'http://localhost:3000',
     'http://localhost:3001',
     'https://paystream-virid.vercel.app',
+    'https://paystream.vercel.app',
   ],
   credentials: true,
 }))
@@ -27,8 +29,10 @@ app.use((req, _res, next) => {
   next()
 })
 
-app.use('/api/v1',   routes)
-app.use('/webhooks', webhooks)
+// Routes
+app.use('/api/v1/auth', authRoutes)
+app.use('/api/v1',      routes)
+app.use('/webhooks',    webhooks)
 
 app.use((_req, res) => res.status(404).json({ error: 'Route not found' }))
 app.use((err, _req, res, _next) => {
@@ -46,19 +50,17 @@ app.listen(PORT, () => {
   ║  Server:   http://localhost:${PORT}      ║
   ║  Network:  ARC-TESTNET                ║
   ║  Health:   /api/v1/health             ║
-  ║  Webhooks: /webhooks/circle           ║
+  ║  Auth:     /api/v1/auth/signup|login  ║
   ╚═══════════════════════════════════════╝
   `)
 
   startPayoutCron()
   startAgentMonitor()
 
-  // Self-ping every 10 minutes to prevent free tier sleep
-  // Works on Railway, Render, or any platform — just set BACKEND_URL env var
+  // Self-ping to prevent Render free tier sleep
   const selfUrl =
     process.env.BACKEND_URL ||
     process.env.RENDER_EXTERNAL_URL ||
-    process.env.RAILWAY_STATIC_URL ||
     null
 
   if (selfUrl) {
