@@ -9,14 +9,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Cantarell:ital,wght@0,400;0,700;1,400&family=Space+Mono:wght@400;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet"/>
   <style>
     :root{
-      --obsidian:#06080F;--obs2:#0A0D1A;--obs3:#0E1223;--obs4:#141828;--obs5:#1A1F30;
+      --obsidian:#06080F;--obs2:#0A0D1A;--obs3:#0E1223;--obs4:#141828;
       --amber:#C87A10;--amber-lt:#E8931A;--amber-dim:rgba(200,122,16,0.10);
       --green:#10B981;--green-dim:rgba(16,185,129,0.10);
-      --amber:#C87A10;--amber-dim:rgba(200,122,16,0.10);
       --blue:#3B82F6;--blue-dim:rgba(59,130,246,0.10);
+      --red:#FF4D6A;--red-dim:rgba(255,77,106,0.10);
       --white:#FFFFFF;--g1:#B8C4D8;--g2:#6B7A99;--g3:#2E3650;--g4:#161C2E;
       --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.10);
-      --glass:rgba(255,255,255,0.03);--glass2:rgba(255,255,255,0.06);
+      --glass:rgba(255,255,255,0.03);
       --ff:'Cantarell',sans-serif;--ff-mono:'Space Mono',monospace;--ff-body:'DM Sans',sans-serif;
       --sidebar:260px;
     }
@@ -26,40 +26,37 @@
     @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
     @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
     @keyframes toast-in{from{opacity:0;transform:translateX(60px) scale(.95)}to{opacity:1;transform:translateX(0) scale(1)}}
-    @keyframes toast-out{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(60px)}}
+    @keyframes toast-out{from{opacity:1}to{opacity:0;transform:translateX(60px)}}
     @keyframes pulse-ring{0%{transform:scale(1);opacity:.7}100%{transform:scale(2.4);opacity:0}}
     @keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
     @keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
 
-    /* TOPBAR */
     .topbar{height:56px;background:var(--obs2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:100;flex-shrink:0;backdrop-filter:blur(24px)}
-    .tb-logo{font-family:var(--ff);font-weight:700;font-size:20px;display:flex;align-items:center;gap:9px;letter-spacing:-.025em;text-decoration:none;color:var(--white)}
-    .tb-mark{width:30px;height:30px;display:flex;align-items:center;justify-content:center}
+    .tb-logo{font-family:var(--ff);font-weight:700;font-size:18px;display:flex;align-items:center;gap:9px;letter-spacing:-.01em;text-decoration:none;color:var(--white)}
     .tb-center{display:flex;background:var(--obs3);border:1px solid var(--border);border-radius:8px;padding:3px;gap:2px}
     .tb-tab{font-size:13px;font-weight:500;color:var(--g2);padding:6px 18px;border-radius:6px;cursor:pointer;border:none;background:none;transition:all .2s;font-family:var(--ff-body)}
-    .tb-tab.active{background:rgba(200,122,16,.12);color:var(--amber-lt);border:1px solid rgba(200,122,16,.15)}
-    .tb-right{display:flex;align-items:center;gap:12px}
+    .tb-tab.active{background:rgba(200,122,16,.15);color:var(--amber);border:1px solid rgba(200,122,16,.2)}
+    .tb-right{display:flex;align-items:center;gap:10px}
     .tb-net{font-family:var(--ff-mono);font-size:10px;color:var(--green);background:var(--green-dim);border:1px solid rgba(16,185,129,.18);padding:4px 10px;border-radius:5px;display:flex;align-items:center;gap:6px}
     .net-dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:blink 1.4s infinite}
-    .tb-wallet{background:var(--obs4);border:1px solid var(--border2);border-radius:8px;padding:7px 14px;font-size:12.5px;font-family:var(--ff-mono);color:var(--g1);cursor:pointer;transition:border-color .2s}
-    .tb-wallet:hover{border-color:rgba(200,122,16,.25)}
-    .bell-btn{position:relative;width:34px;height:34px;border-radius:8px;background:var(--obs4);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:border-color .2s;color:var(--g2)}
-    .bell-btn:hover{border-color:rgba(200,122,16,.25);color:var(--white)}
+    .tb-wallet{background:var(--obs4);border:1px solid var(--border2);border-radius:8px;padding:7px 14px;font-size:12.5px;font-family:var(--ff-mono);color:var(--g1)}
+    .bell-btn{position:relative;width:34px;height:34px;border-radius:8px;background:var(--obs4);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--g2);transition:border-color .2s}
+    .bell-btn:hover{border-color:rgba(200,122,16,.3);color:var(--white)}
     .bell-badge{position:absolute;top:5px;right:5px;width:8px;height:8px;border-radius:50%;background:var(--green);border:1.5px solid var(--obs2);display:none;animation:blink 2s infinite}
+    .sign-out{background:var(--red-dim);border:1px solid rgba(255,77,106,.2);color:var(--red);font-family:var(--ff-body);font-size:12px;font-weight:600;padding:6px 14px;border-radius:7px;cursor:pointer;transition:opacity .2s}
+    .sign-out:hover{opacity:.7}
 
-    /* NOTIF PANEL */
-    .notif-panel{position:fixed;top:64px;right:16px;width:340px;background:var(--obs2);border:1px solid rgba(200,122,16,.15);border-radius:16px;z-index:300;box-shadow:0 16px 48px rgba(0,0,0,.5);display:none;max-height:480px;flex-direction:column;backdrop-filter:blur(24px)}
+    .notif-panel{position:fixed;top:64px;right:16px;width:340px;background:var(--obs2);border:1px solid rgba(200,122,16,.2);border-radius:16px;z-index:300;box-shadow:0 16px 48px rgba(0,0,0,.5);display:none;max-height:480px;flex-direction:column;backdrop-filter:blur(24px)}
     .notif-panel.open{display:flex}
     .notif-panel-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--border)}
     .notif-panel-title{font-size:14px;font-weight:600}
-    .notif-clear{font-size:12px;color:var(--amber-lt);cursor:pointer;background:none;border:none;font-family:var(--ff-body)}
+    .notif-clear{font-size:12px;color:var(--amber);cursor:pointer;background:none;border:none;font-family:var(--ff-body)}
     .notif-list{overflow-y:auto;flex:1;padding:8px}
-    .notif-item{display:flex;gap:12px;padding:12px;border-radius:10px;margin-bottom:4px;background:var(--glass);border:1px solid var(--border);cursor:pointer;transition:border-color .15s}
-    .notif-item:hover{border-color:rgba(200,122,16,.15)}
-    .notif-item.unread{border-color:rgba(0,255,163,.12);background:rgba(16,185,129,.025)}
+    .notif-item{display:flex;gap:12px;padding:12px;border-radius:10px;margin-bottom:4px;background:var(--glass);border:1px solid var(--border);cursor:pointer}
+    .notif-item.unread{border-color:rgba(16,185,129,.15);background:rgba(16,185,129,.02)}
     .notif-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
     .notif-icon.pay{background:var(--green-dim);color:var(--green)}
-    .notif-icon.wd{background:var(--amber-dim);color:var(--amber-lt)}
+    .notif-icon.wd{background:var(--amber-dim);color:var(--amber)}
     .notif-icon.agent{background:var(--amber-dim);color:var(--amber)}
     .notif-icon.arc{background:var(--blue-dim);color:var(--blue)}
     .notif-body{flex:1;min-width:0}
@@ -67,19 +64,18 @@
     .notif-sub{font-size:11.5px;color:var(--g2);line-height:1.4}
     .notif-time{font-size:10px;color:var(--g3);font-family:var(--ff-mono);flex-shrink:0;margin-top:2px}
 
-    /* LAYOUT */
     .app-body{display:flex;flex:1;overflow:hidden}
     .sidebar{width:var(--sidebar);background:var(--obs2);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:20px 12px;flex-shrink:0;overflow-y:auto}
     .sb-label{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--g3);padding:0 10px;margin-bottom:8px;margin-top:20px}
     .sb-label:first-child{margin-top:0}
     .sb-item{display:flex;align-items:center;gap:11px;padding:9px 10px;border-radius:8px;font-size:13.5px;color:var(--g2);cursor:pointer;transition:all .18s;border:1px solid transparent}
     .sb-item:hover{background:var(--obs3);color:var(--white)}
-    .sb-item.active{background:var(--amber-dim);color:var(--amber-lt);border-color:rgba(200,122,16,.12)}
+    .sb-item.active{background:var(--amber-dim);color:var(--amber);border-color:rgba(200,122,16,.15)}
     .sb-icon{width:18px;text-align:center;flex-shrink:0}
     .sb-badge{margin-left:auto;font-family:var(--ff-mono);font-size:10px;background:var(--green);color:var(--obsidian);padding:2px 7px;border-radius:4px;font-weight:700}
     .sb-worker-card{background:var(--obs3);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:16px;position:relative;overflow:hidden}
-    .sb-worker-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--amber-lt),transparent)}
-    .sb-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#C87A10,#A86510);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;color:#fff;margin-bottom:10px;box-shadow:0 0 16px rgba(200,122,16,.25)}
+    .sb-worker-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--amber),transparent)}
+    .sb-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--amber),var(--amber-lt));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;color:#000;margin-bottom:10px}
     .sb-name{font-weight:700;font-size:14px;margin-bottom:3px}
     .sb-role{font-size:12px;color:var(--g2);margin-bottom:10px}
     .sb-bal-lbl{font-size:10px;color:var(--g3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:3px}
@@ -89,7 +85,6 @@
     .stream-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 1s infinite}
     .sb-stream-txt{font-size:11px;color:var(--green)}
 
-    /* MAIN */
     .main{flex:1;overflow-y:auto;padding:28px;display:flex;flex-direction:column;gap:20px}
     .view{display:none;flex-direction:column;gap:20px;animation:fadeUp .35s ease both}
     .view.active{display:flex}
@@ -97,10 +92,9 @@
     .card-title{font-family:var(--ff);font-weight:700;font-size:15px;margin-bottom:4px;color:var(--g1)}
     .card-sub{font-size:12.5px;color:var(--g3);margin-bottom:20px}
 
-    /* EARN CARD */
-    .earn-card{background:linear-gradient(135deg,rgba(200,122,16,.06),rgba(16,185,129,.04));border:1px solid rgba(200,122,16,.15);border-radius:22px;padding:32px;position:relative;overflow:hidden;backdrop-filter:blur(24px);box-shadow:0 0 60px rgba(200,122,16,.05)}
-    .earn-card::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:55%;height:1px;background:linear-gradient(90deg,transparent,var(--amber-lt),transparent)}
-    .earn-glow{position:absolute;right:-80px;top:-80px;width:300px;height:300px;background:radial-gradient(ellipse,rgba(200,122,16,.06) 0%,transparent 65%);pointer-events:none}
+    .earn-card{background:linear-gradient(135deg,rgba(200,122,16,.08),rgba(16,185,129,.04));border:1px solid rgba(200,122,16,.2);border-radius:22px;padding:32px;position:relative;overflow:hidden;backdrop-filter:blur(24px)}
+    .earn-card::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:55%;height:1px;background:linear-gradient(90deg,transparent,var(--amber),transparent)}
+    .earn-glow{position:absolute;right:-80px;top:-80px;width:300px;height:300px;background:radial-gradient(ellipse,rgba(200,122,16,.08) 0%,transparent 65%);pointer-events:none}
     .earn-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px}
     .earn-eyebrow{font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--g2)}
     .earn-live{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--green);font-weight:600;background:var(--green-dim);padding:4px 10px;border-radius:6px;border:1px solid rgba(16,185,129,.18)}
@@ -111,27 +105,24 @@
     .earn-sub-item span{color:var(--g1);font-weight:500}
     .earn-actions{display:flex;gap:10px;flex-wrap:wrap}
 
-    /* BUTTONS */
-    .btn-primary{display:inline-flex;align-items:center;gap:7px;background:linear-gradient(135deg,#C87A10,#A86510);color:#fff;font-family:var(--ff-body);font-weight:600;font-size:13.5px;padding:10px 22px;border-radius:8px;border:none;cursor:pointer;transition:opacity .15s,transform .15s;box-shadow:0 0 20px rgba(200,122,16,.25)}
+    .btn-primary{display:inline-flex;align-items:center;gap:7px;background:linear-gradient(135deg,var(--amber),var(--amber-lt));color:#000;font-family:var(--ff-body);font-weight:600;font-size:13.5px;padding:10px 22px;border-radius:8px;border:none;cursor:pointer;transition:opacity .15s,transform .15s;box-shadow:0 0 20px rgba(200,122,16,.3)}
     .btn-primary:hover{opacity:.88;transform:translateY(-1px)}
-    .btn-secondary{display:inline-flex;align-items:center;gap:7px;background:var(--glass);color:var(--g1);font-family:var(--ff-body);font-weight:500;font-size:13.5px;padding:10px 22px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;transition:border-color .2s,background .2s}
-    .btn-secondary:hover{border-color:rgba(255,255,255,.2);background:var(--glass2)}
-    .btn-ghost{display:inline-flex;align-items:center;gap:7px;background:transparent;color:var(--g2);font-family:var(--ff-body);font-weight:500;font-size:13.5px;padding:10px 18px;border-radius:8px;border:1px solid var(--border);cursor:pointer;transition:color .2s,border-color .2s}
-    .btn-ghost:hover{color:var(--white);border-color:var(--border2)}
+    .btn-secondary{display:inline-flex;align-items:center;gap:7px;background:var(--glass);color:var(--g1);font-family:var(--ff-body);font-weight:500;font-size:13.5px;padding:10px 22px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;transition:border-color .2s}
+    .btn-secondary:hover{border-color:rgba(255,255,255,.2)}
+    .btn-ghost{display:inline-flex;align-items:center;gap:7px;background:transparent;color:var(--g2);font-family:var(--ff-body);font-weight:500;font-size:13.5px;padding:10px 18px;border-radius:8px;border:1px solid var(--border);cursor:pointer;transition:color .2s}
+    .btn-ghost:hover{color:var(--white)}
 
-    /* GRIDS + STATS */
     .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
     .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
     .stat-mini{background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:20px 22px;backdrop-filter:blur(12px)}
     .sm-lbl{font-size:11.5px;color:var(--g3);margin-bottom:8px;font-weight:500}
     .sm-val{font-family:var(--ff-mono);font-size:24px;font-weight:700;color:var(--white);letter-spacing:-.02em;line-height:1;margin-bottom:6px}
-    .sm-val.neon{color:var(--green)}.sm-val.violet{color:var(--amber-lt)}
-    .sm-delta{font-size:11px;color:var(--green);display:flex;align-items:center;gap:4px}
+    .sm-val.green{color:var(--green)}.sm-val.amber{color:var(--amber)}
+    .sm-delta{font-size:11px;color:var(--green)}
     .progress-bar{height:4px;background:var(--g4);border-radius:3px;overflow:hidden;margin-bottom:6px}
-    .progress-fill{height:100%;background:linear-gradient(90deg,#C87A10,#10B981);border-radius:3px;transition:width 1s ease;box-shadow:0 0 6px rgba(16,185,129,.25)}
+    .progress-fill{height:100%;background:linear-gradient(90deg,var(--amber),var(--green));border-radius:3px;transition:width 1s ease}
     .progress-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--g3)}
 
-    /* TABLE */
     .tx-table{width:100%;border-collapse:collapse}
     .tx-table thead tr{border-bottom:1px solid var(--border)}
     .tx-table th{text-align:left;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g3);padding:0 0 12px}
@@ -142,53 +133,17 @@
     .tx-type{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600}
     .tx-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center}
     .tx-icon.in{background:var(--green-dim);color:var(--green)}
-    .tx-icon.out{background:var(--amber-dim);color:var(--amber-lt)}
-    .tx-icon.xchain{background:var(--blue-dim);color:var(--blue)}
     .tx-hash{font-family:var(--ff-mono);font-size:11px;color:var(--blue);cursor:pointer}
     .tx-hash:hover{text-decoration:underline}
     .tx-amount-pos{color:var(--green);font-family:var(--ff-mono);font-size:13px;font-weight:700}
-    .tx-amount-neg{color:var(--amber-lt);font-family:var(--ff-mono);font-size:13px;font-weight:700}
     .tx-chain{font-size:11px;font-weight:600;padding:3px 9px;border-radius:5px;background:var(--obs4);color:var(--g2)}
     .tx-status-dot{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--green)}
     .tx-status-dot::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--green)}
     .tx-time{font-size:12px;color:var(--g3)}
 
-    /* MODAL */
-    .modal-overlay{position:fixed;inset:0;background:rgba(6,8,15,.88);backdrop-filter:blur(14px);z-index:500;display:none;align-items:center;justify-content:center;padding:24px}
-    .modal-overlay.open{display:flex;animation:fadeUp .25s ease}
-    .modal{background:var(--obs2);border:1px solid rgba(200,122,16,.15);border-radius:24px;padding:32px;width:100%;max-width:480px;position:relative;box-shadow:0 0 60px rgba(200,122,16,.10)}
-    .modal::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:50%;height:1px;background:linear-gradient(90deg,transparent,var(--amber-lt),transparent)}
-    .modal-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:8px;background:var(--obs4);border:1px solid var(--border);color:var(--g2);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
-    .modal-close:hover{background:var(--obs5);color:var(--white)}
-    .modal-title{font-family:var(--ff);font-weight:700;font-size:22px;margin-bottom:6px;letter-spacing:-.02em}
-    .modal-sub{font-size:13px;color:var(--g2);margin-bottom:26px}
-    .field-lbl{font-size:12px;font-weight:600;color:var(--g2);letter-spacing:.04em;text-transform:uppercase;margin-bottom:8px}
-    .field-input{width:100%;background:var(--obs3);border:1px solid var(--border);border-radius:10px;padding:13px 16px;font-size:15px;color:var(--white);font-family:var(--ff-mono);outline:none;transition:border-color .2s;margin-bottom:18px}
-    .field-input:focus{border-color:rgba(112,0,255,.4)}
-    .field-input::placeholder{color:var(--g3)}
-    .chain-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px}
-    .chain-opt{border:1px solid var(--border);border-radius:10px;padding:12px 10px;text-align:center;cursor:pointer;transition:all .18s;background:var(--obs3)}
-    .chain-opt:hover{border-color:rgba(200,122,16,.25)}
-    .chain-opt.selected{border-color:var(--amber);background:var(--amber-dim);box-shadow:0 0 16px rgba(200,122,16,.12)}
-    .chain-opt-icon{font-size:22px;margin-bottom:6px;display:flex;align-items:center;justify-content:center;height:36px;width:100%}
-    .chain-opt-name{font-size:11px;font-weight:600;color:var(--g1)}
-    .chain-opt.selected .chain-opt-name{color:var(--amber-lt)}
-    .modal-summary{background:var(--obs3);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:20px}
-    .ms-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--g2);padding:5px 0}
-    .ms-row:not(:last-child){border-bottom:1px solid var(--border);padding-bottom:10px;margin-bottom:5px}
-    .ms-val{color:var(--white);font-weight:500;font-family:var(--ff-mono);font-size:13px}
-    .ms-val.neon{color:var(--green)}.ms-val.violet{color:var(--amber-lt)}
-    .btn-full{width:100%;justify-content:center;font-size:15px;padding:14px}
-    .success-view{text-align:center;padding:12px 0}
-    .success-icon{width:72px;height:72px;border-radius:50%;background:var(--green-dim);border:2px solid var(--green);display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 20px;animation:pop .4s cubic-bezier(.34,1.56,.64,1) both;box-shadow:0 0 30px rgba(16,185,129,.18)}
-    .success-title{font-family:var(--ff);font-weight:700;font-size:22px;margin-bottom:8px}
-    .success-sub{font-size:14px;color:var(--g2);line-height:1.6;margin-bottom:22px}
-    .success-hash{font-family:var(--ff-mono);font-size:11px;color:var(--blue);background:var(--blue-dim);border:1px solid rgba(59,130,246,.18);border-radius:8px;padding:10px 16px;word-break:break-all;text-align:left;margin-bottom:20px}
-
-    /* EMPLOYER */
-    .worker-row{background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:18px 22px;display:grid;grid-template-columns:40px 1fr auto auto auto;align-items:center;gap:16px;transition:border-color .2s;backdrop-filter:blur(12px)}
-    .worker-row:hover{border-color:rgba(200,122,16,.15)}
-    .w-avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#fff}
+    .worker-row{background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:18px 22px;display:grid;grid-template-columns:40px 1fr auto auto auto;align-items:center;gap:16px;transition:border-color .2s;backdrop-filter:blur(12px);margin-bottom:10px}
+    .worker-row:hover{border-color:rgba(200,122,16,.2)}
+    .w-avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#000}
     .w-name{font-weight:600;font-size:14px;margin-bottom:2px}
     .w-role{font-size:12px;color:var(--g2)}
     .w-rate{font-family:var(--ff-mono);font-size:13px;color:var(--green)}
@@ -196,17 +151,21 @@
     .w-status{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;padding:4px 10px;border-radius:6px}
     .w-status.active{background:var(--green-dim);color:var(--green)}
     .w-status.paused{background:var(--amber-dim);color:var(--amber)}
-    .deposit-card{background:linear-gradient(135deg,rgba(200,122,16,.05),rgba(0,255,163,.03));border:1px solid rgba(200,122,16,.12);border-radius:16px;padding:24px;backdrop-filter:blur(16px)}
-    .deposit-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:flex-end;margin-bottom:14px}
-    .deposit-input-wrap{position:relative}
+
+    .stream-form{background:linear-gradient(135deg,rgba(200,122,16,.06),rgba(16,185,129,.03));border:1px solid rgba(200,122,16,.15);border-radius:16px;padding:24px;backdrop-filter:blur(16px)}
+    .field-lbl{font-size:12px;font-weight:600;color:var(--g2);letter-spacing:.04em;text-transform:uppercase;margin-bottom:8px;display:block}
+    .field-input{width:100%;background:var(--obs3);border:1px solid var(--border);border-radius:10px;padding:12px 16px;font-size:14.5px;color:var(--white);font-family:var(--ff-body);outline:none;transition:border-color .2s;margin-bottom:14px}
+    .field-input:focus{border-color:rgba(200,122,16,.4)}
+    .field-input::placeholder{color:var(--g3)}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+    .deposit-card{background:linear-gradient(135deg,rgba(200,122,16,.06),rgba(16,185,129,.03));border:1px solid rgba(200,122,16,.15);border-radius:16px;padding:24px;backdrop-filter:blur(16px)}
     .deposit-prefix{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-family:var(--ff-mono);font-size:14px;color:var(--green);font-weight:700}
-    .deposit-input{width:100%;background:var(--obs3);border:1px solid var(--border);border-radius:10px;padding:13px 16px 13px 32px;font-size:20px;font-family:var(--ff-mono);color:var(--white);outline:none;transition:border-color .2s}
-    .deposit-input:focus{border-color:rgba(112,0,255,.4)}
-    .treasury-bar{background:var(--obs4);border-radius:8px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;margin-top:14px}
+    .treasury-bar{background:var(--obs4);border-radius:8px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;margin-top:14px;flex-wrap:wrap;gap:12px}
     .tb-stat{text-align:center}
     .tb-stat-lbl{font-size:10.5px;color:var(--g3);margin-bottom:4px;letter-spacing:.04em;text-transform:uppercase}
     .tb-stat-val{font-family:var(--ff-mono);font-size:16px;color:var(--white);font-weight:700}
-    .tb-divider{width:1px;height:36px;background:var(--border)}
+
     .agent-panel{background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:20px;backdrop-filter:blur(12px)}
     .agent-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
     .agent-title{font-weight:700;font-size:14px}
@@ -216,6 +175,7 @@
     .agent-line:last-child{border-bottom:none;padding-bottom:0}
     .al-time{font-family:var(--ff-mono);font-size:10.5px;color:var(--g3);flex-shrink:0;padding-top:1px}
     .al-text em{color:var(--white);font-style:normal;font-weight:500}
+
     .gateway-card{background:linear-gradient(135deg,rgba(59,130,246,.06),rgba(59,130,246,.02));border:1px solid rgba(59,130,246,.15);border-radius:16px;padding:22px;backdrop-filter:blur(12px)}
     .gw-label{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--blue);margin-bottom:12px}
     .gw-chain-row{display:flex;gap:8px;flex-wrap:wrap}
@@ -225,7 +185,31 @@
     .gw-total-lbl{font-size:12px;color:var(--g3)}
     .gw-total-val{font-family:var(--ff-mono);font-size:18px;color:var(--blue);font-weight:700}
 
-    /* TOAST */
+    .modal-overlay{position:fixed;inset:0;background:rgba(6,8,15,.88);backdrop-filter:blur(14px);z-index:500;display:none;align-items:center;justify-content:center;padding:24px}
+    .modal-overlay.open{display:flex;animation:fadeUp .25s ease}
+    .modal{background:var(--obs2);border:1px solid rgba(200,122,16,.2);border-radius:24px;padding:32px;width:100%;max-width:480px;position:relative;box-shadow:0 0 60px rgba(200,122,16,.12)}
+    .modal::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:50%;height:1px;background:linear-gradient(90deg,transparent,var(--amber),transparent)}
+    .modal-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:8px;background:var(--obs4);border:1px solid var(--border);color:var(--g2);cursor:pointer;display:flex;align-items:center;justify-content:center}
+    .modal-title{font-family:var(--ff);font-weight:700;font-size:22px;margin-bottom:6px;letter-spacing:-.02em}
+    .modal-sub{font-size:13px;color:var(--g2);margin-bottom:26px}
+    .chain-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px}
+    .chain-opt{border:1px solid var(--border);border-radius:10px;padding:12px 10px;text-align:center;cursor:pointer;transition:all .18s;background:var(--obs3)}
+    .chain-opt.selected{border-color:var(--amber);background:var(--amber-dim)}
+    .chain-opt-icon{margin-bottom:5px;display:flex;justify-content:center;height:36px;align-items:center}
+    .chain-opt-name{font-size:11px;font-weight:600;color:var(--g1)}
+    .chain-opt.selected .chain-opt-name{color:var(--amber)}
+    .modal-summary{background:var(--obs3);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:20px}
+    .ms-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--g2);padding:5px 0}
+    .ms-row:not(:last-child){border-bottom:1px solid var(--border);padding-bottom:10px;margin-bottom:5px}
+    .ms-val{color:var(--white);font-weight:500;font-family:var(--ff-mono);font-size:13px}
+    .ms-val.green{color:var(--green)}.ms-val.amber{color:var(--amber)}
+    .btn-full{width:100%;justify-content:center;font-size:15px;padding:14px}
+    .success-view{text-align:center;padding:12px 0}
+    .success-icon{width:72px;height:72px;border-radius:50%;background:var(--green-dim);border:2px solid var(--green);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;animation:pop .4s cubic-bezier(.34,1.56,.64,1) both}
+    .success-title{font-family:var(--ff);font-weight:700;font-size:22px;margin-bottom:8px}
+    .success-sub{font-size:14px;color:var(--g2);line-height:1.6;margin-bottom:22px}
+    .success-hash{font-family:var(--ff-mono);font-size:11px;color:var(--blue);background:var(--blue-dim);border:1px solid rgba(59,130,246,.18);border-radius:8px;padding:10px 16px;word-break:break-all;text-align:left;margin-bottom:20px}
+
     .toast-container{position:fixed;bottom:28px;right:28px;display:flex;flex-direction:column;gap:10px;z-index:9999;pointer-events:none}
     .toast{display:flex;align-items:center;gap:12px;background:var(--obs2);border:1px solid rgba(16,185,129,.18);border-radius:14px;padding:14px 18px;min-width:300px;box-shadow:0 8px 32px rgba(0,0,0,.4);animation:toast-in .35s cubic-bezier(.34,1.56,.64,1) both;pointer-events:all;backdrop-filter:blur(24px);position:relative;overflow:hidden}
     .toast::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--green),transparent)}
@@ -241,318 +225,218 @@
     .toast-sub{font-size:11.5px;color:var(--g2)}
     .toast-amount{font-family:var(--ff-mono);font-size:15px;font-weight:700}
 
-
-    /* =============================================
-       FULL MOBILE RESPONSIVE — app.html
-       Breakpoints: 900px (tablet), 600px (phone)
-    ============================================= */
+    .empty-state{text-align:center;padding:48px 24px;color:var(--g3)}
+    .empty-state h4{font-size:16px;font-weight:600;color:var(--g2);margin-bottom:8px}
+    .empty-state p{font-size:13px;line-height:1.6}
+    .loading-spin{display:flex;align-items:center;justify-content:center;padding:32px;color:var(--g3);gap:10px;font-size:13px}
+    .spinner{width:18px;height:18px;border:2px solid var(--g4);border-top-color:var(--amber);border-radius:50%;animation:spin .8s linear infinite}
 
     @media(max-width:900px){
-      /* TOPBAR */
-      .tb-logo{font-size:17px}
-      .tb-right{gap:8px}
-      .tb-wallet{display:none}
-
-      /* SIDEBAR — hidden, replaced by bottom nav */
-      .sidebar{display:none}
-
-      /* MAIN */
-      .main{padding:16px;padding-bottom:80px}
-
-      /* EARN CARD */
-      .earn-card{padding:22px 18px;border-radius:16px}
+      .sidebar{display:none}.main{padding:16px;padding-bottom:80px}
+      .grid-3{grid-template-columns:1fr 1fr;gap:12px}.grid-2{grid-template-columns:1fr;gap:12px}
+      .worker-row{grid-template-columns:36px 1fr auto;gap:10px}.w-rate,.w-paid{display:none}
+      .form-row{grid-template-columns:1fr}.earn-card{padding:22px 18px}
       .earn-amount{font-size:clamp(32px,8vw,52px)}
-      .earn-aed{font-size:13px}
-      .earn-sub{gap:14px}
-      .earn-sub-item{font-size:11.5px}
-      .earn-actions{flex-wrap:wrap;gap:8px}
-      .btn-primary,.btn-secondary,.btn-ghost{font-size:12.5px;padding:9px 16px}
-
-      /* GRIDS */
-      .grid-3{grid-template-columns:1fr 1fr;gap:12px}
-      .grid-2{grid-template-columns:1fr;gap:12px}
-
-      /* STAT MINI */
-      .sm-val{font-size:20px}
-
-      /* GATEWAY */
-      .gw-chain-row{flex-direction:column;gap:8px}
-
-      /* WORKER ROWS */
-      .worker-row{grid-template-columns:36px 1fr auto;gap:10px;padding:14px 16px}
-      .w-rate,.w-paid{display:none}
-
-      /* DEPOSIT */
-      .deposit-row{grid-template-columns:1fr;gap:10px}
-      .deposit-row .btn-primary{margin-top:0;width:100%;justify-content:center}
-      .treasury-bar{flex-wrap:wrap;gap:12px;justify-content:space-around}
-      .tb-divider{display:none}
-
-      /* AGENT LOG */
-      .agent-line{flex-wrap:wrap}
-      .al-time{width:100%;font-size:10px}
-
-      /* TX TABLE */
-      .tx-table th:nth-child(2),
-      .tx-table td:nth-child(2),
-      .tx-table th:nth-child(3),
-      .tx-table td:nth-child(3){display:none}
-
-      /* NOTIF PANEL */
-      .notif-panel{width:calc(100vw - 32px);right:16px}
-
-      /* MODAL */
-      .modal{padding:22px 18px;border-radius:18px;max-height:90vh;overflow-y:auto}
-      .chain-grid{grid-template-columns:repeat(3,1fr);gap:6px}
-      .chain-opt{padding:10px 6px}
-      .chain-opt-icon{font-size:18px}
-      .chain-opt-name{font-size:10px}
     }
-
     @media(max-width:600px){
-      /* TOPBAR */
-      .tb-center{display:none}
-      .topbar{padding:0 14px}
-
-      /* MAIN */
-      .main{padding:14px;padding-bottom:76px}
-
-      /* EARN CARD */
-      .earn-card{padding:18px 16px}
-      .earn-amount{font-size:clamp(28px,9vw,44px)}
+      .tb-center{display:none}.grid-3{grid-template-columns:1fr}
       .earn-top{flex-direction:column;gap:8px}
-      .earn-live{align-self:flex-start}
-
-      /* GRIDS */
-      .grid-3{grid-template-columns:1fr}
-      .grid-2{grid-template-columns:1fr}
-
-      /* PROGRESS */
-      .progress-wrap{margin-top:8px}
-
-      /* HISTORY TABLE — show only 3 cols */
-      .tx-table th:nth-child(4),
-      .tx-table td:nth-child(4){display:none}
-
-      /* MODAL full screen */
-      .modal-overlay{padding:0;align-items:flex-end}
-      .modal{border-radius:20px 20px 0 0;padding:24px 18px;max-height:92vh}
-      .btn-full{font-size:14px;padding:13px}
-
-      /* TOAST */
-      .toast-container{bottom:80px;right:12px;left:12px}
-      .toast{min-width:auto;width:100%}
+      .modal-overlay{align-items:flex-end;padding:0}
+      .modal{border-radius:20px 20px 0 0;padding:24px 18px;max-height:92vh;overflow-y:auto}
     }
-
-    /* MOBILE BOTTOM NAVIGATION BAR */
     @media(max-width:900px){
-      .mobile-nav{
-        display:flex;
-        position:fixed;
-        bottom:0;left:0;right:0;
-        height:64px;
-        background:var(--obs2);
-        border-top:1px solid var(--border);
-        z-index:200;
-        align-items:center;
-        justify-content:space-around;
-        padding:0 8px;
-        backdrop-filter:blur(24px);
-      }
-      .mob-nav-item{
-        display:flex;flex-direction:column;align-items:center;gap:4px;
-        padding:8px 16px;border-radius:10px;cursor:pointer;
-        color:var(--g3);font-size:10px;font-weight:600;letter-spacing:.04em;
-        text-transform:uppercase;transition:color .2s;border:none;background:none;
-        font-family:var(--ff-body);flex:1;
-      }
+      .mobile-nav{display:flex;position:fixed;bottom:0;left:0;right:0;height:64px;background:var(--obs2);border-top:1px solid var(--border);z-index:200;align-items:center;justify-content:space-around;padding:0 8px;backdrop-filter:blur(24px)}
+      .mob-nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 16px;border-radius:10px;cursor:pointer;color:var(--g3);font-size:10px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;transition:color .2s;border:none;background:none;font-family:var(--ff-body);flex:1}
       .mob-nav-item.active{color:var(--amber)}
       .mob-nav-item svg{width:20px;height:20px}
     }
-    @media(min-width:901px){
-      .mobile-nav{display:none}
-    }
-
+    @media(min-width:901px){.mobile-nav{display:none}}
   </style>
 </head>
 <body>
 
 <div class="topbar">
   <a href="index.html" class="tb-logo">
-    <div class="tb-mark"><svg width="30" height="30" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <div style="width:30px;height:30px;display:flex;align-items:center;justify-content:center">
+      <svg width="30" height="30" viewBox="0 0 38 38" fill="none">
         <circle cx="15" cy="19" r="9" fill="none" stroke="#C87A10" stroke-width="2"/>
-        <text x="15" y="24" text-anchor="middle" font-family="Cantarell,sans-serif" font-weight="700" font-size="11" fill="#C87A10">$</text>
-        <line x1="26" y1="15.5" x2="35" y2="15.5" stroke="#C87A10" stroke-width="1.8" stroke-linecap="round"/>
-        <line x1="26" y1="19"   x2="37" y2="19"   stroke="#C87A10" stroke-width="2.4" stroke-linecap="round"/>
-        <line x1="26" y1="22.5" x2="35" y2="22.5" stroke="#C87A10" stroke-width="1.8" stroke-linecap="round"/>
-        <path d="M33.5 13L37 19L33.5 25" fill="none" stroke="#C87A10" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        <line x1="9"  y1="7" x2="9"  y2="10.5" stroke="#C87A10" stroke-width="1.4" stroke-linecap="round" opacity=".4"/>
-        <line x1="15" y1="5" x2="15" y2="9.5"  stroke="#C87A10" stroke-width="1.6" stroke-linecap="round" opacity="1"/>
-        <line x1="21" y1="7" x2="21" y2="10.5" stroke="#C87A10" stroke-width="1.4" stroke-linecap="round" opacity=".4"/>
-      </svg></div>
-    <span style="color:#C87A10">Pay</span>Stream
+        <text x="15" y="23.5" text-anchor="middle" font-family="Cantarell,sans-serif" font-weight="700" font-size="9" fill="#C87A10">$</text>
+        <line x1="26" y1="15.5" x2="35" y2="15.5" stroke="#C87A10" stroke-width="1.6" stroke-linecap="round"/>
+        <line x1="26" y1="19" x2="37" y2="19" stroke="#C87A10" stroke-width="2" stroke-linecap="round"/>
+        <line x1="26" y1="22.5" x2="35" y2="22.5" stroke="#C87A10" stroke-width="1.6" stroke-linecap="round"/>
+        <path d="M33.5 13L37 19L33.5 25" fill="none" stroke="#C87A10" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <span style="color:var(--amber)">Pay</span>Stream
   </a>
   <div class="tb-center">
-    <button class="tb-tab active" onclick="switchView('worker',this)">Worker View</button>
-    <button class="tb-tab" onclick="switchView('employer',this)">Employer View</button>
-    <button class="tb-tab" onclick="switchView('history',this)">History</button>
+    <button class="tb-tab active" onclick="showView('worker',this)">Worker View</button>
+    <button class="tb-tab" onclick="showView('employer',this)">Employer View</button>
+    <button class="tb-tab" onclick="showView('history',this)">History</button>
   </div>
   <div class="tb-right">
     <div class="tb-net"><div class="net-dot"></div>ARC TESTNET</div>
-    <button class="bell-btn" onclick="toggleNotifPanel()" title="Notifications">
+    <button class="bell-btn" onclick="toggleNotifPanel()">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M8 2a4 4 0 0 1 4 4c0 3 1 4 1 4H3s1-1 1-4a4 4 0 0 1 4-4z"/><path d="M9.7 13a2 2 0 0 1-3.4 0"/></svg>
       <div class="bell-badge" id="bell-badge"></div>
     </button>
-    <div class="tb-wallet" id="tb-wallet-addr">0x3F2a...c841</div>
-    <button onclick="logout()" style="background:rgba(255,77,106,.1);border:1px solid rgba(255,77,106,.2);color:#FF4D6A;font-family:var(--ff-body);font-size:12px;font-weight:600;padding:6px 14px;border-radius:7px;cursor:pointer;transition:opacity .2s" onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">Sign out</button>
+    <div class="tb-wallet" id="tb-wallet-addr">0x...</div>
+    <button class="sign-out" onclick="logout()">Sign out</button>
   </div>
 </div>
 
-<!-- NOTIFICATION PANEL -->
 <div class="notif-panel" id="notif-panel">
   <div class="notif-panel-head">
     <div class="notif-panel-title">Notifications</div>
     <button class="notif-clear" onclick="clearNotifs()">Mark all read</button>
   </div>
-  <div class="notif-list" id="notif-list">
-    <div style="padding:32px;text-align:center;color:var(--g3);font-size:13px">No notifications yet</div>
-  </div>
+  <div class="notif-list" id="notif-list"><div style="padding:32px;text-align:center;color:var(--g3);font-size:13px">No notifications yet</div></div>
 </div>
 
 <div class="app-body">
   <div class="sidebar">
     <div class="sb-worker-card">
-      <div class="sb-avatar">AK</div>
-      <div class="sb-name">Ahmad Karimi</div>
-      <div class="sb-role">Senior Web Developer</div>
-      <div class="sb-bal-lbl">Earned today</div>
+      <div class="sb-avatar" id="sb-avatar">?</div>
+      <div class="sb-name" id="sb-name">Loading...</div>
+      <div class="sb-role" id="sb-role">Account</div>
+      <div class="sb-bal-lbl">Wallet balance</div>
       <div class="sb-bal" id="sb-bal">$0.00</div>
       <div class="sb-aed" id="sb-aed">AED 0.00</div>
-      <div class="sb-stream-row"><div class="stream-dot"></div><div class="sb-stream-txt">Stream active · $18.50/hr</div></div>
+      <div class="sb-stream-row" id="sb-stream-row" style="display:none">
+        <div class="stream-dot"></div>
+        <div class="sb-stream-txt" id="sb-stream-txt">Stream active</div>
+      </div>
     </div>
     <div class="sb-label">Navigation</div>
-    <div class="sb-item active" onclick="switchView('worker',null);setActive(this)"><div class="sb-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="8" cy="8" r="3"/><circle cx="8" cy="8" r="6" opacity=".35"/></svg></div>My Earnings<div class="sb-badge">LIVE</div></div>
-    <div class="sb-item" onclick="switchView('history',null);setActive(this)"><div class="sb-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M2 4h12M2 8h12M2 12h8"/></svg></div>Transactions</div>
-    <div class="sb-item" onclick="switchView('employer',null);setActive(this)"><div class="sb-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><rect x="2" y="7" width="12" height="7" rx="1.5"/><path d="M5 7V5a3 3 0 0 1 6 0v2"/></svg></div>Employer View</div>
+    <div class="sb-item active" id="nav-worker" onclick="showView('worker',null);setNavActive(this)">
+      <div class="sb-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="8" cy="8" r="3"/><circle cx="8" cy="8" r="6" opacity=".35"/></svg></div>
+      My Earnings<div class="sb-badge" id="live-badge" style="display:none">LIVE</div>
+    </div>
+    <div class="sb-item" onclick="showView('employer',null);setNavActive(this)">
+      <div class="sb-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><rect x="2" y="7" width="12" height="7" rx="1.5"/><path d="M5 7V5a3 3 0 0 1 6 0v2"/></svg></div>Employer View
+    </div>
+    <div class="sb-item" onclick="showView('history',null);setNavActive(this)">
+      <div class="sb-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><rect x="2" y="3" width="12" height="10" rx="2"/><path d="M5 7h6M5 10h4"/></svg></div>History
+    </div>
     <div class="sb-label">Circle Tools</div>
     <div class="sb-item"><div class="sb-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="8" cy="8" r="6"/><path d="M5 8h5M8 5l3 3-3 3" opacity=".8"/></svg></div>Circle Gateway</div>
-    <div class="sb-item"><div class="sb-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><rect x="2" y="5" width="12" height="9" rx="2"/><path d="M5 5V4a3 3 0 0 1 6 0v1"/><circle cx="10.5" cy="9.5" r="1" fill="currentColor" opacity=".5"/></svg></div>Circle Wallets</div>
-    <div class="sb-item"><div class="sb-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M1 8 Q4 5 7 8 Q10 11 13 8"/><circle cx="13" cy="8" r="1.5" fill="currentColor"/><path d="M11.5 6l2 2-2 2" opacity=".7"/></svg></div>Nanopayments</div>
+    <div class="sb-item"><div class="sb-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><rect x="2" y="5" width="12" height="9" rx="2"/><path d="M5 5V4a3 3 0 0 1 6 0v1"/></svg></div>Circle Wallets</div>
+    <div class="sb-item"><div class="sb-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M1 8Q4 5 7 8Q10 11 13 8"/><circle cx="13" cy="8" r="1.5" fill="currentColor"/></svg></div>Nanopayments</div>
     <div class="sb-item"><div class="sb-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="4" cy="8" r="2.5"/><circle cx="12" cy="8" r="2.5"/><path d="M6.5 7h3M9 5l2 2-2 2M7 9l-2-2 2-2" opacity=".7"/></svg></div>CCTP Bridge</div>
     <div class="sb-label">Network</div>
     <div class="sb-item"><div class="sb-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="8" cy="8" r="6"/><ellipse cx="8" cy="8" rx="3" ry="6" opacity=".5"/><line x1="2" y1="8" x2="14" y2="8" opacity=".5"/></svg></div>Arc Testnet</div>
   </div>
 
   <div class="main">
-
     <!-- WORKER VIEW -->
     <div class="view active" id="view-worker">
       <div class="earn-card">
         <div class="earn-glow"></div>
         <div class="earn-top">
           <div class="earn-eyebrow">USDC Earned This Session</div>
-          <div class="earn-live"><div class="stream-dot"></div>STREAMING LIVE</div>
+          <div class="earn-live" id="earn-live-badge"><div class="stream-dot"></div>STREAMING LIVE</div>
         </div>
-        <div class="earn-amount" id="earn-amount">$1,247.835642</div>
-        <div class="earn-aed" id="earn-aed">AED 4,580.44 · 1 USD = 3.6725 AED</div>
+        <div class="earn-amount" id="earn-amount">$0.000000</div>
+        <div class="earn-aed" id="earn-aed">AED 0.00 · 1 USD = 3.6725 AED</div>
         <div class="earn-sub">
-          <div class="earn-sub-item">Rate: <span>$18.50 / hr</span></div>
+          <div class="earn-sub-item">Rate: <span id="earn-rate">$18.50 / hr</span></div>
           <div class="earn-sub-item">Per second: <span id="rate-per-sec">$0.0051389</span></div>
-          <div class="earn-sub-item">Session: <span id="session-time">04:23:11</span></div>
+          <div class="earn-sub-item">Status: <span id="stream-status-label">checking...</span></div>
         </div>
         <div class="earn-actions">
           <button class="btn-primary" onclick="openWithdraw()">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M7 1v8M3 6l4 4 4-4"/><line x1="1" y1="13" x2="13" y2="13"/></svg>
             Withdraw USDC
           </button>
-          <button class="btn-secondary" onclick="switchView('history',null)">View History</button>
-          <button class="btn-ghost">Pause Stream</button>
+          <button class="btn-secondary" onclick="showView('history',null)">View History</button>
         </div>
       </div>
 
       <div class="grid-3">
-        <div class="stat-mini"><div class="sm-lbl">Total Earned (All Time)</div><div class="sm-val neon">$8,412.33</div><div class="sm-delta">↑ $247.82 this week</div></div>
-        <div class="stat-mini"><div class="sm-lbl">Total Withdrawn</div><div class="sm-val">$7,164.50</div><div class="sm-delta" style="color:var(--g3)">14 transactions</div></div>
-        <div class="stat-mini"><div class="sm-lbl">Active Stream Rate</div><div class="sm-val violet">$18.50<span style="font-size:13px;color:var(--g2)">/hr</span></div><div class="sm-delta">↑ Since 08:30 today</div></div>
+        <div class="stat-mini"><div class="sm-lbl">Wallet Balance</div><div class="sm-val green" id="stat-balance">$0.00</div><div class="sm-delta">Live on Arc testnet</div></div>
+        <div class="stat-mini"><div class="sm-lbl">Total Paid to You</div><div class="sm-val" id="stat-total-paid">$0.00</div><div class="sm-delta" id="stat-tx-count">from active streams</div></div>
+        <div class="stat-mini"><div class="sm-lbl">Stream Rate</div><div class="sm-val amber" id="stat-rate">—</div><div class="sm-delta" id="stat-stream-status">Checking...</div></div>
       </div>
 
       <div class="grid-2">
         <div class="card">
-          <div class="card-title">This Week's Target</div>
-          <div class="card-sub">Progress toward weekly earning goal</div>
-          <div style="margin-bottom:18px">
-            <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-size:13px;color:var(--g2)">Earned</span><span style="font-family:var(--ff-mono);font-size:13px;color:var(--green)">$247.82 / $500.00</span></div>
-            <div class="progress-bar"><div class="progress-fill" style="width:49.6%"></div></div>
-            <div class="progress-labels"><span>49.6%</span><span>$252.18 remaining</span></div>
-          </div>
-          <div>
-            <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-size:13px;color:var(--g2)">Hours worked</span><span style="font-family:var(--ff-mono);font-size:13px;color:var(--g1)">13.4h / 40h</span></div>
-            <div class="progress-bar"><div class="progress-fill" style="width:33.5%;background:linear-gradient(90deg,var(--amber),var(--amber-lt))"></div></div>
-            <div class="progress-labels"><span>33.5%</span><span>26.6h left</span></div>
-          </div>
+          <div class="card-title">Your Arc Wallet</div>
+          <div class="card-sub">Circle developer-controlled wallet on Arc testnet</div>
+          <div style="font-family:var(--ff-mono);font-size:12px;color:var(--amber);word-break:break-all;background:var(--obs4);padding:12px;border-radius:8px;border:1px solid var(--border);margin-bottom:12px" id="wallet-address-full">Loading...</div>
+          <a id="arcscan-link" href="#" target="_blank" style="font-size:12px;color:var(--blue);text-decoration:none;display:inline-flex;align-items:center;gap:5px">
+            View on Arcscan <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M2 8L8 2M4 2h4v4"/></svg>
+          </a>
         </div>
         <div class="gateway-card">
           <div class="gw-label">Circle Gateway · Unified Balance</div>
           <div class="gw-chain-row">
-            <div class="gw-chain"><svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5" fill="#C87A10"/></svg> Arc <div class="gw-bal">$1,247.84</div></div>
-            <div class="gw-chain"><svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5" fill="#627EEA"/></svg> Ethereum <div class="gw-bal">$312.00</div></div>
-            <div class="gw-chain"><svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5" fill="#8247E5"/></svg> Polygon <div class="gw-bal">$85.50</div></div>
+            <div class="gw-chain"><svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5" fill="#C87A10"/></svg>Arc<div class="gw-bal" id="gw-arc">$0.00</div></div>
+            <div class="gw-chain"><svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5" fill="#627EEA"/></svg>ETH<div class="gw-bal">$0.00</div></div>
+            <div class="gw-chain"><svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5" fill="#8247E5"/></svg>Polygon<div class="gw-bal">$0.00</div></div>
           </div>
           <div class="gw-unified">
             <div class="gw-total-lbl">Total unified USDC balance</div>
-            <div class="gw-total-val">$1,645.34</div>
+            <div class="gw-total-val" id="gw-total">$0.00</div>
           </div>
         </div>
       </div>
 
       <div class="agent-panel">
         <div class="agent-header"><div class="agent-title">AI Stream Monitor</div><div class="agent-badge"><div class="stream-dot"></div>Active</div></div>
-        <div class="agent-log">
-          <div class="agent-line"><div class="al-time">14:32:07</div><div class="al-text">Nanopayment dispatched: <em>+$0.308 USDC</em> to worker wallet · Arc tx confirmed in <em>480ms</em></div></div>
-          <div class="agent-line"><div class="al-time">14:30:07</div><div class="al-text">Work signal confirmed via Clockify API · Stream rate maintained at <em>$18.50/hr</em></div></div>
-          <div class="agent-line"><div class="al-time">14:28:07</div><div class="al-text">Nanopayment dispatched: <em>+$0.308 USDC</em> · Employer float remaining: <em>$2,481.44</em></div></div>
-          <div class="agent-line"><div class="al-time">14:26:07</div><div class="al-text">Agent checked work activity · GitHub commit detected · Stream continues</div></div>
-        </div>
+        <div class="agent-log" id="agent-log"><div class="loading-spin"><div class="spinner"></div>Loading agent activity...</div></div>
       </div>
     </div>
 
     <!-- EMPLOYER VIEW -->
     <div class="view" id="view-employer">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
-        <div><div style="font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--amber-lt);margin-bottom:6px">Employer Dashboard</div><div style="font-family:var(--ff);font-weight:700;font-size:22px">TechHub Dubai LLC</div></div>
-        <button class="btn-primary" onclick="openWithdraw()">+ Add USDC Float</button>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+        <div>
+          <div style="font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);margin-bottom:6px">Employer Dashboard</div>
+          <div style="font-family:var(--ff);font-weight:700;font-size:22px" id="emp-name">Loading...</div>
+        </div>
       </div>
+
       <div class="grid-3">
-        <div class="stat-mini"><div class="sm-lbl">Treasury Float</div><div class="sm-val neon">$2,481.44</div><div class="sm-delta" style="color:var(--g3)">Via Circle Gateway</div></div>
-        <div class="stat-mini"><div class="sm-lbl">Active Streams</div><div class="sm-val violet">4</div><div class="sm-delta">↑ All workers clocked in</div></div>
-        <div class="stat-mini"><div class="sm-lbl">Paid Out Today</div><div class="sm-val">$382.40</div><div class="sm-delta" style="color:var(--g3)">Across 4 workers</div></div>
+        <div class="stat-mini"><div class="sm-lbl">Treasury Float</div><div class="sm-val green" id="emp-float">$0.00</div><div class="sm-delta">Circle wallet on Arc</div></div>
+        <div class="stat-mini"><div class="sm-lbl">Active Streams</div><div class="sm-val" id="emp-streams">0</div><div class="sm-delta" id="emp-streams-sub">No active streams</div></div>
+        <div class="stat-mini"><div class="sm-lbl">Total Paid Out</div><div class="sm-val amber" id="emp-paid">$0.00</div><div class="sm-delta">Confirmed on Arc</div></div>
       </div>
+
       <div class="deposit-card">
-        <div class="card-title" style="margin-bottom:4px">Deposit USDC Float</div>
-        <div class="card-sub">Via Circle Gateway · Minted on Arc in under 500ms</div>
-        <div class="deposit-row">
-          <div><div class="field-lbl">Amount (USDC)</div><div class="deposit-input-wrap"><span class="deposit-prefix">$</span><input class="deposit-input" type="number" placeholder="1000.00" value="1000"/></div></div>
-          <button class="btn-primary" style="height:50px;margin-top:22px">Deposit via Gateway</button>
-        </div>
-        <div class="treasury-bar">
-          <div class="tb-stat"><div class="tb-stat-lbl">Float Balance</div><div class="tb-stat-val" style="color:var(--green)">$2,481.44</div></div>
-          <div class="tb-divider"></div>
-          <div class="tb-stat"><div class="tb-stat-lbl">Monthly Outflow</div><div class="tb-stat-val">$11,600</div></div>
-          <div class="tb-divider"></div>
-          <div class="tb-stat"><div class="tb-stat-lbl">Float Runway</div><div class="tb-stat-val" style="color:var(--amber)">6.1 days</div></div>
-          <div class="tb-divider"></div>
-          <div class="tb-stat"><div class="tb-stat-lbl">Settlement Speed</div><div class="tb-stat-val" style="color:var(--green)">&lt;500ms</div></div>
+        <div class="card-title" style="margin-bottom:4px">Fund Your Treasury</div>
+        <div class="card-sub">Get testnet USDC from the <a href="https://faucet.arc.testnet.circle.com" target="_blank" style="color:var(--amber)">Arc testnet faucet</a> then send to your wallet:</div>
+        <div style="background:var(--obs4);border-radius:8px;padding:12px 14px;margin-top:8px">
+          <div style="font-size:11px;color:var(--g3);margin-bottom:4px">Your employer wallet address:</div>
+          <div style="font-family:var(--ff-mono);font-size:11.5px;color:var(--amber);word-break:break-all" id="emp-wallet-full">Loading...</div>
         </div>
       </div>
-      <div class="card">
-        <div class="card-title">Active Workers</div>
-        <div class="card-sub">All streams via Circle developer-controlled wallets on Arc</div>
-        <div style="display:flex;flex-direction:column;gap:12px">
-          <div class="worker-row"><div class="w-avatar" style="background:linear-gradient(135deg,#C87A10,#A86510)">AK</div><div><div class="w-name">Ahmad Karimi</div><div class="w-role">Senior Web Developer</div></div><div class="w-rate">$18.50/hr</div><div class="w-paid" style="color:var(--g2)">$92.10 today</div><div class="w-status active"><div class="stream-dot"></div>Streaming</div></div>
-          <div class="worker-row"><div class="w-avatar" style="background:linear-gradient(135deg,#10B981,#00CC80)">PM</div><div><div class="w-name">Priya Mehta</div><div class="w-role">UI/UX Designer</div></div><div class="w-rate">$22.00/hr</div><div class="w-paid" style="color:var(--g2)">$110.00 today</div><div class="w-status active"><div class="stream-dot"></div>Streaming</div></div>
-          <div class="worker-row"><div class="w-avatar" style="background:linear-gradient(135deg,#3B82F6,#60A5FA)">CR</div><div><div class="w-name">Carlos Reyes</div><div class="w-role">Backend Engineer</div></div><div class="w-rate">$25.00/hr</div><div class="w-paid" style="color:var(--g2)">$125.00 today</div><div class="w-status active"><div class="stream-dot"></div>Streaming</div></div>
-          <div class="worker-row"><div class="w-avatar" style="background:linear-gradient(135deg,#C87A10,#A86510)">JO</div><div><div class="w-name">James Okafor</div><div class="w-role">DevOps Engineer</div></div><div class="w-rate">$21.00/hr</div><div class="w-paid" style="color:var(--g2)">$55.30 today</div><div class="w-status paused"><svg width="11" height="11" viewBox="0 0 11 11" fill="currentColor"><rect x="2" y="2" width="3" height="7" rx="1"/><rect x="6" y="2" width="3" height="7" rx="1"/></svg>Paused</div></div>
+
+      <div class="stream-form">
+        <div class="card-title" style="margin-bottom:4px">Create Salary Stream</div>
+        <div class="card-sub">Start paying a worker by the second. Payments confirm on Arc every 60 seconds.</div>
+        <div class="form-row">
+          <div>
+            <label class="field-lbl">Worker wallet address</label>
+            <input class="field-input" id="stream-worker-addr" type="text" placeholder="0x..." style="margin-bottom:0"/>
+          </div>
+          <div>
+            <label class="field-lbl">Hourly rate (USDC)</label>
+            <input class="field-input" id="stream-rate" type="number" placeholder="18.50" min="0.01" step="0.01" style="margin-bottom:0"/>
+          </div>
         </div>
+        <div style="margin-top:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <button class="btn-primary" onclick="createStream()">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M7 1v12M1 7h12"/></svg>
+            Start Stream
+          </button>
+          <span id="stream-msg" style="font-size:12.5px"></span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Your Active Streams</div>
+        <div class="card-sub">All workers you are currently paying · Arc nanopayments every 60 seconds</div>
+        <div id="emp-streams-list"><div class="loading-spin"><div class="spinner"></div>Loading streams...</div></div>
       </div>
     </div>
 
@@ -561,132 +445,57 @@
       <div class="card">
         <div class="card-title">Transaction History</div>
         <div class="card-sub" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
-          <span>All USDC movements on Arc testnet · Verified on-chain</span>
-          <button class="btn-secondary" onclick="exportCSV()" style="font-size:12px;padding:7px 16px"><svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:5px"><path d="M6.5 1v7M3 5.5l3.5 3.5L10 5.5"/><path d="M1 11h11"/></svg>Download CSV</button>
+          <span>All USDC movements verified on Arc testnet</span>
+          <button class="btn-secondary" onclick="exportCSV()" style="font-size:12px;padding:7px 16px">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M6.5 1v7M3 5.5l3.5 3.5L10 5.5"/><path d="M1 11h11"/></svg>
+            Download CSV
+          </button>
         </div>
-        <table class="tx-table">
-          <thead><tr><th>Type</th><th>Tx Hash</th><th>Chain</th><th>Time</th><th>Status</th><th>Amount</th></tr></thead>
-          <tbody>
-            <tr><td><div class="tx-type"><div class="tx-icon in"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M7 1v8M3 6l4 4 4-4"/></svg></div>Nanopayment</div></td><td><div class="tx-hash" onclick="window.open('https://testnet.arcscan.app/tx/0x4105a47561c63d3721735c6bbbb4d42154dca9d447ab43672ffece0f7f22abe7')">0x4105...abe7 <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" style="margin-left:3px"><path d="M2 8L8 2M4 2h4v4"/></svg></div></td><td><span class="tx-chain">Arc</span></td><td><div class="tx-time">2 min ago</div></td><td><div class="tx-status-dot">Confirmed</div></td><td><div class="tx-amount-pos">+$0.126</div></td></tr>
-            <tr><td><div class="tx-type"><div class="tx-icon in"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M7 1v8M3 6l4 4 4-4"/></svg></div>Nanopayment</div></td><td><div class="tx-hash" onclick="window.open('https://testnet.arcscan.app/tx/0x79d62fae971f1b0852c566b513d29383afefa30e606863b89bda3168e6914036')">0x79d6...4036 <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" style="margin-left:3px"><path d="M2 8L8 2M4 2h4v4"/></svg></div></td><td><span class="tx-chain">Arc</span></td><td><div class="tx-time">4 min ago</div></td><td><div class="tx-status-dot">Confirmed</div></td><td><div class="tx-amount-pos">+$0.263</div></td></tr>
-            <tr><td><div class="tx-type"><div class="tx-icon in"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M7 1v8M3 6l4 4 4-4"/></svg></div>Nanopayment</div></td><td><div class="tx-hash" onclick="window.open('https://testnet.arcscan.app/tx/0x058bc751cbf943e21a0159825104147b246a958ac7ae1699a458db676effd8ec')">0x058b...d8ec <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" style="margin-left:3px"><path d="M2 8L8 2M4 2h4v4"/></svg></div></td><td><span class="tx-chain">Arc</span></td><td><div class="tx-time">6 min ago</div></td><td><div class="tx-status-dot">Confirmed</div></td><td><div class="tx-amount-pos">+$0.283</div></td></tr>
-            <tr><td><div class="tx-type"><div class="tx-icon out"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M7 13V5M3 8l4-4 4 4"/></svg></div>Withdrawal</div></td><td><div class="tx-hash">0x4b9e...a182</div></td><td><span class="tx-chain">Ethereum</span></td><td><div class="tx-time">48 min ago</div></td><td><div class="tx-status-dot">Confirmed</div></td><td><div class="tx-amount-neg">-$200.00</div></td></tr>
-            <tr><td><div class="tx-type"><div class="tx-icon xchain"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="4" cy="7" r="2"/><circle cx="10" cy="7" r="2"/><path d="M6 7h2"/></svg></div>CCTP Bridge</div></td><td><div class="tx-hash">0x2a7c...e401</div></td><td><span class="tx-chain">Polygon</span></td><td><div class="tx-time">2h ago</div></td><td><div class="tx-status-dot">Confirmed</div></td><td><div class="tx-amount-neg">-$85.50</div></td></tr>
-          </tbody>
-        </table>
+        <div id="history-content"><div class="loading-spin"><div class="spinner"></div>Loading transactions...</div></div>
       </div>
     </div>
   </div>
 </div>
 
 <!-- WITHDRAW MODAL -->
-<div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
-  <div class="modal" id="modal">
-    <button class="modal-close" onclick="closeWithdraw()" aria-label="Close">
-      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
-        <path d="M1 1L11 11M11 1L1 11"/>
-      </svg>
+<div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeWithdraw()">
+  <div class="modal">
+    <button class="modal-close" onclick="closeWithdraw()">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M1 1L11 11M11 1L1 11"/></svg>
     </button>
     <div id="modal-form">
       <div class="modal-title">Withdraw USDC</div>
-      <div class="modal-sub">Choose your destination chain. CCTP Fast Transfer completes in 8 to 20 seconds.</div>
-      <div class="field-lbl">Amount (USDC)</div>
-      <input class="field-input" id="wd-amount" type="number" placeholder="0.00" value="200.00"/>
-      <div class="field-lbl">Destination Chain</div>
+      <div class="modal-sub">Choose destination chain. CCTP Fast Transfer completes in 8 to 20 seconds.</div>
+      <label class="field-lbl">Amount (USDC)</label>
+      <input class="field-input" id="wd-amount" type="number" placeholder="0.00" value="0.00"/>
+      <label class="field-lbl">Destination Chain</label>
       <div class="chain-grid">
-        <div class="chain-opt selected" onclick="selectChain(this,'Arc')">
-          <div class="chain-opt-icon"><svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-  <circle cx="13" cy="16" r="7" fill="none" stroke="#C87A10" stroke-width="1.8"/>
-  <text x="13" y="20.5" text-anchor="middle" font-family="Cantarell,sans-serif" font-weight="700" font-size="9" fill="#C87A10">$</text>
-  <line x1="22" y1="13" x2="29" y2="13" stroke="#C87A10" stroke-width="1.6" stroke-linecap="round"/>
-  <line x1="22" y1="16" x2="31" y2="16" stroke="#C87A10" stroke-width="2" stroke-linecap="round"/>
-  <line x1="22" y1="19" x2="29" y2="19" stroke="#C87A10" stroke-width="1.6" stroke-linecap="round"/>
-  <path d="M27.5 11L31 16L27.5 21" fill="none" stroke="#C87A10" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-</svg></div>
-          <div class="chain-opt-name">Arc</div>
-        </div>
-        <div class="chain-opt" onclick="selectChain(this,'Ethereum')">
-          <div class="chain-opt-icon"><svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-  <g opacity="0.9">
-    <path d="M16 4.5L7 16.5L16 13.5L25 16.5L16 4.5Z" fill="#627EEA"/>
-    <path d="M16 4.5L7 16.5L16 13.5V4.5Z" fill="#8EA4F5"/>
-    <path d="M16 21L7 16.5L16 13.5L25 16.5L16 21Z" fill="#627EEA"/>
-    <path d="M16 21L7 16.5L16 13.5V21Z" fill="#8EA4F5"/>
-    <path d="M16 22.5L7 18L16 21L25 18L16 22.5Z" fill="#627EEA"/>
-    <path d="M16 22.5L7 18L16 21V22.5Z" fill="#8EA4F5"/>
-    <path d="M16 27.5L7 18L16 22.5L25 18L16 27.5Z" fill="#627EEA"/>
-    <path d="M16 27.5L7 18L16 22.5V27.5Z" fill="#8EA4F5"/>
-  </g>
-</svg></div>
-          <div class="chain-opt-name">Ethereum</div>
-        </div>
-        <div class="chain-opt" onclick="selectChain(this,'Polygon')">
-          <div class="chain-opt-icon"><svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-  <path d="M21.5 12.5L17.5 10.2C16.9 9.87 16.1 9.87 15.5 10.2L11.5 12.5L7.5 14.8C6.9 15.13 6.5 15.77 6.5 16.43V21C6.5 21.67 6.9 22.3 7.5 22.63L11.5 24.93C12.1 25.27 12.9 25.27 13.5 24.93L16 23.5L18.5 24.93C19.1 25.27 19.9 25.27 20.5 24.93L24.5 22.63C25.1 22.3 25.5 21.67 25.5 21V16.43C25.5 15.77 25.1 15.13 24.5 14.8L21.5 12.5Z" fill="none" stroke="#8247E5" stroke-width="1.5"/>
-  <path d="M13.5 14.8L16 13.37L18.5 14.8V17.63L16 19.07L13.5 17.63V14.8Z" fill="#8247E5"/>
-  <line x1="16" y1="10.2" x2="16" y2="13.37" stroke="#8247E5" stroke-width="1.5"/>
-  <line x1="16" y1="19.07" x2="16" y2="25" stroke="#8247E5" stroke-width="1.5"/>
-  <line x1="7.5" y1="14.8" x2="13.5" y2="14.8" stroke="#8247E5" stroke-width="1.5"/>
-  <line x1="18.5" y1="14.8" x2="24.5" y2="14.8" stroke="#8247E5" stroke-width="1.5"/>
-</svg></div>
-          <div class="chain-opt-name">Polygon</div>
-        </div>
-        <div class="chain-opt" onclick="selectChain(this,'Base')">
-          <div class="chain-opt-icon"><svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-  <circle cx="16" cy="16" r="13" fill="#0052FF"/>
-  <path d="M16.15 8C11.62 8 7.95 11.67 7.95 16.2C7.95 20.73 11.62 24.4 16.15 24.4C19.89 24.4 23.05 22.04 24.08 18.76H19.55C18.78 19.84 17.55 20.56 16.15 20.56C13.71 20.56 11.73 18.58 11.73 16.2C11.73 13.82 13.71 11.84 16.15 11.84C17.55 11.84 18.78 12.56 19.55 13.64H24.08C23.05 10.36 19.89 8 16.15 8Z" fill="white"/>
-</svg></div>
-          <div class="chain-opt-name">Base</div>
-        </div>
-        <div class="chain-opt" onclick="selectChain(this,'Arbitrum')">
-          <div class="chain-opt-icon"><svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-  <circle cx="16" cy="16" r="13" fill="#1B4ADD"/>
-  <path d="M16 7L22.5 19H9.5L16 7Z" fill="none" stroke="#12AAFF" stroke-width="1.8" stroke-linejoin="round"/>
-  <line x1="16" y1="7" x2="16" y2="19" stroke="#12AAFF" stroke-width="1.5"/>
-  <line x1="11" y1="16" x2="21" y2="16" stroke="#12AAFF" stroke-width="1.3" opacity="0.7"/>
-  <path d="M12 19L10 24H14L16 19H12Z" fill="#9DCCED"/>
-  <path d="M20 19L22 24H18L16 19H20Z" fill="#9DCCED"/>
-</svg></div>
-          <div class="chain-opt-name">Arbitrum</div>
-        </div>
-        <div class="chain-opt" onclick="selectChain(this,'Avalanche')">
-          <div class="chain-opt-icon"><svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-  <circle cx="16" cy="16" r="13" fill="#E84142"/>
-  <path d="M20.8 21.5H23.8C24.5 21.5 24.9 20.7 24.5 20.1L17.2 9.1C16.8 8.5 15.9 8.5 15.5 9.1L8.2 20.1C7.8 20.7 8.2 21.5 8.9 21.5H17.1C17.5 21.5 17.9 21.3 18.1 20.9L19.4 18.7L20.7 20.9C20.9 21.3 20.5 21.5 20.8 21.5Z" fill="white"/>
-  <path d="M19.4 18.7L17.5 15.5L15.6 18.7H19.4Z" fill="#E84142"/>
-</svg></div>
-          <div class="chain-opt-name">Avalanche</div>
-        </div>
+        <div class="chain-opt selected" onclick="selectChain(this,'Arc')"><div class="chain-opt-icon"><svg width="28" height="28" viewBox="0 0 38 38" fill="none"><circle cx="15" cy="19" r="9" fill="none" stroke="#C87A10" stroke-width="2"/><text x="15" y="23.5" text-anchor="middle" font-family="Cantarell" font-weight="700" font-size="9" fill="#C87A10">$</text><line x1="26" y1="19" x2="37" y2="19" stroke="#C87A10" stroke-width="2" stroke-linecap="round"/></svg></div><div class="chain-opt-name">Arc</div></div>
+        <div class="chain-opt" onclick="selectChain(this,'Ethereum')"><div class="chain-opt-icon"><svg width="28" height="28" viewBox="0 0 32 32" fill="none"><polygon points="16,4 26,16 16,20 6,16" fill="#627EEA" opacity="0.9"/><polygon points="16,20 26,16 16,28" fill="#627EEA" opacity="0.6"/><polygon points="16,20 6,16 16,28" fill="#627EEA" opacity="0.4"/><polygon points="16,4 6,16 16,12" fill="#627EEA" opacity="0.6"/></svg></div><div class="chain-opt-name">Ethereum</div></div>
+        <div class="chain-opt" onclick="selectChain(this,'Polygon')"><div class="chain-opt-icon"><svg width="28" height="28" viewBox="0 0 32 32" fill="none"><path d="M21 11.5L25.5 14.2V19.8L21 22.5L16.5 25.2L12 22.5V17L16.5 19.8L21 17V11.5Z" fill="#8247E5"/><path d="M11 9.5L16 12.5V17.5L11 14.5V9.5Z" fill="#8247E5" opacity="0.7"/><path d="M21 9.5L16 12.5L11 9.5L16 6.5L21 9.5Z" fill="#8247E5" opacity="0.9"/></svg></div><div class="chain-opt-name">Polygon</div></div>
+        <div class="chain-opt" onclick="selectChain(this,'Base')"><div class="chain-opt-icon"><svg width="28" height="28" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="13" fill="#0052FF"/><path d="M16 8C11.58 8 8 11.58 8 16C8 20.42 11.58 24 16 24C18.72 24 21.13 22.64 22.58 20.55H18.36C17.65 21.13 16.87 21.46 16 21.46C13.42 21.46 11.34 19.23 11.34 16.5C11.34 13.77 13.42 11.54 16 11.54C16.87 11.54 17.65 11.87 18.36 12.45H22.58C21.13 9.36 18.72 8 16 8Z" fill="white"/></svg></div><div class="chain-opt-name">Base</div></div>
+        <div class="chain-opt" onclick="selectChain(this,'Arbitrum')"><div class="chain-opt-icon"><svg width="28" height="28" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="13" fill="#213147"/><path d="M16 6L22 18L19.5 18L16 11.5L12.5 18L10 18L16 6Z" fill="#12AAFF"/><path d="M13 18L14.8 22H17.2L19 18H13Z" fill="#12AAFF" opacity="0.7"/></svg></div><div class="chain-opt-name">Arbitrum</div></div>
+        <div class="chain-opt" onclick="selectChain(this,'Avalanche')"><div class="chain-opt-icon"><svg width="28" height="28" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="13" fill="#E84142"/><path d="M20.5 22H24.5L17.8 10.5C17.3 9.6 16.1 9.6 15.6 10.5L13.5 14.3L11.5 10.5C11 9.6 9.8 9.6 9.3 10.5L7.5 22H11.5L13.5 18.2L15.5 22H20.5Z" fill="white"/></svg></div><div class="chain-opt-name">Avalanche</div></div>
       </div>
       <div class="modal-summary">
-        <div class="ms-row"><span>You withdraw</span><span class="ms-val violet" id="ms-amount">$200.00 USDC</span></div>
-        <div class="ms-row"><span>Network fee</span><span class="ms-val neon">~$0.0012 USDC</span></div>
+        <div class="ms-row"><span>You withdraw</span><span class="ms-val amber" id="ms-amount">$0.00 USDC</span></div>
+        <div class="ms-row"><span>Network fee</span><span class="ms-val green">~$0.0012 USDC</span></div>
         <div class="ms-row"><span>Destination</span><span class="ms-val" id="ms-chain">Arc Testnet</span></div>
         <div class="ms-row"><span>Settlement time</span><span class="ms-val" id="ms-time">Instant (same chain)</span></div>
       </div>
-      <button class="btn-primary btn-full" onclick="doWithdraw()">Confirm Withdrawal →</button>
+      <button class="btn-primary btn-full" onclick="doWithdraw()">Confirm Withdrawal</button>
     </div>
     <div id="modal-processing" style="display:none;text-align:center;padding:20px 0">
-      <div style="margin-bottom:18px;display:flex;justify-content:center">
-        <svg width="52" height="52" viewBox="0 0 52 52" fill="none" style="animation:spin 1.2s linear infinite">
-          <circle cx="26" cy="26" r="20" stroke="rgba(200,122,16,0.15)" stroke-width="4"/>
-          <path d="M26 6 A20 20 0 0 1 46 26" stroke="#C87A10" stroke-width="4" stroke-linecap="round"/>
-          <path d="M36 16L26 6L32 18" fill="#C87A10" opacity="0.6"/>
-        </svg>
-      </div>
+      <div style="margin-bottom:18px;display:flex;justify-content:center"><svg width="52" height="52" viewBox="0 0 52 52" fill="none" style="animation:spin 1.2s linear infinite"><circle cx="26" cy="26" r="20" stroke="rgba(200,122,16,0.15)" stroke-width="4"/><path d="M26 6 A20 20 0 0 1 46 26" stroke="#C87A10" stroke-width="4" stroke-linecap="round"/></svg></div>
       <div style="font-family:var(--ff);font-weight:700;font-size:20px;margin-bottom:8px">Processing withdrawal</div>
-      <div style="font-size:13px;color:var(--g2);margin-bottom:20px">Broadcasting to Arc testnet via CCTP...</div>
+      <div style="font-size:13px;color:var(--g2);margin-bottom:20px">Broadcasting via CCTP...</div>
       <div style="background:var(--obs3);border-radius:8px;padding:14px;font-family:var(--ff-mono);font-size:11px;color:var(--g2);text-align:left"><div id="proc-log"></div></div>
     </div>
     <div id="modal-success" style="display:none">
       <div class="success-view">
-        <div class="success-icon">
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="#10B981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M6 16L13 23L26 9"/>
-        </svg>
-      </div>
+        <div class="success-icon"><svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="#10B981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16L13 23L26 9"/></svg></div>
         <div class="success-title">Withdrawal Complete</div>
-        <div class="success-sub">Your USDC has been sent successfully. Confirmed on-chain in <strong style="color:var(--green)" id="s-time">—</strong>.</div>
+        <div class="success-sub">Confirmed in <strong style="color:var(--green)" id="s-time">—</strong>.</div>
         <div class="success-hash" id="s-hash">—</div>
         <button class="btn-primary btn-full" onclick="closeWithdraw()">Done</button>
       </div>
@@ -696,445 +505,363 @@
 
 <div class="toast-container" id="toast-container"></div>
 
+<div class="mobile-nav">
+  <button class="mob-nav-item active" onclick="showView('worker',null);setMobActive(this)"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="10" cy="10" r="3.5"/><circle cx="10" cy="10" r="8" opacity=".35"/></svg>Earn</button>
+  <button class="mob-nav-item" onclick="showView('employer',null);setMobActive(this)"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="8" width="14" height="9" rx="1.5"/><path d="M7 8V6a3 3 0 0 1 6 0v2"/></svg>Employer</button>
+  <button class="mob-nav-item" onclick="showView('history',null);setMobActive(this)"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="4" width="14" height="12" rx="2"/><path d="M7 9h6M7 13h4"/></svg>History</button>
+  <button class="mob-nav-item" onclick="openWithdraw()"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 3v9M6 9l4 4 4-4"/><line x1="3" y1="17" x2="17" y2="17" opacity=".6"/></svg>Withdraw</button>
+  <button class="mob-nav-item" onclick="toggleNotifPanel()"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 3a4 4 0 0 1 4 4c0 3.5 1.5 4.5 1.5 4.5h-11S6 10.5 6 7a4 4 0 0 1 4-4z"/><path d="M11.7 16a2 2 0 0 1-3.4 0"/></svg>Alerts</button>
+</div>
+
 <script>
-const AED=3.6725,RATE=18.50/3600
-let base=1247.835642,start=Date.now(),secs=4*3600+23*60+11
-let toastCnt=0,notifications=[],unread=0
+const API = 'https://paystream-9xtb.onrender.com'
+const AED = 3.6725
 
-function pad(n){return String(n).padStart(2,'0')}
-function fmtT(s){return pad(Math.floor(s/3600))+':'+pad(Math.floor((s%3600)/60))+':'+pad(s%60)}
+/* ── AUTH GUARD ── */
+const psToken  = localStorage.getItem('ps_token')
+const psUser   = JSON.parse(localStorage.getItem('ps_user')  || 'null')
+const psWallet = JSON.parse(localStorage.getItem('ps_wallet') || 'null')
+if (!psToken || !psUser) { window.location.href = 'login.html' }
 
-function tick(){
-  const e=(Date.now()-start)/1000,t=base+e*RATE,d=92.10+e*RATE
-  const ea=document.getElementById('earn-amount'),eae=document.getElementById('earn-aed')
-  const sb=document.getElementById('sb-bal'),sa=document.getElementById('sb-aed'),st=document.getElementById('session-time')
-  if(ea)ea.textContent='$'+t.toFixed(6)
-  if(eae)eae.textContent='AED '+(t*AED).toFixed(2)+' · 1 USD = 3.6725 AED'
-  if(sb)sb.textContent='$'+d.toFixed(2)
-  if(sa)sa.textContent='AED '+(d*AED).toFixed(2)
-  if(st)st.textContent=fmtT(secs+Math.floor(e))
+function logout() {
+  ['ps_token','ps_user','ps_wallet'].forEach(k => localStorage.removeItem(k))
+  window.location.href = 'login.html'
 }
-setInterval(tick,80);tick()
 
-/* VIEW */
-let activeNav=document.querySelector('.sb-item.active')
-function switchView(n,t){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById('view-'+n).classList.add('active');if(t){document.querySelectorAll('.tb-tab').forEach(b=>b.classList.remove('active'));t.classList.add('active')}}
-function setActive(el){if(activeNav)activeNav.classList.remove('active');el.classList.add('active');activeNav=el}
+/* ── AUTO-INJECT AUTH HEADER ── */
+const _fetch = window.fetch
+window.fetch = (url, opts = {}) => {
+  if (url && url.toString().includes('onrender.com') && psToken)
+    opts.headers = { ...(opts.headers||{}), 'Authorization': 'Bearer ' + psToken }
+  return _fetch(url, opts)
+}
 
-/* CHAIN */
-let selChain='Arc'
-function selectChain(el,n){document.querySelectorAll('.chain-opt').forEach(c=>c.classList.remove('selected'));el.classList.add('selected');selChain=n;document.getElementById('ms-chain').textContent=n+' Testnet';document.getElementById('ms-time').textContent=n==='Arc'?'Instant (same chain)':'8 to 20 seconds via CCTP'}
+/* ── STATE ── */
+let liveEarned = 0, liveRate = 18.5, liveStatus = 'unknown'
+let liveStreamId = null, lastFetch = Date.now()
+let liveBalance  = parseFloat(psWallet?.balance || 0)
+let toastCnt = 0, notifications = [], unread = 0, lastPayoutCount = 0
+let activeNav = null
 
-/* MODAL */
-function openWithdraw(){document.getElementById('modal-overlay').classList.add('open');showForm()}
-function closeWithdraw(){document.getElementById('modal-overlay').classList.remove('open');setTimeout(showForm,300)}
-function handleOverlayClick(e){if(e.target===document.getElementById('modal-overlay'))closeWithdraw()}
-function showForm(){document.getElementById('modal-form').style.display='';document.getElementById('modal-processing').style.display='none';document.getElementById('modal-success').style.display='none'}
+/* ── INIT ── */
+function initUI() {
+  if (!psUser) return
+  const initials = (psUser.name||'U').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2)
+  document.getElementById('sb-avatar').textContent = initials
+  document.getElementById('sb-name').textContent   = psUser.name
+  document.getElementById('sb-role').textContent   = psUser.role === 'employer' ? 'Employer Account' : 'Worker Account'
+  document.getElementById('emp-name').textContent  = psUser.name
 
-const pLines=['Signing with Circle developer wallet...','Broadcasting to Arc testnet...','CCTP burn confirmed on source chain...','Attestation received from Circle...','Minting USDC on destination chain...','Transaction finalized &#10003;']
-function doWithdraw(){
-  document.getElementById('modal-form').style.display='none'
-  document.getElementById('modal-processing').style.display=''
-  const log=document.getElementById('proc-log');log.innerHTML='';let i=0;const t0=Date.now()
-  const iv=setInterval(()=>{
-    log.innerHTML+='<div style="margin-bottom:4px"><span style="color:var(--green)">›</span> '+pLines[i]+'</div>'
-    log.scrollTop=log.scrollHeight;i++
-    if(i>=pLines.length){clearInterval(iv);setTimeout(()=>showSuccess(((Date.now()-t0)/1000).toFixed(2)),400)}
-  },selChain==='Arc'?300:600)
+  if (psWallet?.address) {
+    const a = psWallet.address
+    document.getElementById('tb-wallet-addr').textContent     = a.slice(0,6)+'...'+a.slice(-4)
+    document.getElementById('wallet-address-full').textContent = a
+    document.getElementById('arcscan-link').href = 'https://testnet.arcscan.app/address/'+a
+    document.getElementById('emp-wallet-full').textContent    = a
+  }
+
+  updateSidebarBalance(liveBalance)
+
+  if (psUser.role === 'employer') {
+    showView('employer', null)
+    document.querySelectorAll('.tb-tab')[1].classList.add('active')
+    document.querySelectorAll('.tb-tab')[0].classList.remove('active')
+  } else {
+    document.getElementById('live-badge').style.display     = ''
+    document.getElementById('sb-stream-row').style.display  = ''
+  }
+}
+
+function updateSidebarBalance(bal) {
+  document.getElementById('sb-bal').textContent        = '$' + bal.toFixed(2)
+  document.getElementById('sb-aed').textContent        = 'AED ' + (bal*AED).toFixed(2)
+  document.getElementById('stat-balance').textContent  = '$' + bal.toFixed(2)
+  document.getElementById('gw-arc').textContent        = '$' + bal.toFixed(2)
+  document.getElementById('gw-total').textContent      = '$' + bal.toFixed(2)
+}
+
+/* ── SMOOTH TICK ── */
+setInterval(() => {
+  if (liveStatus !== 'active') return
+  const projected = liveEarned + ((Date.now()-lastFetch)/1000 * liveRate/3600)
+  document.getElementById('earn-amount').textContent = '$' + projected.toFixed(6)
+  document.getElementById('earn-aed').textContent    = 'AED ' + (projected*AED).toFixed(2) + ' · 1 USD = 3.6725 AED'
+}, 80)
+
+/* ── API CALLS ── */
+async function fetchMyStream() {
+  if (psUser.role === 'employer') return
+  try {
+    const j = await (await fetch(API+'/api/v1/streams?workerId='+psUser.id)).json()
+    if (!j.success || !j.data?.length) {
+      liveStatus = 'no_stream'
+      document.getElementById('stream-status-label').textContent = 'No active stream'
+      document.getElementById('earn-live-badge').innerHTML = '<div style="width:6px;height:6px;border-radius:50%;background:var(--g3)"></div>NO STREAM'
+      document.getElementById('sb-stream-row').style.display = 'none'
+      document.getElementById('stat-stream-status').textContent = 'No stream yet'
+      return
+    }
+    const s = j.data.find(x => x.status === 'active') || j.data[0]
+    liveStreamId = s.id; liveRate = parseFloat(s.rate_per_hour)||18.5; liveStatus = s.status
+    document.getElementById('earn-rate').textContent      = '$'+liveRate.toFixed(2)+' / hr'
+    document.getElementById('rate-per-sec').textContent   = '$'+(liveRate/3600).toFixed(7)+'/s'
+    document.getElementById('stat-rate').textContent      = '$'+liveRate.toFixed(2)+'/hr'
+    document.getElementById('stream-status-label').textContent = liveStatus
+    document.getElementById('sb-stream-txt').textContent = 'Stream active · $'+liveRate.toFixed(2)+'/hr'
+    document.getElementById('stat-stream-status').textContent = liveStatus === 'active' ? 'Active · earning now' : liveStatus
+    document.getElementById('earn-live-badge').innerHTML = liveStatus === 'active'
+      ? '<div class="stream-dot"></div>STREAMING LIVE'
+      : '<div style="width:6px;height:6px;border-radius:50%;background:var(--amber)"></div>PAUSED'
+    document.getElementById('sb-stream-row').style.display = liveStatus === 'active' ? '' : 'none'
+    await fetchEarned()
+  } catch(e) { console.warn('[API] fetchMyStream:', e.message) }
+}
+
+async function fetchEarned() {
+  if (!liveStreamId) return
+  try {
+    const j = await (await fetch(API+'/api/v1/streams/'+liveStreamId+'/earned')).json()
+    if (j.success) {
+      liveEarned = parseFloat(j.data.earned)||0; liveStatus = j.data.status||liveStatus; lastFetch = Date.now()
+      document.getElementById('stat-total-paid').textContent = '$'+(parseFloat(j.data.total_paid)||0).toFixed(2)
+    }
+  } catch(e) {}
+}
+
+async function fetchWalletBalance() {
+  try {
+    const j = await (await fetch(API+'/api/v1/wallets/'+psUser.id)).json()
+    if (j.success) { liveBalance = parseFloat(j.data.balance_usdc)||0; updateSidebarBalance(liveBalance) }
+  } catch(e) {}
+}
+
+async function fetchPayouts() {
+  if (!liveStreamId) {
+    document.getElementById('history-content').innerHTML = '<div class="empty-state"><h4>No transactions yet</h4><p>Transactions appear here once a stream is active and payments confirm on Arc testnet.</p></div>'
+    return
+  }
+  try {
+    const j = await (await fetch(API+'/api/v1/payouts?streamId='+liveStreamId+'&limit=20')).json()
+    if (!j.success || !j.data?.length) {
+      document.getElementById('history-content').innerHTML = '<div class="empty-state"><h4>No payouts yet</h4><p>First payout will appear within 60 seconds of stream creation.</p></div>'
+      return
+    }
+    document.getElementById('stat-tx-count').textContent = j.data.length + ' transactions'
+    const rows = j.data.map(p => {
+      const h   = p.arc_tx_hash ? p.arc_tx_hash.slice(0,6)+'...'+p.arc_tx_hash.slice(-4) : 'pending'
+      const lnk = p.arc_tx_hash ? `onclick="window.open('https://testnet.arcscan.app/tx/${p.arc_tx_hash}')"` : ''
+      const sta = p.status === 'confirmed' ? '<div class="tx-status-dot">Confirmed</div>' : '<div style="color:var(--amber);font-size:11px">Pending</div>'
+      return `<tr><td><div class="tx-type"><div class="tx-icon in"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M7 1v8M3 6l4 4 4-4"/></svg></div>Nanopayment</div></td><td><div class="tx-hash" ${lnk}>${h} <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" style="margin-left:2px"><path d="M2 8L8 2M4 2h4v4"/></svg></div></td><td><span class="tx-chain">Arc</span></td><td><div class="tx-time">${timeSince(new Date(p.created_at))}</div></td><td>${sta}</td><td><div class="tx-amount-pos">+$${parseFloat(p.amount_usdc).toFixed(4)}</div></td></tr>`
+    }).join('')
+    document.getElementById('history-content').innerHTML = `<table class="tx-table"><thead><tr><th>Type</th><th>Tx Hash</th><th>Chain</th><th>Time</th><th>Status</th><th>Amount</th></tr></thead><tbody>${rows}</tbody></table>`
+  } catch(e) {}
+}
+
+async function fetchAgentLog() {
+  if (!liveStreamId) { document.getElementById('agent-log').innerHTML = '<div style="font-size:13px;color:var(--g3);padding:8px 0">No stream active yet.</div>'; return }
+  try {
+    const j = await (await fetch(API+'/api/v1/agent-log?streamId='+liveStreamId+'&limit=4')).json()
+    if (!j.success || !j.data?.length) { document.getElementById('agent-log').innerHTML = '<div style="font-size:13px;color:var(--g3)">No agent activity yet.</div>'; return }
+    document.getElementById('agent-log').innerHTML = j.data.map(e => {
+      const icon = e.action === 'pause'
+        ? '<svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor" style="color:var(--amber)"><rect x="2" y="2" width="3" height="8" rx="1"/><rect x="7" y="2" width="3" height="8" rx="1"/></svg>'
+        : '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="var(--green)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6L5 9L10 3"/></svg>'
+      return `<div class="agent-line"><div class="al-time">${new Date(e.created_at).toLocaleTimeString()}</div><div style="flex-shrink:0">${icon}</div><div class="al-text">${e.reason||e.action} · score <em>${parseFloat(e.activity_score||0).toFixed(2)}</em></div></div>`
+    }).join('')
+  } catch(e) {}
+}
+
+async function fetchEmployerStreams() {
+  if (psUser.role !== 'employer') return
+  try {
+    const wb = await (await fetch(API+'/api/v1/wallets/'+psUser.id)).json()
+    if (wb.success) document.getElementById('emp-float').textContent = '$'+parseFloat(wb.data.balance_usdc||0).toFixed(2)
+
+    const j = await (await fetch(API+'/api/v1/streams?employerId='+psUser.id)).json()
+    if (!j.success || !j.data?.length) {
+      document.getElementById('emp-streams').textContent = '0'
+      document.getElementById('emp-streams-sub').textContent = 'No streams yet'
+      document.getElementById('emp-paid').textContent = '$0.00'
+      document.getElementById('emp-streams-list').innerHTML = '<div class="empty-state"><h4>No streams yet</h4><p>Create your first salary stream above to start paying workers by the second.</p></div>'
+      return
+    }
+    const active = j.data.filter(s=>s.status==='active').length
+    const paid   = j.data.reduce((sum,s)=>sum+parseFloat(s.total_paid||0),0)
+    document.getElementById('emp-streams').textContent     = active
+    document.getElementById('emp-streams-sub').textContent = active + ' streaming now'
+    document.getElementById('emp-paid').textContent        = '$'+paid.toFixed(2)
+    const colors = ['linear-gradient(135deg,#C87A10,#E8931A)','linear-gradient(135deg,#10B981,#34D399)','linear-gradient(135deg,#3B82F6,#60A5FA)','linear-gradient(135deg,#8B5CF6,#A78BFA)']
+    document.getElementById('emp-streams-list').innerHTML = j.data.map((s,i) => {
+      const sc  = s.status==='active'?'active':s.status==='paused'?'paused':'stopped'
+      const st  = s.status==='active'?'<div class="stream-dot"></div>Streaming':s.status
+      const ini = (s.worker_id||'?')[0].toUpperCase()
+      return `<div class="worker-row"><div class="w-avatar" style="background:${colors[i%colors.length]}">${ini}</div><div><div class="w-name" style="font-family:var(--ff-mono);font-size:11.5px">${s.worker_id}</div><div class="w-role">Started ${timeSince(new Date(s.started_at))}</div></div><div class="w-rate">$${parseFloat(s.rate_per_hour).toFixed(2)}/hr</div><div class="w-paid">$${parseFloat(s.total_paid||0).toFixed(2)} paid</div><div class="w-status ${sc}">${st}</div></div>`
+    }).join('')
+  } catch(e) { console.warn('[API] fetchEmployerStreams:', e.message) }
+}
+
+/* ── CREATE STREAM ── */
+async function createStream() {
+  const addr = document.getElementById('stream-worker-addr').value.trim()
+  const rate = parseFloat(document.getElementById('stream-rate').value)
+  const msg  = document.getElementById('stream-msg')
+  if (!addr) return msg.textContent = 'Enter worker wallet address', void(msg.style.color='var(--red)')
+  if (!rate||rate<=0) return msg.textContent = 'Enter a valid hourly rate', void(msg.style.color='var(--red)')
+  msg.textContent = 'Creating stream...'; msg.style.color = 'var(--g2)'
+  try {
+    const j = await (await fetch(API+'/api/v1/streams', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ employerId: psUser.id, workerAddress: addr, ratePerHour: rate }),
+    })).json()
+    if (j.success) {
+      msg.textContent = 'Stream created! First payment in 60 seconds.'; msg.style.color='var(--green)'
+      document.getElementById('stream-worker-addr').value = ''
+      document.getElementById('stream-rate').value = ''
+      showToast({title:'Stream Created', sub:`$${rate.toFixed(2)}/hr · payments every 60s on Arc`, amount:'', type:'pay'})
+      pushNotif({title:'New stream created', sub:`Paying ${addr.slice(0,8)}... at $${rate.toFixed(2)}/hr`, type:'pay'})
+      setTimeout(fetchEmployerStreams, 2000)
+    } else { msg.textContent = j.error||'Failed'; msg.style.color='var(--red)' }
+  } catch(e) { msg.textContent = 'Connection error'; msg.style.color='var(--red)' }
+}
+
+/* ── WITHDRAW ── */
+let selChain = 'Arc'
+function openWithdraw() {
+  document.getElementById('modal-overlay').classList.add('open')
+  showModalForm()
+  document.getElementById('wd-amount').value = Math.min(liveBalance, 10).toFixed(2)
+  document.getElementById('ms-amount').textContent = '$' + Math.min(liveBalance,10).toFixed(2) + ' USDC'
+}
+function closeWithdraw() { document.getElementById('modal-overlay').classList.remove('open'); setTimeout(showModalForm,300) }
+function showModalForm() {
+  document.getElementById('modal-form').style.display = ''
+  document.getElementById('modal-processing').style.display = 'none'
+  document.getElementById('modal-success').style.display = 'none'
+}
+function selectChain(el,n) {
+  document.querySelectorAll('.chain-opt').forEach(c=>c.classList.remove('selected'))
+  el.classList.add('selected'); selChain=n
+  document.getElementById('ms-chain').textContent = n+' Testnet'
+  document.getElementById('ms-time').textContent  = n==='Arc'?'Instant (same chain)':'8 to 20 seconds via CCTP'
+}
+document.getElementById('wd-amount').addEventListener('input',function(){
+  document.getElementById('ms-amount').textContent = '$'+(parseFloat(this.value)||0).toFixed(2)+' USDC'
+})
+const pLines = ['Signing with Circle developer wallet...','Broadcasting to Arc testnet...','CCTP burn confirmed on source chain...','Attestation received from Circle...','Minting USDC on destination chain...','Transaction finalized &#10003;']
+function doWithdraw() {
+  const amt = parseFloat(document.getElementById('wd-amount').value||0)
+  if (amt<=0||amt>liveBalance) return
+  document.getElementById('modal-form').style.display = 'none'
+  document.getElementById('modal-processing').style.display = ''
+  const log = document.getElementById('proc-log'); log.innerHTML = ''; let i=0; const t0=Date.now()
+  const iv = setInterval(()=>{
+    log.innerHTML += `<div style="margin-bottom:4px"><span style="color:var(--green)">›</span> ${pLines[i]}</div>`
+    log.scrollTop = log.scrollHeight; i++
+    if(i>=pLines.length){ clearInterval(iv); setTimeout(()=>showSuccess(((Date.now()-t0)/1000).toFixed(2),amt),400) }
+  }, selChain==='Arc'?300:600)
 }
 function randHex(n){return Array.from({length:n},()=>Math.floor(Math.random()*16).toString(16)).join('')}
-function showSuccess(elapsed){
+function showSuccess(elapsed,amt) {
   document.getElementById('modal-processing').style.display='none'
   document.getElementById('modal-success').style.display=''
-  document.getElementById('s-time').textContent=elapsed+'s'
-  const hash='0x'+randHex(8)+'...'+randHex(4)
-  document.getElementById('s-hash').textContent=hash+' on Arc Testnet'
-  const amt=parseFloat(document.getElementById('wd-amount').value||200)
-  showToast({title:'Withdrawal Confirmed',sub:'Sent to '+selChain+' via CCTP · '+elapsed+'s',amount:'-$'+amt.toFixed(2),type:'wd'})
-  pushNotif({title:'Withdrawal settled on Arc',sub:'$'+amt.toFixed(2)+' USDC → '+selChain+' · '+elapsed+'s · '+hash,type:'wd'})
+  document.getElementById('s-time').textContent = elapsed+'s'
+  const hash = '0x'+randHex(8)+'...'+randHex(4)
+  document.getElementById('s-hash').textContent = hash+' on Arc Testnet'
+  showToast({title:'Withdrawal Confirmed',sub:`Sent to ${selChain} via CCTP · ${elapsed}s`,amount:'-$'+parseFloat(amt).toFixed(2),type:'wd'})
+  pushNotif({title:'Withdrawal settled',sub:`$${parseFloat(amt).toFixed(2)} USDC sent to ${selChain} · ${elapsed}s`,type:'wd'})
+  setTimeout(fetchWalletBalance, 3000)
 }
-document.getElementById('wd-amount').addEventListener('input',function(){document.getElementById('ms-amount').textContent='$'+(parseFloat(this.value)||0).toFixed(2)+' USDC'})
 
-/* TOASTS */
-function showToast({title,sub,amount,type='pay'}){
-  const id='t'+(++toastCnt);const el=document.createElement('div');el.className='toast';el.id=id
-  const neonOrViolet=amount&&amount.startsWith('-')?'var(--amber-lt)':'var(--green)'
-  const iconSvg=type==='pay'
+/* ── TOASTS ── */
+function showToast({title,sub,amount,type='pay'}) {
+  const el = document.createElement('div'); el.className='toast'
+  const ac = amount&&amount.startsWith('-')?'var(--amber)':'var(--green)'
+  const sv = type==='pay'
     ?`<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--green)" stroke-width="1.5" stroke-linecap="round"><path d="M8 1v8M4 6l4 4 4-4"/></svg>`
     :type==='wd'
-    ?`<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--amber-lt)" stroke-width="1.5" stroke-linecap="round"><circle cx="5" cy="8" r="2.5"/><circle cx="11" cy="8" r="2.5"/><path d="M7.5 8h1"/></svg>`
+    ?`<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--amber)" stroke-width="1.5" stroke-linecap="round"><circle cx="5" cy="8" r="2.5"/><circle cx="11" cy="8" r="2.5"/><path d="M7.5 8h1"/></svg>`
     :`<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--blue)" stroke-width="1.5" stroke-linecap="round"><circle cx="8" cy="8" r="6"/><path d="M5 8h4"/></svg>`
-  el.innerHTML=`<div class="toast-icon-wrap"><div class="toast-icon ${type}">${iconSvg}</div><div class="toast-ring"></div></div><div class="toast-body"><div class="toast-title">${title}</div><div class="toast-sub">${sub}</div></div>${amount?`<div class="toast-amount" style="color:${neonOrViolet}">${amount}</div>`:''}`
+  el.innerHTML=`<div class="toast-icon-wrap"><div class="toast-icon ${type}">${sv}</div><div class="toast-ring"></div></div><div class="toast-body"><div class="toast-title">${title}</div><div class="toast-sub">${sub}</div></div>${amount?`<div class="toast-amount" style="color:${ac}">${amount}</div>`:''}`
   document.getElementById('toast-container').appendChild(el)
   setTimeout(()=>{el.classList.add('removing');setTimeout(()=>el.remove(),320)},5000)
 }
 
-/* PUSH NOTIFICATIONS */
-function pushNotif({title,sub,type='pay'}){
-  unread++;document.getElementById('bell-badge').style.display='block'
-  notifications.unshift({id:Date.now(),title,sub,type,time:'Just now',unread:true})
-  renderNotifs()
+/* ── PUSH NOTIFS ── */
+const svgM = {
+  pay:`<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--green)" stroke-width="1.4" stroke-linecap="round"><path d="M8 1v8M4 6l4 4 4-4"/></svg>`,
+  wd:`<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--amber)" stroke-width="1.4" stroke-linecap="round"><circle cx="5" cy="8" r="2.5"/><circle cx="11" cy="8" r="2.5"/><path d="M7.5 8h1"/></svg>`,
+  agent:`<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--amber)" stroke-width="1.4" stroke-linecap="round"><circle cx="8" cy="8" r="6"/><path d="M8 5v4M8 10.5v.5"/></svg>`,
+  arc:`<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--blue)" stroke-width="1.4" stroke-linecap="round"><circle cx="8" cy="8" r="6"/><path d="M5 8h4"/></svg>`,
 }
-function renderNotifs(){
-  const list=document.getElementById('notif-list')
-  if(!notifications.length){list.innerHTML='<div style="padding:32px;text-align:center;color:var(--g3);font-size:13px">No notifications yet</div>';return}
-  const iconMap={pay:'var(--green)',wd:'var(--amber-lt)',agent:'var(--amber)',arc:'var(--blue)'}
-  const svgMap={
-    pay:`<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--green)" stroke-width="1.4" stroke-linecap="round"><path d="M8 1v8M4 6l4 4 4-4"/></svg>`,
-    wd:`<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--amber-lt)" stroke-width="1.4" stroke-linecap="round"><circle cx="5" cy="8" r="2.5"/><circle cx="11" cy="8" r="2.5"/><path d="M7.5 8h1"/></svg>`,
-    agent:`<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--amber)" stroke-width="1.4" stroke-linecap="round"><circle cx="8" cy="8" r="6"/><path d="M8 5v4M8 10.5v.5"/></svg>`,
-    arc:`<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--blue)" stroke-width="1.4" stroke-linecap="round"><circle cx="8" cy="8" r="6"/><path d="M5 8h4"/></svg>`
-  }
-  list.innerHTML=notifications.map(n=>`<div class="notif-item ${n.unread?'unread':''}" onclick="markRead(${n.id})"><div class="notif-icon ${n.type}">${svgMap[n.type]||svgMap.arc}</div><div class="notif-body"><div class="notif-title">${n.title}</div><div class="notif-sub">${n.sub}</div></div><div class="notif-time">${n.time}</div></div>`).join('')
+function pushNotif({title,sub,type='pay'}) {
+  unread++; document.getElementById('bell-badge').style.display='block'
+  notifications.unshift({id:Date.now(),title,sub,type,time:'Just now',unread:true}); renderNotifs()
 }
-function markRead(id){notifications=notifications.map(n=>n.id===id?{...n,unread:false}:n);unread=notifications.filter(n=>n.unread).length;if(!unread)document.getElementById('bell-badge').style.display='none';renderNotifs()}
-function clearNotifs(){notifications=notifications.map(n=>({...n,unread:false}));unread=0;document.getElementById('bell-badge').style.display='none';renderNotifs()}
-
+function renderNotifs() {
+  const list = document.getElementById('notif-list')
+  if (!notifications.length) { list.innerHTML='<div style="padding:32px;text-align:center;color:var(--g3);font-size:13px">No notifications yet</div>'; return }
+  list.innerHTML=notifications.map(n=>`<div class="notif-item ${n.unread?'unread':''}" onclick="markRead(${n.id})"><div class="notif-icon ${n.type}">${svgM[n.type]||svgM.arc}</div><div class="notif-body"><div class="notif-title">${n.title}</div><div class="notif-sub">${n.sub}</div></div><div class="notif-time">${n.time}</div></div>`).join('')
+}
+function markRead(id) { notifications=notifications.map(n=>n.id===id?{...n,unread:false}:n); unread=notifications.filter(n=>n.unread).length; if(!unread)document.getElementById('bell-badge').style.display='none'; renderNotifs() }
+function clearNotifs() { notifications=notifications.map(n=>({...n,unread:false})); unread=0; document.getElementById('bell-badge').style.display='none'; renderNotifs() }
 let notifOpen=false
-function toggleNotifPanel(){notifOpen=!notifOpen;document.getElementById('notif-panel').classList.toggle('open',notifOpen);if(notifOpen)clearNotifs()}
-document.addEventListener('click',e=>{if(notifOpen&&!e.target.closest('#notif-panel')&&!e.target.closest('.bell-btn')){notifOpen=false;document.getElementById('notif-panel').classList.remove('open')}})
+function toggleNotifPanel() { notifOpen=!notifOpen; document.getElementById('notif-panel').classList.toggle('open',notifOpen); if(notifOpen)clearNotifs() }
+document.addEventListener('click',e=>{ if(notifOpen&&!e.target.closest('#notif-panel')&&!e.target.closest('.bell-btn')){notifOpen=false;document.getElementById('notif-panel').classList.remove('open')} })
 
-/* AUTO EVENTS */
-function fireNanopay(){
-  const earned=(RATE*60).toFixed(4),aed=(parseFloat(earned)*AED).toFixed(4)
-  showToast({title:'Nanopayment Received',sub:'Arc testnet · Confirmed in 480ms',amount:'+$'+earned,type:'pay'})
-  pushNotif({title:'Nanopayment confirmed on Arc',sub:'+$'+earned+' USDC (AED '+aed+') · stream confirmed · employer → worker',type:'pay'})
+/* ── VIEW SWITCHING ── */
+function showView(name,tabEl) {
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'))
+  document.getElementById('view-'+name).classList.add('active')
+  if (tabEl) { document.querySelectorAll('.tb-tab').forEach(t=>t.classList.remove('active')); tabEl.classList.add('active') }
+  if (name==='history')  fetchPayouts()
+  if (name==='employer') fetchEmployerStreams()
 }
-setTimeout(fireNanopay,5000)
-setInterval(fireNanopay,60000)
+function setNavActive(el) { if(activeNav)activeNav.classList.remove('active'); el.classList.add('active'); activeNav=el }
+function setMobActive(el) { document.querySelectorAll('.mob-nav-item').forEach(b=>b.classList.remove('active')); el.classList.add('active') }
 
-setTimeout(()=>{
-  showToast({title:'AI Agent: Stream paused',sub:'Activity score 0.18 below threshold',amount:'PAUSED',type:'arc'})
-  pushNotif({title:'AI Agent paused stream',sub:'Activity score 0.18 below threshold (0.25) · Clockify API · Will resume when activity recovers',type:'agent'})
-},35000)
-
-setTimeout(()=>{
-  showToast({title:'AI Agent: Stream resumed',sub:'GitHub commit detected · Streaming restored',amount:'LIVE',type:'pay'})
-  pushNotif({title:'AI Agent resumed stream',sub:'Activity score 0.74 above threshold (0.60) · GitHub commit detected · Stream reactivated',type:'agent'})
-},90000)
-
-setTimeout(()=>{pushNotif({title:'Arc tx confirmed',sub:'0x4105a475...abe7 · Block #41935756 · Gas: $0.0004 · Status: COMPLETE',type:'arc'})},8000)
-
-/* CSV */
-function exportCSV(){
-  const rows=[['Type','Tx Hash','Chain','Time','Status','USDC','AED'],['Nanopayment','0x4105...abe7','Arc','2 min ago','Confirmed','+0.126057','+0.46'],['Nanopayment','0x79d6...4036','Arc','4 min ago','Confirmed','+0.263651','+0.97'],['Nanopayment','0x058b...d8ec','Arc','6 min ago','Confirmed','+0.283173','+1.04'],['Withdrawal','0x4b9e...a182','Ethereum','48 min ago','Confirmed','-200.000000','-734.50'],['CCTP Bridge','0x2a7c...e401','Polygon','2h ago','Confirmed','-85.500000','-313.99']]
-  const blob=new Blob([rows.map(r=>r.map(c=>'"'+c+'"').join(',')).join('\n')],{type:'text/csv'})
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='paystream-'+new Date().toISOString().slice(0,10)+'.csv';a.click()
-  showToast({title:'Report Downloaded',sub:'paystream.csv saved to your downloads',amount:'',type:'arc'})
+/* ── CSV EXPORT ── */
+async function exportCSV() {
+  let rows=[['Type','Tx Hash','Chain','Time','Status','USDC','AED']]
+  if (liveStreamId) {
+    try {
+      const j = await (await fetch(API+'/api/v1/payouts?streamId='+liveStreamId+'&limit=100')).json()
+      if (j.success) j.data.forEach(p => rows.push(['Nanopayment',p.arc_tx_hash||'pending','Arc',p.created_at,p.status,'+'+parseFloat(p.amount_usdc).toFixed(6),'+'+(parseFloat(p.amount_usdc)*AED).toFixed(4)]))
+    } catch(e) {}
+  }
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([rows.map(r=>r.map(c=>'"'+c+'"').join(',')).join('\n')],{type:'text/csv'})); a.download='paystream-'+new Date().toISOString().slice(0,10)+'.csv'; a.click()
+  showToast({title:'Report Downloaded',sub:'paystream.csv saved',amount:'',type:'arc'})
 }
 
-function setMobileActive(el){
-  document.querySelectorAll('.mob-nav-item').forEach(b=>b.classList.remove('active'))
-  el.classList.add('active')
+/* ── CHECK NEW PAYOUTS FOR TOAST ── */
+async function checkNewPayouts() {
+  if (!liveStreamId) return
+  try {
+    const j = await (await fetch(API+'/api/v1/payouts?streamId='+liveStreamId+'&limit=5')).json()
+    if (j.success&&j.data?.length) {
+      if (lastPayoutCount>0&&j.data.length>lastPayoutCount) {
+        const p=j.data[0]
+        showToast({title:'Nanopayment Received',sub:'Arc testnet · Confirmed · ERC-8183',amount:'+$'+parseFloat(p.amount_usdc).toFixed(4),type:'pay'})
+        pushNotif({title:'Nanopayment confirmed on Arc',sub:'+$'+parseFloat(p.amount_usdc).toFixed(4)+' USDC · '+(p.arc_tx_hash||'').slice(0,12)+'...',type:'pay'})
+      }
+      lastPayoutCount=j.data.length
+    }
+  } catch(e) {}
 }
 
+/* ── UTILS ── */
+function timeSince(d) { const s=Math.floor((Date.now()-d)/1000); if(s<60)return s+'s ago'; if(s<3600)return Math.floor(s/60)+'m ago'; if(s<86400)return Math.floor(s/3600)+'h ago'; return Math.floor(s/86400)+'d ago' }
 
-    /* ========================================================
-       REAL BACKEND WIRING
-       Fetches live data from Render backend every 5 seconds
-    ======================================================== */
-    const API        = 'https://paystream-9xtb.onrender.com'
-    const STREAM_ID  = 'e5858b46-9604-4ec8-aed2-651e92fb9838'
-    const WORKER_ID  = 'worker_001'
-    const EMPLOYER_ID = 'employer_001'
-    const AED_RATE   = 3.6725
-
-    let liveEarned    = 0
-    let liveBalance   = 0
-    let liveRate      = 18.50
-    let liveStatus    = 'active'
-    let liveTotalPaid = 0
-    let lastFetch     = Date.now()
-
-    // Smooth real-time counter between API fetches
-    function smoothTick() {
-      if (liveStatus === 'active') {
-        const elapsed = (Date.now() - lastFetch) / 1000
-        const projected = liveEarned + (elapsed * liveRate / 3600)
-        const aed = projected * AED_RATE
-
-        const ea = document.getElementById('earn-amount')
-        const eae = document.getElementById('earn-aed')
-        const sb = document.getElementById('sb-bal')
-        const sa = document.getElementById('sb-aed')
-
-        if (ea) ea.textContent = '$' + projected.toFixed(6)
-        if (eae) eae.textContent = 'AED ' + aed.toFixed(2) + ' · 1 USD = 3.6725 AED'
-        if (sb) sb.textContent = '$' + (liveBalance + projected).toFixed(2)
-        if (sa) sa.textContent = 'AED ' + ((liveBalance + projected) * AED_RATE).toFixed(2)
-      }
-    }
-
-    // Fetch live stream earned amount
-    async function fetchEarned() {
-      try {
-        const res  = await fetch(API + '/api/v1/streams/' + STREAM_ID + '/earned')
-        const json = await res.json()
-        if (json.success) {
-          liveEarned  = parseFloat(json.data.earned) || 0
-          liveRate    = parseFloat(json.data.rate_per_hour) || 18.50
-          liveStatus  = json.data.status || 'active'
-          liveTotalPaid = parseFloat(json.data.total_paid) || 0
-          lastFetch   = Date.now()
-
-          // Update session time display
-          const st = document.getElementById('session-time')
-          if (st) st.textContent = new Date().toLocaleTimeString()
-
-          // Update rate per second
-          const rs = document.getElementById('rate-per-sec')
-          if (rs) rs.textContent = '$' + (liveRate / 3600).toFixed(7) + '/s'
-
-          // Update stream status badge
-          const liveBadge = document.querySelector('.earn-live')
-          if (liveBadge) {
-            liveBadge.innerHTML = liveStatus === 'active'
-              ? '<div class="stream-dot"></div>STREAMING LIVE'
-              : '<div style="width:6px;height:6px;border-radius:50%;background:var(--amber)"></div>PAUSED'
-          }
-        }
-      } catch(e) { console.warn('[API] fetchEarned failed:', e.message) }
-    }
-
-    // Fetch live worker wallet balance
-    async function fetchWorkerBalance() {
-      try {
-        const res  = await fetch(API + '/api/v1/wallets/' + WORKER_ID)
-        const json = await res.json()
-        if (json.success) {
-          liveBalance = parseFloat(json.data.balance_usdc) || 0
-
-          // Update gateway panel
-          const arcBal = document.querySelector('.gw-bal')
-          if (arcBal) arcBal.textContent = '$' + liveBalance.toFixed(2)
-
-          // Update total earned stat
-          const totalEl = document.querySelector('.sm-val.neon')
-          if (totalEl) totalEl.textContent = '$' + (liveBalance + liveTotalPaid).toFixed(2)
-        }
-      } catch(e) { console.warn('[API] fetchWorkerBalance failed:', e.message) }
-    }
-
-    // Fetch employer wallet balance and update treasury
-    async function fetchEmployerBalance() {
-      try {
-        const res  = await fetch(API + '/api/v1/wallets/' + EMPLOYER_ID)
-        const json = await res.json()
-        if (json.success) {
-          const bal = parseFloat(json.data.balance_usdc) || 0
-          const runwayDays = (bal / (18.50 * 24)).toFixed(1)
-
-          // Update treasury bar
-          const floatEls = document.querySelectorAll('.tb-stat-val')
-          if (floatEls[0]) floatEls[0].textContent = '$' + bal.toFixed(2)
-          if (floatEls[2]) floatEls[2].style.color = bal < 10 ? 'var(--red)' : 'var(--amber)'
-
-          // Update employer stat card
-          const empStat = document.querySelector('#view-employer .sm-val.neon')
-          if (empStat) empStat.textContent = '$' + bal.toFixed(2)
-        }
-      } catch(e) { console.warn('[API] fetchEmployerBalance failed:', e.message) }
-    }
-
-    // Fetch real payouts and update history table
-    async function fetchPayouts() {
-      try {
-        const res  = await fetch(API + '/api/v1/payouts?streamId=' + STREAM_ID + '&limit=10')
-        const json = await res.json()
-        if (json.success && json.data.length) {
-          const tbody = document.querySelector('.tx-table tbody')
-          if (!tbody) return
-
-          const rows = json.data.slice(0, 6).map(p => {
-            const shortHash = p.arc_tx_hash
-              ? p.arc_tx_hash.slice(0,6) + '...' + p.arc_tx_hash.slice(-4)
-              : 'pending'
-            const arcLink = p.arc_tx_hash
-              ? `onclick="window.open('https://testnet.arcscan.app/tx/${p.arc_tx_hash}')" style="cursor:pointer"`
-              : ''
-            const timeAgo = p.created_at
-              ? timeSince(new Date(p.created_at))
-              : 'just now'
-            const statusDot = p.status === 'confirmed'
-              ? '<div class="tx-status-dot">Confirmed</div>'
-              : '<div style="color:var(--amber);font-size:11px">Pending</div>'
-
-            return `<tr>
-              <td><div class="tx-type"><div class="tx-icon in"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M7 1v8M3 6l4 4 4-4"/></svg></div>Nanopayment</div></td>
-              <td><div class="tx-hash" ${arcLink}>${shortHash} <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" style="margin-left:2px"><path d="M2 8L8 2M4 2h4v4"/></svg></div></td>
-              <td><span class="tx-chain">Arc</span></td>
-              <td><div class="tx-time">${timeAgo}</div></td>
-              <td>${statusDot}</td>
-              <td><div class="tx-amount-pos">+$${parseFloat(p.amount_usdc).toFixed(4)}</div></td>
-            </tr>`
-          }).join('')
-
-          tbody.innerHTML = rows
-
-          // Update total paid stat card
-          const totalPaidEl = document.querySelectorAll('.sm-val')[1]
-          if (totalPaidEl) totalPaidEl.textContent = '$' + liveTotalPaid.toFixed(2)
-        }
-      } catch(e) { console.warn('[API] fetchPayouts failed:', e.message) }
-    }
-
-    // Fetch agent log and update the AI monitor panel
-    async function fetchAgentLog() {
-      try {
-        const res  = await fetch(API + '/api/v1/agent-log?streamId=' + STREAM_ID + '&limit=4')
-        const json = await res.json()
-        if (json.success && json.data.length) {
-          const logEl = document.getElementById('agent-log')
-          if (!logEl) return
-          logEl.innerHTML = json.data.map(entry => {
-            const t = new Date(entry.created_at).toLocaleTimeString()
-            const icon = entry.action === 'pause'
-              ? '<svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor" style="color:var(--amber)"><rect x="2" y="2" width="3" height="8" rx="1"/><rect x="7" y="2" width="3" height="8" rx="1"/></svg>'
-              : entry.action === 'resume'
-              ? '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="var(--green)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6L5 9L10 3"/></svg>'
-              : '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="var(--green)" stroke-width="1.4" stroke-linecap="round"><circle cx="6" cy="6" r="5"/><path d="M6 4v3M6 8v.5"/></svg>'
-            return `<div class="agent-line">
-              <div class="al-time">${t}</div>
-              <div style="flex-shrink:0">${icon}</div>
-              <div class="al-text">${entry.reason || entry.action} · score <em>${parseFloat(entry.activity_score||0).toFixed(2)}</em></div>
-            </div>`
-          }).join('')
-        }
-      } catch(e) { console.warn('[API] fetchAgentLog failed:', e.message) }
-    }
-
-    function timeSince(date) {
-      const s = Math.floor((Date.now() - date) / 1000)
-      if (s < 60)  return s + 's ago'
-      if (s < 3600) return Math.floor(s/60) + 'm ago'
-      return Math.floor(s/3600) + 'h ago'
-    }
-
-    // Boot: fetch all data immediately
-    async function bootLiveData() {
-      await Promise.allSettled([
-        fetchEarned(),
-        fetchWorkerBalance(),
-        fetchEmployerBalance(),
-        fetchPayouts(),
-        fetchAgentLog(),
-      ])
-      console.log('[PayStream] Live data loaded from backend')
-    }
-
-    // Poll every 5 seconds for earned amount
-    // Poll every 15 seconds for balances and history
-    bootLiveData()
-    setInterval(fetchEarned, 5000)
-    setInterval(smoothTick, 80)
-    setInterval(fetchWorkerBalance,   15000)
-    setInterval(fetchEmployerBalance, 15000)
-    setInterval(fetchPayouts,         15000)
-    setInterval(fetchAgentLog,        30000)
-
-
-    /* ========================================================
-       AUTH GUARD + REAL USER SESSION
-       Reads JWT from localStorage, redirects to login if missing
-    ======================================================== */
-    const psToken  = localStorage.getItem('ps_token')
-    const psUser   = JSON.parse(localStorage.getItem('ps_user')  || 'null')
-    const psWallet = JSON.parse(localStorage.getItem('ps_wallet') || 'null')
-
-    // Redirect to login if not authenticated
-    if (!psToken || !psUser) {
-      window.location.href = 'login.html'
-    }
-
-    // Populate UI with real user data
-    document.addEventListener('DOMContentLoaded', () => {
-      if (!psUser) return
-
-      // Sidebar name and role
-      const sbName = document.querySelector('.sb-name')
-      const sbRole = document.querySelector('.sb-role')
-      const sbAvatar = document.querySelector('.sb-avatar')
-      if (sbName) sbName.textContent = psUser.name || 'User'
-      if (sbRole) sbRole.textContent = psUser.role === 'employer' ? 'Employer Account' : 'Worker Account'
-      if (sbAvatar) sbAvatar.textContent = (psUser.name || 'U').split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2)
-
-      // Topbar wallet address
-      const walletEl = document.querySelector('.tb-wallet')
-      if (walletEl && psWallet?.address) {
-        walletEl.textContent = psWallet.address.slice(0,6) + '...' + psWallet.address.slice(-4)
-      }
-
-      // Show employer or worker view based on role
-      if (psUser.role === 'employer') {
-        // Switch to employer view by default
-        const tabs = document.querySelectorAll('.tb-tab')
-        tabs.forEach(t => t.classList.remove('active'))
-        tabs[1]?.classList.add('active')
-        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'))
-        document.getElementById('view-employer')?.classList.add('active')
-      }
-    })
-
-    // Logout function
-    function logout() {
-      localStorage.removeItem('ps_token')
-      localStorage.removeItem('ps_user')
-      localStorage.removeItem('ps_wallet')
-      window.location.href = 'login.html'
-    }
-
-    // Add auth header to all API calls
-    const _origFetch = window.fetch
-    window.fetch = (url, opts = {}) => {
-      if (url.toString().includes('paystream-9xtb.onrender.com') && psToken) {
-        opts.headers = { ...(opts.headers || {}), 'Authorization': 'Bearer ' + psToken }
-      }
-      return _origFetch(url, opts)
-    }
-
+/* ── BOOT ── */
+activeNav = document.getElementById('nav-worker')
+initUI()
+Promise.allSettled([fetchWalletBalance(),fetchMyStream(),fetchEmployerStreams()]).then(()=>{fetchPayouts();fetchAgentLog()})
+setInterval(fetchEarned,         5000)
+setInterval(fetchWalletBalance, 15000)
+setInterval(fetchPayouts,       15000)
+setInterval(fetchAgentLog,      30000)
+setInterval(fetchMyStream,      60000)
+setInterval(checkNewPayouts,    10000)
+setInterval(fetchEmployerStreams,30000)
 </script>
-
-<!-- MOBILE BOTTOM NAVIGATION -->
-<div class="mobile-nav">
-  <button class="mob-nav-item active" id="mn-worker" onclick="switchView('worker',null);setMobileActive(this)">
-    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-      <circle cx="10" cy="10" r="3.5"/>
-      <circle cx="10" cy="10" r="8" opacity=".35"/>
-      <line x1="2" y1="10" x2="3.5" y2="10" opacity=".5"/>
-      <line x1="16.5" y1="10" x2="18" y2="10" opacity=".5"/>
-    </svg>
-    Earn
-  </button>
-  <button class="mob-nav-item" id="mn-employer" onclick="switchView('employer',null);setMobileActive(this)">
-    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-      <rect x="3" y="8" width="14" height="9" rx="1.5"/>
-      <path d="M7 8V6a3 3 0 0 1 6 0v2"/>
-    </svg>
-    Employer
-  </button>
-  <button class="mob-nav-item" id="mn-history" onclick="switchView('history',null);setMobileActive(this)">
-    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-      <rect x="3" y="4" width="14" height="12" rx="2"/>
-      <line x1="7" y1="9" x2="13" y2="9"/>
-      <line x1="7" y1="13" x2="11" y2="13"/>
-    </svg>
-    History
-  </button>
-  <button class="mob-nav-item" onclick="openWithdraw()">
-    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-      <path d="M10 3v9M6 9l4 4 4-4"/>
-      <line x1="3" y1="17" x2="17" y2="17" opacity=".6"/>
-    </svg>
-    Withdraw
-  </button>
-  <button class="mob-nav-item" onclick="toggleNotifPanel()">
-    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-      <path d="M10 3a4 4 0 0 1 4 4c0 3.5 1.5 4.5 1.5 4.5h-11S6 10.5 6 7a4 4 0 0 1 4-4z"/>
-      <path d="M11.7 16a2 2 0 0 1-3.4 0"/>
-    </svg>
-    Alerts
-  </button>
-</div>
-
 </body>
 </html>
