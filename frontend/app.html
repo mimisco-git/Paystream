@@ -343,6 +343,21 @@
           <div class="earn-sub-item">Per second: <span id="rate-per-sec">$0.0051389</span></div>
           <div class="earn-sub-item">Status: <span id="stream-status-label">checking...</span></div>
         </div>
+        <!-- STREAM HEALTH -->
+        <div id="stream-health" style="display:none;background:rgba(255,255,255,.03);border:.5px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:20px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">
+            <div style="font-size:11px;font-weight:600;color:var(--g2);letter-spacing:.04em;text-transform:uppercase">Stream Health</div>
+            <div style="font-size:11.5px;font-weight:600" id="health-label">Checking...</div>
+          </div>
+          <div style="height:4px;background:var(--g4);border-radius:3px;overflow:hidden">
+            <div id="health-fill" style="height:100%;border-radius:3px;transition:width 1s ease,background .5s ease;width:0%"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:5px;font-size:10px;color:var(--g3)">
+            <span>Employer float</span>
+            <span id="health-hint">Loading...</span>
+          </div>
+        </div>
+
         <div class="earn-actions">
           <button class="btn-primary" onclick="openWithdraw()">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M7 1v8M3 6l4 4 4-4"/><line x1="1" y1="13" x2="13" y2="13"/></svg>
@@ -367,18 +382,46 @@
             View on Arcscan <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M2 8L8 2M4 2h4v4"/></svg>
           </a>
         </div>
-        <div class="gateway-card">
-          <div class="gw-label">Circle Gateway · Unified Balance</div>
-          <div class="gw-chain-row">
-            <div class="gw-chain"><svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5" fill="#C87A10"/></svg>Arc<div class="gw-bal" id="gw-arc">$0.00</div></div>
-            <div class="gw-chain"><svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5" fill="#627EEA"/></svg>ETH<div class="gw-bal">$0.00</div></div>
-            <div class="gw-chain"><svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5" fill="#8247E5"/></svg>Polygon<div class="gw-bal">$0.00</div></div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="gateway-card">
+            <div class="gw-label">Circle Gateway · Unified Balance</div>
+            <div class="gw-chain-row">
+              <div class="gw-chain"><svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5" fill="#C87A10"/></svg>Arc<div class="gw-bal" id="gw-arc">$0.00</div></div>
+              <div class="gw-chain"><svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5" fill="#627EEA"/></svg>ETH<div class="gw-bal">$0.00</div></div>
+              <div class="gw-chain"><svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5" fill="#8247E5"/></svg>Polygon<div class="gw-bal">$0.00</div></div>
+            </div>
+            <div class="gw-unified">
+              <div class="gw-total-lbl">Total unified USDC balance</div>
+              <div class="gw-total-val" id="gw-total">$0.00</div>
+            </div>
           </div>
-          <div class="gw-unified">
-            <div class="gw-total-lbl">Total unified USDC balance</div>
-            <div class="gw-total-val" id="gw-total">$0.00</div>
+          <!-- WHO IS PAYING -->
+          <div id="employer-info-card" style="display:none;background:linear-gradient(135deg,rgba(16,185,129,.05),rgba(200,122,16,.03));border:.5px solid rgba(16,185,129,.15);border-radius:14px;padding:18px 20px;backdrop-filter:blur(12px)">
+            <div style="font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--green);margin-bottom:12px">Paid by</div>
+            <div style="display:flex;align-items:center;gap:12px">
+              <div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--amber),var(--amber-lt));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;color:#000;flex-shrink:0" id="emp-avatar-worker">?</div>
+              <div>
+                <div style="font-weight:700;font-size:15px;margin-bottom:2px" id="emp-name-worker">Loading...</div>
+                <div style="font-size:11px;color:var(--g2);font-family:var(--ff-mono)" id="emp-addr-worker">0x...</div>
+              </div>
+            </div>
+            <div style="margin-top:12px;padding-top:12px;border-top:.5px solid var(--border);display:flex;gap:20px;flex-wrap:wrap">
+              <div><div style="font-size:10.5px;color:var(--g3);margin-bottom:3px">Treasury float</div><div style="font-family:var(--ff-mono);font-size:13px;font-weight:700;color:var(--white)" id="emp-float-worker">$0.00</div></div>
+              <div><div style="font-size:10.5px;color:var(--g3);margin-bottom:3px">Runway</div><div style="font-family:var(--ff-mono);font-size:13px;font-weight:700" id="emp-runway-worker">—</div></div>
+              <div><div style="font-size:10.5px;color:var(--g3);margin-bottom:3px">Contract rate</div><div style="font-family:var(--ff-mono);font-size:13px;font-weight:700;color:var(--amber)" id="emp-rate-worker">$18.50/hr</div></div>
+            </div>
           </div>
         </div>
+      </div>
+
+      <!-- 7-DAY EARNINGS CHART -->
+      <div class="card">
+        <div class="card-title">7-Day Earnings</div>
+        <div class="card-sub">Daily USDC earned from active streams</div>
+        <div id="earnings-chart" style="height:120px;display:flex;align-items:flex-end;gap:6px;padding:0 4px">
+          <div class="loading-spin"><div class="spinner"></div>Loading chart...</div>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:8px;padding:0 4px" id="chart-labels"></div>
       </div>
 
       <div class="agent-panel">
@@ -397,9 +440,24 @@
       </div>
 
       <div class="grid-3">
-        <div class="stat-mini"><div class="sm-lbl">Treasury Float</div><div class="sm-val green" id="emp-float">$0.00</div><div class="sm-delta">Circle wallet on Arc</div></div>
+        <div class="stat-mini"><div class="sm-lbl">Treasury Float</div><div class="sm-val green" id="emp-float">$0.00</div><div class="sm-delta" id="emp-runway-lbl">Circle wallet on Arc</div></div>
         <div class="stat-mini"><div class="sm-lbl">Active Streams</div><div class="sm-val" id="emp-streams">0</div><div class="sm-delta" id="emp-streams-sub">No active streams</div></div>
-        <div class="stat-mini"><div class="sm-lbl">Total Paid Out</div><div class="sm-val amber" id="emp-paid">$0.00</div><div class="sm-delta">Confirmed on Arc</div></div>
+        <div class="stat-mini"><div class="sm-lbl">Total Paid Out</div><div class="sm-val amber" id="emp-paid">$0.00</div><div class="sm-delta" id="emp-workers-lbl">Confirmed on Arc</div></div>
+      </div>
+      <!-- FLOAT RUNWAY BAR -->
+      <div id="runway-bar-wrap" style="display:none;background:var(--glass);border:.5px solid var(--border);border-radius:12px;padding:16px 20px;backdrop-filter:blur(12px)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <div style="font-size:12.5px;font-weight:600;color:var(--g1)">Float Runway</div>
+          <div style="font-family:var(--ff-mono);font-size:13px;font-weight:700" id="runway-val">—</div>
+        </div>
+        <div style="height:6px;background:var(--g4);border-radius:4px;overflow:hidden">
+          <div id="runway-fill" style="height:100%;border-radius:4px;transition:width 1s ease,background .5s ease;width:0%"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:10.5px;color:var(--g3)">
+          <span>0 days</span>
+          <span id="runway-hint">Add USDC to extend runway</span>
+          <span>30 days</span>
+        </div>
       </div>
 
       <div class="deposit-card">
@@ -708,19 +766,46 @@ async function fetchEarned() {
 async function fetchWalletBalance() {
   try {
     const j = await (await fetch(API+'/api/v1/wallets/'+psUser.id)).json()
-    if (j.success) { liveBalance = parseFloat(j.data.balance_usdc)||0; updateSidebarBalance(liveBalance) }
+    if (j.success) {
+      liveBalance = parseFloat(j.data.balance_usdc)||0
+      updateSidebarBalance(liveBalance)
+      // Update employer float stat
+      const empFloat = document.getElementById('emp-float')
+      if (empFloat && psUser.role === 'employer') empFloat.textContent = '$'+liveBalance.toFixed(2)
+    }
   } catch(e) {}
 }
 
 async function fetchPayouts() {
   if (!liveStreamId) {
-    document.getElementById('history-content').innerHTML = '<div class="empty-state"><h4>No transactions yet</h4><p>Transactions appear here once a stream is active and payments confirm on Arc testnet.</p></div>'
+    document.getElementById('history-content').innerHTML = `<div class="empty-state">
+  <svg width="64" height="64" viewBox="0 0 64 64" fill="none" style="margin:0 auto 16px;display:block;opacity:.35">
+    <rect x="10" y="14" width="44" height="38" rx="4" stroke="#10B981" stroke-width="1.5"/>
+    <line x1="10" y1="24" x2="54" y2="24" stroke="#10B981" stroke-width="1.5"/>
+    <line x1="20" y1="34" x2="44" y2="34" stroke="#10B981" stroke-width="1.5" stroke-dasharray="3 2"/>
+    <line x1="20" y1="42" x2="36" y2="42" stroke="#10B981" stroke-width="1.5" stroke-dasharray="3 2"/>
+    <circle cx="48" cy="48" r="8" fill="#0F1117" stroke="#10B981" stroke-width="1.5"/>
+    <path d="M48 44v4l2 2" stroke="#10B981" stroke-width="1.4" stroke-linecap="round"/>
+  </svg>
+  <h4>No transactions yet</h4>
+  <p>Transactions appear here once a stream is active and payments confirm on Arc testnet.</p>
+</div>`
     return
   }
   try {
     const j = await (await fetch(API+'/api/v1/payouts?streamId='+liveStreamId+'&limit=20')).json()
     if (!j.success || !j.data?.length) {
-      document.getElementById('history-content').innerHTML = '<div class="empty-state"><h4>No payouts yet</h4><p>First payout will appear within 60 seconds of stream creation.</p></div>'
+      document.getElementById('history-content').innerHTML = `<div class="empty-state">
+  <svg width="64" height="64" viewBox="0 0 64 64" fill="none" style="margin:0 auto 16px;display:block;opacity:.35">
+    <circle cx="32" cy="28" r="14" stroke="#10B981" stroke-width="1.5"/>
+    <text x="32" y="33" text-anchor="middle" font-family="monospace" font-weight="700" font-size="16" fill="#10B981">$</text>
+    <line x1="32" y1="42" x2="32" y2="52" stroke="#10B981" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="22" y1="52" x2="42" y2="52" stroke="#10B981" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M20 20l-4-4M44 20l4-4" stroke="#10B981" stroke-width="1.3" stroke-linecap="round" opacity=".5"/>
+  </svg>
+  <h4>Waiting for first payout</h4>
+  <p>The cron fires every 60 seconds. Your first USDC nanopayment will appear here shortly.</p>
+</div>`
       return
     }
     document.getElementById('stat-tx-count').textContent = j.data.length + ' transactions'
@@ -759,13 +844,32 @@ async function fetchEmployerStreams() {
       document.getElementById('emp-streams').textContent = '0'
       document.getElementById('emp-streams-sub').textContent = 'No streams yet'
       document.getElementById('emp-paid').textContent = '$0.00'
-      document.getElementById('emp-streams-list').innerHTML = '<div class="empty-state"><h4>No streams yet</h4><p>Create your first salary stream above to start paying workers by the second.</p></div>'
+      document.getElementById('emp-streams-list').innerHTML = `<div class="empty-state">
+  <svg width="64" height="64" viewBox="0 0 64 64" fill="none" style="margin:0 auto 16px;display:block;opacity:.35">
+    <circle cx="32" cy="32" r="28" stroke="#C87A10" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <circle cx="20" cy="28" r="7" stroke="#C87A10" stroke-width="1.5"/>
+    <circle cx="44" cy="28" r="7" stroke="#C87A10" stroke-width="1.5"/>
+    <path d="M20 35c0 4 2.7 7 6 7" stroke="#C87A10" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M44 35c0 4-2.7 7-6 7" stroke="#C87A10" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="26" y1="42" x2="38" y2="42" stroke="#C87A10" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M28 20l-2-4M36 20l2-4" stroke="#C87A10" stroke-width="1.3" stroke-linecap="round" opacity=".5"/>
+  </svg>
+  <h4>No streams yet</h4>
+  <p>Create your first salary stream above to start paying workers by the second on Arc testnet.</p>
+</div>`
       return
     }
     const active = j.data.filter(s=>s.status==='active').length
     const paid   = j.data.reduce((sum,s)=>sum+parseFloat(s.total_paid||0),0)
     document.getElementById('emp-streams').textContent     = active
     document.getElementById('emp-streams-sub').textContent = active + ' streaming now'
+    // Update workers count label
+    const workerLbl = document.getElementById('emp-workers-lbl')
+    if (workerLbl) workerLbl.textContent = j.data.length + ' total worker' + (j.data.length!==1?'s':'')
+    // Update runway bar
+    const totalRate = j.data.filter(s=>s.status==='active').reduce((sum,s)=>sum+parseFloat(s.rate_per_hour||0),0)
+    const floatBal  = parseFloat(document.getElementById('emp-float').textContent.replace('$',''))||0
+    updateRunwayBar(floatBal, active, totalRate)
     document.getElementById('emp-paid').textContent        = '$'+paid.toFixed(2)
     const colors = ['linear-gradient(135deg,#C87A10,#E8931A)','linear-gradient(135deg,#10B981,#34D399)','linear-gradient(135deg,#3B82F6,#60A5FA)','linear-gradient(135deg,#8B5CF6,#A78BFA)']
     document.getElementById('emp-streams-list').innerHTML = j.data.map((s,i) => {
@@ -934,6 +1038,31 @@ function showSuccess(elapsed,amt) {
   showToast({title:'Withdrawal Confirmed',sub:`Sent to ${selChain} via CCTP · ${elapsed}s`,amount:'-$'+parseFloat(amt).toFixed(2),type:'wd'})
   pushNotif({title:'Withdrawal settled',sub:`$${parseFloat(amt).toFixed(2)} USDC sent to ${selChain} · ${elapsed}s`,type:'wd'})
   setTimeout(fetchWalletBalance, 3000)
+  // Confetti on first withdrawal
+  const isFirst = !localStorage.getItem('ps_first_wd')
+  if (isFirst) { localStorage.setItem('ps_first_wd','1'); fireConfetti() }
+}
+
+function fireConfetti() {
+  const colors = ['#C87A10','#10B981','#F5A623','#ffffff','#3B82F6','#10B981']
+  const container = document.createElement('div')
+  container.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:99998;overflow:hidden'
+  document.body.appendChild(container)
+  for (let i = 0; i < 120; i++) {
+    const el = document.createElement('div')
+    const size = Math.random() * 10 + 5
+    const color = colors[Math.floor(Math.random() * colors.length)]
+    const left  = Math.random() * 100
+    const delay = Math.random() * 0.8
+    const dur   = Math.random() * 2 + 2
+    const shape = Math.random() > 0.5 ? '50%' : '2px'
+    el.style.cssText = `position:absolute;width:${size}px;height:${size}px;background:${color};border-radius:${shape};left:${left}%;top:-20px;opacity:1;animation:confetti-fall ${dur}s ease-in ${delay}s forwards`
+    container.appendChild(el)
+  }
+  const style = document.createElement('style')
+  style.textContent = '@keyframes confetti-fall{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}'
+  document.head.appendChild(style)
+  setTimeout(() => { container.remove(); style.remove() }, 4000)
 }
 
 /* ── TOASTS ── */
@@ -1050,10 +1179,180 @@ async function stopStream(streamId) {
 /* ── UTILS ── */
 function timeSince(d) { const s=Math.floor((Date.now()-d)/1000); if(s<60)return s+'s ago'; if(s<3600)return Math.floor(s/60)+'m ago'; if(s<86400)return Math.floor(s/3600)+'h ago'; return Math.floor(s/86400)+'d ago' }
 
+
+/* ── COPY WALLET ADDRESS ── */
+function copyWalletAddress() {
+  const addr = document.getElementById('wallet-address-full').textContent
+  if (!addr || addr === 'Loading...') return
+  navigator.clipboard.writeText(addr).then(() => {
+    const btn = document.getElementById('copy-addr-btn')
+    btn.innerHTML = '<svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M1 6L4 9L10 2"/></svg> Copied!'
+    btn.style.color = 'var(--amber)'
+    setTimeout(() => {
+      btn.innerHTML = '<svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><path d="M1 7V1h6" opacity=".5"/></svg> Copy address'
+      btn.style.color = 'var(--green)'
+    }, 2000)
+  }).catch(() => {
+    // Fallback for browsers without clipboard API
+    const el = document.createElement('textarea')
+    el.value = addr; el.style.position='fixed'; el.style.opacity='0'
+    document.body.appendChild(el); el.select()
+    document.execCommand('copy'); document.body.removeChild(el)
+  })
+}
+
+/* ── 7-DAY EARNINGS CHART ── */
+async function buildEarningsChart() {
+  const chartEl  = document.getElementById('earnings-chart')
+  const labelsEl = document.getElementById('chart-labels')
+  if (!chartEl) return
+
+  // Get last 7 days labels
+  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
+  const today = new Date()
+  const dayLabels = []
+  const dayKeys   = []
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today)
+    d.setDate(d.getDate() - i)
+    dayLabels.push(i === 0 ? 'Today' : days[d.getDay()])
+    dayKeys.push(d.toISOString().slice(0,10))
+  }
+
+  // Aggregate payouts by day from real data
+  const dayTotals = {}
+  dayKeys.forEach(k => dayTotals[k] = 0)
+
+  if (liveStreamId) {
+    try {
+      const j = await (await fetch(API+'/api/v1/payouts?streamId='+liveStreamId+'&limit=500')).json()
+      if (j.success && j.data?.length) {
+        j.data.forEach(p => {
+          const day = p.created_at?.slice(0,10)
+          if (day && dayTotals.hasOwnProperty(day)) {
+            dayTotals[day] += parseFloat(p.amount_usdc) || 0
+          }
+        })
+      }
+    } catch(e) {}
+  }
+
+  const values  = dayKeys.map(k => dayTotals[k])
+  const maxVal  = Math.max(...values, 0.001)
+
+  // Build bar chart
+  chartEl.innerHTML = values.map((v, i) => {
+    const pct     = Math.max(4, (v / maxVal) * 100)
+    const isToday = i === 6
+    const color   = v > 0
+      ? (isToday ? 'var(--amber)' : 'var(--green)')
+      : 'var(--g4)'
+    const glow    = v > 0 && isToday ? 'box-shadow:0 0 12px rgba(200,122,16,.3)' : v > 0 ? 'box-shadow:0 0 8px rgba(16,185,129,.2)' : ''
+    const label   = v > 0 ? '$' + v.toFixed(3) : ''
+    return \`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:default" title="\${dayLabels[i]}: $\${v.toFixed(4)} USDC">
+      <div style="font-size:9px;color:var(--g3);font-family:var(--ff-mono);\${v>0?'color:var(--g2)':''}">\${label}</div>
+      <div style="width:100%;background:\${color};\${glow};border-radius:4px 4px 0 0;height:\${pct}%;min-height:4px;transition:height .6s ease \${i*0.08}s,background .3s;position:relative"></div>
+    </div>\`
+  }).join('')
+
+  labelsEl.innerHTML = dayLabels.map((l, i) => {
+    const isToday = i === 6
+    return \`<div style="flex:1;text-align:center;font-size:10px;color:\${isToday?'var(--amber)':'var(--g3)'};font-weight:\${isToday?'600':'400'}">\${l}</div>\`
+  }).join('')
+}
+
+/* ── FETCH EMPLOYER INFO (for worker view) ── */
+async function fetchEmployerInfo() {
+  if (!liveStreamId || psUser.role === 'employer') return
+  try {
+    const j = await (await fetch(API+'/api/v1/streams/'+liveStreamId)).json()
+    if (!j.success) return
+
+    const empId = j.data.employer_id
+    if (!empId) return
+
+    // Get employer wallet balance and info
+    const wb = await (await fetch(API+'/api/v1/wallets/'+empId)).json()
+    if (!wb.success) return
+
+    const bal        = parseFloat(wb.data.balance_usdc) || 0
+    const ratePerHr  = parseFloat(j.data.rate_per_hour) || 18.5
+    const runwayHrs  = bal / ratePerHr
+    const runwayDays = runwayHrs / 24
+
+    // Get employer user name from users table via /auth/me is not possible
+    // Use the employer_id as display
+    const ini = empId.slice(0,2).toUpperCase()
+    const shortId = empId.slice(0,8) + '...' + empId.slice(-4)
+
+    document.getElementById('emp-avatar-worker').textContent  = ini
+    document.getElementById('emp-name-worker').textContent    = 'Employer ' + shortId
+    document.getElementById('emp-addr-worker').textContent    = wb.data.address
+    document.getElementById('emp-float-worker').textContent   = '$' + bal.toFixed(2)
+    document.getElementById('emp-rate-worker').textContent    = '$' + ratePerHr.toFixed(2) + '/hr'
+
+    // Runway color
+    const runwayColor = runwayDays > 7 ? 'var(--green)' : runwayDays > 2 ? 'var(--amber)' : 'var(--red)'
+    const runwayTxt   = runwayDays > 1 ? runwayDays.toFixed(1) + ' days' : runwayHrs.toFixed(1) + ' hours'
+    document.getElementById('emp-runway-worker').textContent = runwayTxt
+    document.getElementById('emp-runway-worker').style.color = runwayColor
+    document.getElementById('employer-info-card').style.display = ''
+
+    // Update stream health bar on worker view
+    const healthEl    = document.getElementById('stream-health')
+    const healthFill  = document.getElementById('health-fill')
+    const healthLabel = document.getElementById('health-label')
+    const healthHint  = document.getElementById('health-hint')
+    if (healthEl) {
+      const pct   = Math.min(100, (runwayDays / 30) * 100)
+      const color = runwayDays > 7 ? 'var(--green)' : runwayDays > 2 ? 'var(--amber)' : 'var(--red)'
+      const icon  = runwayDays > 7 ? '✓ Healthy' : runwayDays > 2 ? '⚠ Low float' : '! Critical'
+      healthEl.style.display  = ''
+      healthFill.style.width  = pct + '%'
+      healthFill.style.background = color
+      healthLabel.textContent = icon
+      healthLabel.style.color = color
+      healthHint.textContent  = 'Employer has ' + runwayTxt + ' of payments funded'
+      healthHint.style.color  = color
+    }
+  } catch(e) { console.warn('[API] fetchEmployerInfo:', e.message) }
+}
+
+/* ── UPDATE RUNWAY BAR (employer view) ── */
+function updateRunwayBar(floatBalance, activeStreams, ratePerHour) {
+  const totalRatePerHr = activeStreams > 0 ? ratePerHour : 0
+  const runwayWrap     = document.getElementById('runway-bar-wrap')
+
+  if (!runwayWrap || totalRatePerHr <= 0) {
+    if (runwayWrap) runwayWrap.style.display = 'none'
+    return
+  }
+
+  const runwayHrs  = floatBalance / totalRatePerHr
+  const runwayDays = runwayHrs / 24
+  const pct        = Math.min(100, (runwayDays / 30) * 100)
+  const color      = runwayDays > 7 ? 'var(--green)' : runwayDays > 2 ? 'var(--amber)' : 'var(--red)'
+  const label      = runwayDays > 1 ? runwayDays.toFixed(1) + ' days remaining' : runwayHrs.toFixed(1) + ' hours remaining'
+  const hint       = runwayDays < 3 ? 'Low float — add USDC urgently' : runwayDays < 7 ? 'Consider topping up soon' : 'Float is healthy'
+
+  document.getElementById('runway-val').textContent        = label
+  document.getElementById('runway-val').style.color        = color
+  document.getElementById('runway-fill').style.width       = pct + '%'
+  document.getElementById('runway-fill').style.background  = color
+  document.getElementById('runway-hint').textContent       = hint
+  document.getElementById('runway-hint').style.color       = color
+
+  // Update float label in stat card
+  const runwayLbl = document.getElementById('emp-runway-lbl')
+  if (runwayLbl) { runwayLbl.textContent = label; runwayLbl.style.color = color }
+
+  runwayWrap.style.display = ''
+}
+
 /* ── BOOT ── */
 activeNav = document.getElementById('nav-worker')
 initUI()
-Promise.allSettled([fetchWalletBalance(),fetchMyStream(),fetchEmployerStreams()]).then(()=>{fetchPayouts();fetchAgentLog()})
+Promise.allSettled([fetchWalletBalance(),fetchMyStream(),fetchEmployerStreams()]).then(()=>{fetchPayouts();fetchAgentLog();fetchEmployerInfo();buildEarningsChart()})
 setInterval(fetchEarned,         5000)
 setInterval(fetchWalletBalance, 15000)
 setInterval(fetchPayouts,       15000)
@@ -1061,6 +1360,8 @@ setInterval(fetchAgentLog,      30000)
 setInterval(fetchMyStream,      60000)
 setInterval(checkNewPayouts,    10000)
 setInterval(fetchEmployerStreams,30000)
+  setInterval(fetchEmployerInfo,60000)
+  setInterval(buildEarningsChart,60000)
 </script>
 </body>
 </html>
