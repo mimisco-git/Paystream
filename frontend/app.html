@@ -469,7 +469,7 @@
         </div>
       </div>
 
-      <div class="stream-form">
+      <div class="stream-form" id="create-stream-form">
         <div class="card-title" style="margin-bottom:4px">Create Salary Stream</div>
         <div class="card-sub">Set the rate, frequency and duration. Payments confirm on Arc every 60 seconds via nanopayments.</div>
 
@@ -1306,7 +1306,22 @@ async function fetchEmployerInfo() {
     const shortId = empId.slice(0,8) + '...' + empId.slice(-4)
 
     document.getElementById('emp-avatar-worker').textContent  = ini
-    document.getElementById('emp-name-worker').textContent    = 'Employer ' + shortId
+    // Try to get employer name from API
+    try {
+      const userRes = await _fetch(API+'/api/v1/auth/user/'+empId, {headers:{'Authorization':'Bearer '+psToken}})
+      if (userRes.ok) {
+        const userJson = await userRes.json()
+        if (userJson.success && userJson.data?.name) {
+          document.getElementById('emp-name-worker').textContent = userJson.data.name
+        } else {
+          document.getElementById('emp-name-worker').textContent = 'Employer ' + shortId
+        }
+      } else {
+        document.getElementById('emp-name-worker').textContent = 'Employer ' + shortId
+      }
+    } catch(e) {
+      document.getElementById('emp-name-worker').textContent = 'Employer ' + shortId
+    }
     document.getElementById('emp-addr-worker').textContent    = wb.data.address
     document.getElementById('emp-float-worker').textContent   = '$' + bal.toFixed(2)
     document.getElementById('emp-rate-worker').textContent    = '$' + ratePerHr.toFixed(2) + '/hr'
