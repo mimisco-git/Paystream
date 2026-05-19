@@ -281,6 +281,10 @@
       <div class="bell-badge" id="bell-badge"></div>
     </button>
     <div class="tb-wallet" id="tb-wallet-addr">0x...</div>
+    <button id="role-switch-btn" onclick="switchRole()" style="background:rgba(200,122,16,.1);border:.5px solid rgba(200,122,16,.22);color:var(--amber);font-family:var(--ff-body);font-size:12px;font-weight:600;padding:6px 14px;border-radius:7px;cursor:pointer;transition:opacity .2s;display:flex;align-items:center;gap:6px" onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h9M2 4l2-2M2 4l2 2M11 9H2M11 9l-2-2M11 9l-2 2"/></svg>
+      <span id="role-switch-label">Switch to Employer</span>
+    </button>
     <button class="sign-out" onclick="logout()">Sign out</button>
   </div>
 </div>
@@ -1128,6 +1132,12 @@ function showView(name,tabEl) {
   if (tabEl) { document.querySelectorAll('.tb-tab').forEach(t=>t.classList.remove('active')); tabEl.classList.add('active') }
   if (name==='history')  fetchPayouts()
   if (name==='employer') fetchEmployerStreams()
+  // Sync role switcher label
+  const lbl = document.getElementById('role-switch-label')
+  if (lbl) {
+    if (name === 'employer') { lbl.textContent = 'Switch to Worker View'; activeRoleView = 'employer' }
+    else if (name === 'worker') { lbl.textContent = 'Switch to Employer View'; activeRoleView = 'worker' }
+  }
 }
 function setNavActive(el) { if(activeNav)activeNav.classList.remove('active'); el.classList.add('active'); activeNav=el }
 function setMobActive(el) { document.querySelectorAll('.mob-nav-item').forEach(b=>b.classList.remove('active')); el.classList.add('active') }
@@ -1384,9 +1394,63 @@ function updateRunwayBar(floatBalance, activeStreams, ratePerHour) {
   runwayWrap.style.display = ''
 }
 
+
+/* ── ROLE SWITCHER ── */
+// Tracks the current active role view (not the account role, just what we are viewing)
+let activeRoleView = psUser ? psUser.role : 'worker'
+
+function switchRole() {
+  if (activeRoleView === 'worker') {
+    activeRoleView = 'employer'
+    showView('employer', null)
+    // Update topbar tabs
+    document.querySelectorAll('.tb-tab').forEach(t => t.classList.remove('active'))
+    document.querySelectorAll('.tb-tab')[1].classList.add('active')
+    // Update switch button
+    document.getElementById('role-switch-label').textContent = 'Switch to Worker'
+    // Update sidebar active
+    document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'))
+    // Show create stream form regardless of role
+    var csf = document.getElementById('create-stream-form')
+    if (csf) csf.style.display = ''
+    // Fetch employer data
+    fetchEmployerStreams()
+    showToast({title:'Switched to Employer View', sub:'You are now viewing the employer dashboard', amount:'', type:'arc'})
+  } else {
+    activeRoleView = 'worker'
+    showView('worker', null)
+    document.querySelectorAll('.tb-tab').forEach(t => t.classList.remove('active'))
+    document.querySelectorAll('.tb-tab')[0].classList.add('active')
+    document.getElementById('role-switch-label').textContent = 'Switch to Employer'
+    // Hide create stream if original role is worker
+    var csf = document.getElementById('create-stream-form')
+    if (csf) csf.style.display = psUser.role === 'worker' ? 'none' : ''
+    fetchMyStream()
+    showToast({title:'Switched to Worker View', sub:'You are now viewing your earning stream', amount:'', type:'pay'})
+  }
+}
+
+// Init role switch button label based on account role
+function initRoleSwitcher() {
+  const btn = document.getElementById('role-switch-btn')
+  const lbl = document.getElementById('role-switch-label')
+  if (!btn || !lbl || !psUser) return
+
+  if (psUser.role === 'employer') {
+    // Employer starts in employer view, can switch to worker view
+    lbl.textContent = 'Switch to Worker View'
+    activeRoleView = 'employer'
+  } else {
+    // Worker starts in worker view, can switch to employer view to create streams
+    lbl.textContent = 'Switch to Employer View'
+    activeRoleView = 'worker'
+  }
+}
+
 /* ── BOOT ── */
 activeNav = document.getElementById('nav-worker')
 initUI()
+initRoleSwitcher()
 Promise.allSettled([fetchWalletBalance(),fetchMyStream(),fetchEmployerStreams()]).then(()=>{fetchPayouts();fetchAgentLog();fetchEmployerInfo();buildEarningsChart()})
 setInterval(fetchEarned,         5000)
 setInterval(fetchWalletBalance, 15000)
