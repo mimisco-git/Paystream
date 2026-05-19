@@ -413,18 +413,95 @@
 
       <div class="stream-form">
         <div class="card-title" style="margin-bottom:4px">Create Salary Stream</div>
-        <div class="card-sub">Start paying a worker by the second. Payments confirm on Arc every 60 seconds.</div>
-        <div class="form-row">
+        <div class="card-sub">Set the rate, frequency and duration. Payments confirm on Arc every 60 seconds via nanopayments.</div>
+
+        <div class="form-row" style="margin-bottom:14px">
           <div>
             <label class="field-lbl">Worker wallet address</label>
-            <input class="field-input" id="stream-worker-addr" type="text" placeholder="0x..." style="margin-bottom:0"/>
+            <input class="field-input" id="stream-worker-addr" type="text" placeholder="0x..." style="margin-bottom:0" oninput="calcPreview()"/>
           </div>
           <div>
-            <label class="field-lbl">Hourly rate (USDC)</label>
-            <input class="field-input" id="stream-rate" type="number" placeholder="18.50" min="0.01" step="0.01" style="margin-bottom:0"/>
+            <label class="field-lbl">Worker name (optional)</label>
+            <input class="field-input" id="stream-worker-name" type="text" placeholder="e.g. Ahmad Karimi" style="margin-bottom:0"/>
           </div>
         </div>
-        <div style="margin-top:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+
+        <div class="form-row" style="margin-bottom:14px">
+          <div>
+            <label class="field-lbl">Rate amount (USDC)</label>
+            <div style="position:relative">
+              <span style="position:absolute;left:13px;top:50%;transform:translateY(-50%);font-family:var(--ff-mono);font-size:14px;color:var(--green);font-weight:700;pointer-events:none">$</span>
+              <input class="field-input" id="stream-rate" type="number" placeholder="18.50" min="0.01" step="0.01" style="margin-bottom:0;padding-left:26px" oninput="calcPreview()"/>
+            </div>
+          </div>
+          <div>
+            <label class="field-lbl">Pay frequency</label>
+            <select class="field-input" id="stream-freq" onchange="calcPreview()" style="margin-bottom:0;cursor:pointer;background:var(--slate)">
+              <option value="hourly">Per hour</option>
+              <option value="daily">Per day</option>
+              <option value="weekly">Per week</option>
+              <option value="monthly">Per month</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row" style="margin-bottom:16px">
+          <div>
+            <label class="field-lbl">Contract duration</label>
+            <select class="field-input" id="stream-duration" onchange="calcPreview()" style="margin-bottom:0;cursor:pointer;background:var(--slate)">
+              <option value="0">Open-ended (no end date)</option>
+              <option value="1">1 day</option>
+              <option value="7">1 week</option>
+              <option value="14">2 weeks</option>
+              <option value="30">1 month</option>
+              <option value="90">3 months</option>
+            </select>
+          </div>
+          <div>
+            <label class="field-lbl">Currency display</label>
+            <select class="field-input" id="stream-currency" onchange="calcPreview()" style="margin-bottom:0;cursor:pointer;background:var(--slate)">
+              <option value="USDC">USDC</option>
+              <option value="AED">AED (UAE Dirham)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Cost preview card -->
+        <div id="stream-preview" style="background:var(--slate3);border:.5px solid rgba(200,122,16,.2);border-radius:12px;padding:16px 18px;margin-bottom:16px;display:none">
+          <div style="font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--g3);margin-bottom:12px">Payment preview</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+            <div>
+              <div style="font-size:11px;color:var(--g3);margin-bottom:4px">Per second</div>
+              <div style="font-family:var(--ff-mono);font-size:14px;font-weight:700;color:var(--green)" id="prev-per-sec">$0.0000</div>
+            </div>
+            <div>
+              <div style="font-size:11px;color:var(--g3);margin-bottom:4px">Per hour</div>
+              <div style="font-family:var(--ff-mono);font-size:14px;font-weight:700;color:var(--white)" id="prev-per-hour">$0.00</div>
+            </div>
+            <div>
+              <div style="font-size:11px;color:var(--g3);margin-bottom:4px">Per day</div>
+              <div style="font-family:var(--ff-mono);font-size:14px;font-weight:700;color:var(--white)" id="prev-per-day">$0.00</div>
+            </div>
+            <div>
+              <div style="font-size:11px;color:var(--g3);margin-bottom:4px">Per week</div>
+              <div style="font-family:var(--ff-mono);font-size:14px;font-weight:700;color:var(--white)" id="prev-per-week">$0.00</div>
+            </div>
+            <div>
+              <div style="font-size:11px;color:var(--g3);margin-bottom:4px">Per month</div>
+              <div style="font-family:var(--ff-mono);font-size:14px;font-weight:700;color:var(--white)" id="prev-per-month">$0.00</div>
+            </div>
+            <div>
+              <div style="font-size:11px;color:var(--g3);margin-bottom:4px" id="prev-total-lbl">Total contract</div>
+              <div style="font-family:var(--ff-mono);font-size:14px;font-weight:700;color:var(--amber)" id="prev-total">Open-ended</div>
+            </div>
+          </div>
+          <div style="margin-top:12px;padding-top:12px;border-top:.5px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+            <div style="font-size:12px;color:var(--g2)">AED equivalent (1 USD = 3.6725)</div>
+            <div style="font-family:var(--ff-mono);font-size:13px;color:var(--g1)" id="prev-aed">AED 0.00/hr</div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
           <button class="btn-primary" onclick="createStream()">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M7 1v12M1 7h12"/></svg>
             Start Stream
@@ -733,12 +810,67 @@ async function fetchEmployerStreams() {
 }
 
 /* ── CREATE STREAM ── */
+/* ── RATE CALCULATOR ── */
+function calcPreview() {
+  const rateRaw = parseFloat(document.getElementById('stream-rate').value)
+  const freq    = document.getElementById('stream-freq').value
+  const dur     = parseInt(document.getElementById('stream-duration').value)
+  const cur     = document.getElementById('stream-currency').value
+
+  if (!rateRaw || rateRaw <= 0) {
+    document.getElementById('stream-preview').style.display = 'none'
+    return
+  }
+
+  // Convert any frequency to hourly rate
+  let ratePerHour
+  switch(freq) {
+    case 'hourly':  ratePerHour = rateRaw; break
+    case 'daily':   ratePerHour = rateRaw / 24; break
+    case 'weekly':  ratePerHour = rateRaw / (24 * 7); break
+    case 'monthly': ratePerHour = rateRaw / (24 * 30); break
+    default:        ratePerHour = rateRaw
+  }
+
+  const fmt = (n) => cur === 'AED'
+    ? 'AED ' + (n * 3.6725).toFixed(2)
+    : '$' + n.toFixed(cur === 'USDC' && n < 0.01 ? 6 : 2)
+
+  document.getElementById('prev-per-sec').textContent   = '$' + (ratePerHour/3600).toFixed(7)
+  document.getElementById('prev-per-hour').textContent  = fmt(ratePerHour)
+  document.getElementById('prev-per-day').textContent   = fmt(ratePerHour * 24)
+  document.getElementById('prev-per-week').textContent  = fmt(ratePerHour * 24 * 7)
+  document.getElementById('prev-per-month').textContent = fmt(ratePerHour * 24 * 30)
+  document.getElementById('prev-aed').textContent       = 'AED ' + (ratePerHour * 3.6725).toFixed(2) + '/hr'
+
+  if (dur > 0) {
+    const total = ratePerHour * 24 * dur
+    document.getElementById('prev-total').textContent   = fmt(total) + ' (' + dur + 'd)'
+    document.getElementById('prev-total-lbl').textContent = 'Total contract'
+  } else {
+    document.getElementById('prev-total').textContent   = 'Open-ended'
+  }
+
+  document.getElementById('stream-preview').style.display = ''
+}
+
 async function createStream() {
-  const addr = document.getElementById('stream-worker-addr').value.trim()
-  const rate = parseFloat(document.getElementById('stream-rate').value)
-  const msg  = document.getElementById('stream-msg')
-  if (!addr) return msg.textContent = 'Enter worker wallet address', void(msg.style.color='var(--red)')
-  if (!rate||rate<=0) return msg.textContent = 'Enter a valid hourly rate', void(msg.style.color='var(--red)')
+  const addr    = document.getElementById('stream-worker-addr').value.trim()
+  const rateRaw = parseFloat(document.getElementById('stream-rate').value)
+  const freq    = document.getElementById('stream-freq').value
+  const msg     = document.getElementById('stream-msg')
+  if (!addr) return (msg.textContent='Enter worker wallet address', void(msg.style.color='var(--red)'))
+  if (!rateRaw||rateRaw<=0) return (msg.textContent='Enter a valid rate', void(msg.style.color='var(--red)'))
+
+  // Convert to hourly rate
+  let rate
+  switch(freq) {
+    case 'hourly':  rate = rateRaw; break
+    case 'daily':   rate = rateRaw / 24; break
+    case 'weekly':  rate = rateRaw / (24 * 7); break
+    case 'monthly': rate = rateRaw / (24 * 30); break
+    default:        rate = rateRaw
+  }
   msg.textContent = 'Creating stream...'; msg.style.color = 'var(--g2)'
   try {
     const j = await (await fetch(API+'/api/v1/streams', {
@@ -749,7 +881,7 @@ async function createStream() {
       msg.textContent = 'Stream created! First payment in 60 seconds.'; msg.style.color='var(--green)'
       document.getElementById('stream-worker-addr').value = ''
       document.getElementById('stream-rate').value = ''
-      showToast({title:'Stream Created', sub:`$${rate.toFixed(2)}/hr · payments every 60s on Arc`, amount:'', type:'pay'})
+      showToast({title:'Stream Created', sub:`$${rateRaw.toFixed(2)} ${freq} ($${rate.toFixed(4)}/hr) · payments every 60s on Arc`, amount:'', type:'pay'})
       pushNotif({title:'New stream created', sub:`Paying ${addr.slice(0,8)}... at $${rate.toFixed(2)}/hr`, type:'pay'})
       setTimeout(fetchEmployerStreams, 2000)
     } else { msg.textContent = j.error||'Failed'; msg.style.color='var(--red)' }
