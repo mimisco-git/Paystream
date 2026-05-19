@@ -656,7 +656,21 @@ const AED = 3.6725
 const psToken  = localStorage.getItem('ps_token')
 const psUser   = JSON.parse(localStorage.getItem('ps_user')  || 'null')
 const psWallet = JSON.parse(localStorage.getItem('ps_wallet') || 'null')
+
+// Redirect if no token or no user
 if (!psToken || !psUser) { window.location.href = 'login.html' }
+
+// Validate token not expired (JWT payload check)
+try {
+  const payload = JSON.parse(atob(psToken.split('.')[1]))
+  if (payload.exp && payload.exp * 1000 < Date.now()) {
+    localStorage.clear()
+    window.location.href = 'login.html'
+  }
+} catch(e) {
+  localStorage.clear()
+  window.location.href = 'login.html'
+}
 
 function logout() {
   ['ps_token','ps_user','ps_wallet'].forEach(k => localStorage.removeItem(k))
@@ -665,10 +679,16 @@ function logout() {
 
 /* ── AUTO-INJECT AUTH HEADER ── */
 const _fetch = window.fetch
-window.fetch = (url, opts = {}) => {
+window.fetch = async (url, opts = {}) => {
   if (url && url.toString().includes('onrender.com') && psToken)
     opts.headers = { ...(opts.headers||{}), 'Authorization': 'Bearer ' + psToken }
-  return _fetch(url, opts)
+  const res = await _fetch(url, opts)
+  // Auto logout on 401 unauthorized
+  if (res.status === 401) {
+    localStorage.clear()
+    window.location.href = 'login.html'
+  }
+  return res
 }
 
 /* ── STATE ── */
