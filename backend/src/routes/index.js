@@ -152,24 +152,6 @@ router.get('/agent-log', wrap(async (req, res) => {
   ok(res, logs)
 }))
 
-export default router
-
-// ── WITHDRAWALS ──
-router.post('/withdrawals', wrap(async (req, res) => {
-  const { userId, amount, destinationAddress, destinationChain } = z.object({
-    userId:             z.string().min(1),
-    amount:             z.number().positive().max(10000),
-    destinationAddress: z.string().min(10),
-    destinationChain:   z.string().default('Arc'),
-  }).parse(req.body)
-  console.log('[Route] Withdrawal:', { userId, amount, destinationChain })
-  const result = await createWithdrawal({ userId, amount, destinationAddress, destinationChain })
-  ok(res, result)
-}))
-
-router.get('/withdrawals/:userId', wrap(async (req, res) => {
-  const data = await listWithdrawals(req.params.userId)
-  ok(res, data)
 
 // ── WITHDRAWALS ──
 router.post('/withdrawals', wrap(async (req, res) => {
