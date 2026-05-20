@@ -1,101 +1,259 @@
 # PayStream
 
-> Real-time USDC salary streaming on Arc. Built for the Stablecoin Commerce Stack Challenge — Track 1: Cross-Border Payments.
+**Real-time USDC salary streaming on Arc testnet. Workers earn by the second.**
 
-![Arc Testnet](https://img.shields.io/badge/Network-Arc%20Testnet-F5A623?style=flat-square&logo=ethereum&logoColor=white)
-![Circle USDC](https://img.shields.io/badge/Powered%20by-Circle%20USDC-2775CA?style=flat-square)
-![Node.js](https://img.shields.io/badge/Node.js-v20+-339933?style=flat-square&logo=node.js&logoColor=white)
-![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
-![Status](https://img.shields.io/badge/Status-Live%20on%20Testnet-brightgreen?style=flat-square)
+Built for the Stablecoin Commerce Stack Challenge (Ignyte / Circle / Arc) — Track 1: Best Cross-Border Payments and Remittances Experience.
 
 ---
 
-## The Problem
+## Live URLs
 
-9 million expat workers in the UAE wait 30 to 60 days for money they have already earned. International transfers cost 3 to 8% in fees and take 3 to 5 business days. There is zero transparency about when funds will arrive.
-
-## The Solution
-
-PayStream replaces the monthly paycheck cycle with real-time USDC streaming. Employers deposit a float once. Workers earn by the second. They withdraw to any chain at any time — instantly, at near-zero cost.
-
----
-
-## Circle Tools Used
-
-| Tool | How PayStream uses it |
+| Resource | URL |
 |---|---|
-| **USDC on Arc** | Primary settlement rail for all stream payouts and withdrawals |
-| **Circle Developer-Controlled Wallets** | Server-side key custody. Enables automated per-minute nanopayments without user signing. |
-| **Nanopayments** | Sub-cent high-frequency USDC transfers dispatched every 60 seconds per stream. |
-| **Circle Gateway** | Unified USDC balance across Arc, Ethereum, Polygon, Base in under 500ms. |
-| **CCTP + Arc Bridge Kit** | Cross-chain withdrawals. Fast Transfer completes in 8 to 20 seconds. |
+| Frontend | https://paystream-virid.vercel.app |
+| Backend API | https://paystream-9xtb.onrender.com |
+| Health check | https://paystream-9xtb.onrender.com/api/v1/health |
+| Architecture | https://paystream-virid.vercel.app/architecture.html |
+| GitHub | https://github.com/mimisco-git/Paystream |
 
 ---
 
-## Quick Start
+## What is PayStream
 
-```bash
-git clone https://github.com/mimisco-git/Paystream.git
-cd Paystream/backend
-npm install
-cp .env.example .env
-# Fill in CIRCLE_API_KEY, CIRCLE_ENTITY_SECRET, SUPABASE_URL, SUPABASE_SERVICE_KEY
-npm run dev
+PayStream solves one of the UAE's most painful financial problems: the 1.5 million+ low-wage expat workers (construction, hospitality, domestic) who wait 30 days for salary, send money home through expensive remittance corridors, and have no financial identity.
+
+PayStream pays workers by the second. Every 60 seconds, a real Circle USDC nanopayment confirms on Arc testnet. Workers withdraw to any external wallet via CCTP. The entire flow is accessible via email login — no MetaMask, no seed phrases.
+
+---
+
+## Circle Products Used
+
+### USDC
+Primary settlement currency for all salary streams and withdrawals. Every nanopayment is denominated in USDC. Workers earn USDC per second, employers hold USDC float.
+
+### Circle Developer-Controlled Wallets
+Every new user (worker or employer) gets a Circle developer-controlled wallet created automatically on signup. The wallet is invisible to the user — they just have a balance. No seed phrase, no gas management.
+
+### Circle Gateway
+Employer treasury management and unified balance display. The employer dashboard shows treasury float across chains via the Gateway unified balance view.
+
+### CCTP with Bridge Kit
+Workers withdraw USDC from Arc to Ethereum, Polygon, Base, Arbitrum, or Avalanche in 8 to 20 seconds. Real Circle attestation service, real burn-and-mint cycle.
+
+### Nanopayments
+The core product feature. A cron engine fires every 60 seconds and dispatches a real `createTransaction` call for each active stream. Sub-cent amounts, real Arc transaction hashes, visible on Arcscan.
+
+---
+
+## Architecture
+
 ```
-
-Health check: `curl http://localhost:4000/api/v1/health`
-
-Open `frontend/index.html` for the landing page.
-Open `frontend/app.html` for the full dashboard.
+Worker / Employer
+      |
+      | HTTPS
+      v
+Frontend (Vercel)
+  - login.html    Email auth
+  - app.html      Role-separated dashboard
+  - architecture.html  This diagram
+      |
+      | REST API
+      v
+Backend (Render — Node.js / Express)
+  - /api/v1/auth         Email signup, login, JWT
+  - /api/v1/wallets      Circle wallet creation and balance
+  - /api/v1/streams      Create, pause, resume, stop streams
+  - /api/v1/payouts      Payout history with Arc tx hashes
+  - /api/v1/withdrawals  Real Circle CCTP withdrawals
+  - /api/v1/agent-log    AI agent activity
+      |
+      |--- Circle SDK -----> Arc Testnet (Chain ID: 5042002)
+      |--- Supabase -------> PostgreSQL (wallets, streams, payouts, withdrawals)
+      |--- Cron (60s) -----> createTransaction per active stream
+      |--- Agent (5min) ---> Pause/resume streams based on activity score
+```
 
 ---
 
 ## Project Structure
 
 ```
-paystream/
+Paystream/
 ├── frontend/
 │   ├── index.html          Landing page
-│   └── app.html            Worker + employer + history dashboard
-├── contracts/
-│   ├── PayStream.sol       On-chain stream registry on Arc
-│   └── scripts/deploy.js   Deployment script
+│   ├── login.html          Email auth (signup and login)
+│   ├── app.html            Dashboard (worker and employer views)
+│   └── architecture.html   Technical architecture page
 ├── backend/
-│   ├── .env.example
-│   └── src/
-│       ├── index.js
-│       ├── config/         Circle SDK + Supabase
-│       ├── routes/         REST API + Circle webhooks
-│       ├── jobs/           Nanopayment cron (every 60s)
-│       └── services/       Wallets, streams, withdrawals, AI agent
-└── architecture.html       Clickable submission diagram
+│   ├── src/
+│   │   ├── index.js                 Express server, cron boot
+│   │   ├── config/
+│   │   │   ├── circle.js            Circle SDK singleton
+│   │   │   └── db.js                Supabase client
+│   │   ├── routes/
+│   │   │   ├── index.js             REST endpoints
+│   │   │   ├── auth.js              Email auth routes
+│   │   │   └── webhooks.js          Circle webhook handler
+│   │   ├── jobs/
+│   │   │   └── payoutCron.js        Nanopayment engine every 60s
+│   │   └── services/
+│   │       ├── walletService.js     Circle wallet creation and balance
+│   │       ├── streamService.js     Stream CRUD, pause, resume, stop
+│   │       ├── withdrawalService.js Real Circle CCTP withdrawals
+│   │       └── agentService.js      AI activity monitor
+│   └── package.json
+└── README.md
 ```
 
 ---
 
-## Network
+## Setup and Installation
 
-| Property | Value |
-|---|---|
-| Network | Arc Testnet |
-| Chain ID | 2816 |
-| RPC | https://rpc.arc.testnet.circle.com |
-| USDC | 0x3600000000000000000000000000000000000000 |
-| Explorer | https://explorer.arc.testnet.circle.com |
-| Faucet | https://faucet.arc.testnet.circle.com |
+### Prerequisites
+- Node.js 18+
+- Circle developer account at https://console.circle.com
+- Supabase project
+
+### Backend Setup
+
+```bash
+git clone https://github.com/mimisco-git/Paystream.git
+cd Paystream/backend
+npm install
+```
+
+Create `backend/.env`:
+
+```
+CIRCLE_API_KEY=your_circle_api_key
+CIRCLE_ENTITY_SECRET=your_entity_secret_hex
+ARC_RPC_URL=https://rpc.testnet.arc.network
+ARC_CHAIN_ID=5042002
+USDC_ARC_ADDRESS=0x3600000000000000000000000000000000000000
+SUPABASE_URL=your_supabase_project_url
+SUPABASE_SERVICE_KEY=your_supabase_service_role_key
+JWT_SECRET=your_jwt_secret
+PORT=4000
+FRONTEND_URL=http://localhost:3000
+BACKEND_URL=http://localhost:4000
+```
+
+Run the Supabase SQL schema (in `/backend/schema.sql` or run each table manually):
+
+```bash
+npm run dev
+```
+
+### Frontend Setup
+
+The frontend is plain HTML with no build step. Open `frontend/index.html` directly or serve with any static server:
+
+```bash
+cd frontend
+npx serve .
+```
+
+Update the `API` constant in `app.html` and `login.html` to point to your backend URL.
+
+---
+
+## Database Schema
+
+Six tables in Supabase:
+
+- `users` — email, password_hash, name, role
+- `wallets` — user_id, circle_wallet_id, address, role
+- `streams` — employer_id, worker_id, rate_per_hour, status, total_paid
+- `payouts` — stream_id, amount_usdc, circle_tx_id, arc_tx_hash, status
+- `withdrawals` — user_id, amount_usdc, destination_address, circle_tx_id, arc_tx_hash
+- `agent_log` — stream_id, action, activity_score, reason
+
+---
+
+## API Endpoints
+
+```
+POST /api/v1/auth/signup          Create account + Circle wallet
+POST /api/v1/auth/login           Login, get JWT
+GET  /api/v1/auth/me              Get current user
+GET  /api/v1/auth/user/:userId    Get user by ID (employer name lookup)
+
+POST /api/v1/wallets              Create wallet for user
+GET  /api/v1/wallets/:userId      Get wallet + live balance
+
+POST /api/v1/streams              Create salary stream
+GET  /api/v1/streams              List streams (by employer or worker)
+GET  /api/v1/streams/:id/earned   Get earned amount since last payout
+POST /api/v1/streams/:id/pause    Pause stream
+POST /api/v1/streams/:id/resume   Resume stream
+POST /api/v1/streams/:id/stop     Stop stream permanently
+
+POST /api/v1/withdrawals          Real Circle CCTP withdrawal
+GET  /api/v1/withdrawals/:userId  Withdrawal history
+
+GET  /api/v1/payouts              Payout history with Arc tx hashes
+GET  /api/v1/agent-log            AI agent activity log
+
+GET  /api/v1/health               Health check
+```
 
 ---
 
 ## Circle Product Feedback
 
-**Why we chose these products:** Developer-Controlled Wallets is the only model that enables automated per-minute disbursements without user signing. Nanopayments makes sub-cent micro-transfers economically viable on Arc. Circle Gateway gives workers a unified balance across chains. CCTP makes cross-chain withdrawal a single API call.
+### Why we chose these products
 
-**What worked well:** The createTransaction API is clean and consistent. Arc testnet finality is genuinely sub-second. The faucet is fast and frictionless.
+**USDC** was the only correct choice for UAE salary streaming. Expat workers need stability. Volatile tokens would undermine the entire value proposition. USDC on Arc gives dollar-denominated predictability.
 
-**What could be improved:** A webhook signature verification helper in the SDK would reduce boilerplate. A dedicated Nanopayments method distinct from createTransaction would make intent explicit. The entity secret registration flow in the console could be more developer-friendly.
+**Developer-controlled wallets** are correct for this audience. A construction worker in Dubai will not manage a seed phrase. The wallet must be invisible — just an account with a balance. Circle's developer-controlled model handles this perfectly.
 
-**Recommendation:** A native stream primitive in the Circle API — deposit a float, set a rate, specify a recipient — would be the ideal product for this use case and reduce backend complexity significantly.
+**Nanopayments** are PayStream's core differentiator. Traditional payroll is monthly. PayStream pays by the second. Only Circle's infrastructure makes sub-cent transactions economically viable.
+
+**CCTP** was chosen because UAE workers need to off-ramp to networks where more exchanges and DeFi options exist. Arc-only USDC would limit real-world utility.
+
+**Gateway** provides the unified balance view that makes the employer treasury dashboard coherent. Seeing USDC across chains as one number is exactly what a payroll manager needs.
+
+### What worked well
+
+- Developer-controlled wallets have an excellent API. One call creates a wallet. The mental model is clean.
+- Arc testnet USDC contract address is predictable. No ABI lookup needed.
+- `createTransaction` is reliable. The polling pattern for confirmation works.
+- Arc testnet faucet is fast. USDC arrives within seconds — critical during hackathon development.
+- Arcscan is developer-friendly and easy to share with judges.
+- The SDK handles idempotency keys correctly. Re-running the cron does not duplicate payments.
+
+### What could be improved
+
+- The SDK response format is inconsistent between `createWalletSet` and `createWallets`. The wallet set ID is nested differently. This caused multiple debugging sessions.
+- The entity secret registration flow is not documented clearly for new accounts. A setup wizard in the Circle console would save hours.
+- CCTP cross-chain status is difficult to poll reliably. A webhook on attestation confirmation would be cleaner than a polling loop.
+- StableFX and USYC require enterprise approval. A hackathon sandbox mode with simulated responses would let builders design around these products without waiting.
+- A webhook for transaction confirmation would replace the polling pattern and reduce API call volume significantly.
+
+### Recommendations
+
+- A native streaming payments primitive in the SDK (`createStream` with rate and recipient) would make products like PayStream far easier to build correctly.
+- A developer console that shows live wallet balances and transaction history — similar to Stripe's dashboard — would reduce the need for custom admin tooling.
+- An official Arc testnet block explorer API would help builders construct richer history views without scraping Arcscan HTML.
 
 ---
 
-Built for the Stablecoin Commerce Stack Challenge · Arc + Circle · 2026
+## Demo Accounts
+
+For testing the live site:
+
+| Role | Email | Password |
+|---|---|---|
+| Worker | ahmad@paystream.test | password123 |
+| Employer | employer@paystream.test | password123 |
+
+---
+
+## Hackathon Details
+
+- **Challenge:** Stablecoin Commerce Stack Challenge
+- **Organizer:** Ignyte
+- **Technical sponsors:** Circle, Arc
+- **Track:** Track 1 — Best Cross-Border Payments and Remittances Experience (UAE)
+- **Prize pool:** 5000 USDC (1st place) + 3000 USDC (2nd place)
+- **Deadline:** July 13 2026

@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PayStream — Architecture</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cantarell:wght@400;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root{
+      --slate:#0F1117;--slate2:#1A1D27;--slate3:#151820;--slate4:#1E2233;
+      --amber:#C87A10;--amber-lt:#E8931A;--amber-dim:rgba(200,122,16,0.12);
+      --green:#10B981;--green-dim:rgba(16,185,129,0.10);
+      --blue:#3B82F6;--blue-dim:rgba(59,130,246,0.10);
+      --purple:#8B5CF6;--purple-dim:rgba(139,92,246,0.10);
+      --red:#FF4D6A;--red-dim:rgba(255,77,106,0.10);
+      --white:#fff;--g1:#B8C4D8;--g2:#6B7A99;--g3:#2E3650;
+      --border:rgba(255,255,255,0.07);
+      --ff:'Cantarell',sans-serif;--ff-mono:'Space Mono',monospace;--ff-body:'DM Sans',sans-serif;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{background:var(--slate);color:var(--white);font-family:var(--ff-body);-webkit-font-smoothing:antialiased;min-height:100vh}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+    @keyframes flow{0%{stroke-dashoffset:20}100%{stroke-dashoffset:0}}
+    @keyframes pulse{0%,100%{transform:scale(1);opacity:.7}50%{transform:scale(1.05);opacity:1}}
+
+    .grid-bg{position:fixed;inset:0;background-image:linear-gradient(rgba(200,122,16,.015) 1px,transparent 1px),linear-gradient(90deg,rgba(200,122,16,.015) 1px,transparent 1px);background-size:48px 48px;pointer-events:none}
+
+    /* NAV */
+    nav{position:sticky;top:0;z-index:100;background:rgba(15,17,23,.92);border-bottom:.5px solid var(--border);backdrop-filter:blur(20px);padding:14px 48px;display:flex;align-items:center;justify-content:space-between}
+    .nav-logo{font-family:var(--ff);font-weight:700;font-size:18px;display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--white)}
+    .nav-links{display:flex;gap:28px}
+    .nav-links a{font-size:13px;color:var(--g2);text-decoration:none;transition:color .2s}
+    .nav-links a:hover{color:var(--white)}
+    .nav-badge{background:var(--green-dim);border:.5px solid rgba(16,185,129,.2);color:var(--green);font-size:11px;font-weight:600;padding:4px 12px;border-radius:100px;display:flex;align-items:center;gap:5px}
+    .live-dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:blink 1.4s infinite}
+
+    /* HERO */
+    .hero{padding:80px 48px 60px;text-align:center;position:relative}
+    .hero-tag{display:inline-flex;align-items:center;gap:8px;background:var(--amber-dim);border:.5px solid rgba(200,122,16,.25);color:var(--amber);font-size:11.5px;font-weight:600;padding:6px 16px;border-radius:100px;margin-bottom:24px;letter-spacing:.04em}
+    .hero h1{font-family:var(--ff);font-weight:700;font-size:clamp(36px,5vw,58px);letter-spacing:-.03em;margin-bottom:16px;line-height:1.05}
+    .hero h1 span{color:var(--amber)}
+    .hero-sub{font-size:16px;color:var(--g2);max-width:640px;margin:0 auto 40px;line-height:1.6}
+
+    /* CIRCLE TOOLS USED */
+    .tools-bar{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:80px}
+    .tool-pill{display:flex;align-items:center;gap:8px;background:var(--slate2);border:.5px solid var(--border);border-radius:100px;padding:8px 18px;font-size:13px;font-weight:500;color:var(--g1);transition:border-color .2s}
+    .tool-pill:hover{border-color:rgba(200,122,16,.3)}
+    .tool-pill .dot{width:8px;height:8px;border-radius:50%}
+
+    /* SECTION */
+    section{padding:60px 48px;max-width:1200px;margin:0 auto}
+    .sec-label{font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;margin-bottom:10px}
+    .sec-label.amber{color:var(--amber)}.sec-label.green{color:var(--green)}.sec-label.blue{color:var(--blue)}.sec-label.purple{color:var(--purple)}
+    .sec-title{font-family:var(--ff);font-weight:700;font-size:clamp(24px,3vw,36px);letter-spacing:-.025em;margin-bottom:14px}
+    .sec-sub{font-size:14.5px;color:var(--g2);line-height:1.65;max-width:680px;margin-bottom:40px}
+
+    /* ARCH DIAGRAM */
+    .arch-diagram{background:var(--slate2);border:.5px solid var(--border);border-radius:20px;padding:40px;position:relative;overflow:hidden;margin-bottom:60px}
+    .arch-diagram::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:40%;height:1px;background:linear-gradient(90deg,transparent,var(--amber),transparent)}
+
+    .arch-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:0;align-items:center;min-height:480px}
+
+    .arch-col{display:flex;flex-direction:column;gap:12px}
+    .arch-col.left{align-items:flex-end}
+    .arch-col.right{align-items:flex-start}
+    .arch-col.center{align-items:center;justify-content:center}
+
+    .arch-node{border-radius:14px;padding:16px 20px;position:relative;width:200px;animation:fadeUp .6s ease both}
+    .arch-node.user{background:linear-gradient(135deg,rgba(139,92,246,.12),rgba(139,92,246,.06));border:.5px solid rgba(139,92,246,.25)}
+    .arch-node.frontend{background:linear-gradient(135deg,rgba(200,122,16,.12),rgba(200,122,16,.06));border:.5px solid rgba(200,122,16,.25)}
+    .arch-node.backend{background:linear-gradient(135deg,rgba(16,185,129,.12),rgba(16,185,129,.06));border:.5px solid rgba(16,185,129,.25)}
+    .arch-node.circle{background:linear-gradient(135deg,rgba(59,130,246,.12),rgba(59,130,246,.06));border:.5px solid rgba(59,130,246,.25)}
+    .arch-node.db{background:linear-gradient(135deg,rgba(255,77,106,.1),rgba(255,77,106,.05));border:.5px solid rgba(255,77,106,.2)}
+    .arch-node.blockchain{background:linear-gradient(135deg,rgba(200,122,16,.15),rgba(232,147,26,.08));border:.5px solid rgba(200,122,16,.3)}
+    .arch-node.cron{background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(16,185,129,.05));border:.5px solid rgba(16,185,129,.2)}
+
+    .node-icon{font-size:20px;margin-bottom:6px}
+    .node-title{font-weight:700;font-size:13px;margin-bottom:3px}
+    .node-sub{font-size:11px;color:var(--g2);line-height:1.4}
+    .node-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;margin-top:7px}
+    .node-badge.green{background:var(--green-dim);color:var(--green)}
+    .node-badge.blue{background:var(--blue-dim);color:var(--blue)}
+    .node-badge.amber{background:var(--amber-dim);color:var(--amber)}
+
+    /* CENTER CORE */
+    .arch-core{background:linear-gradient(135deg,rgba(200,122,16,.15),rgba(16,185,129,.08));border:.5px solid rgba(200,122,16,.3);border-radius:20px;padding:24px;text-align:center;width:180px;position:relative;animation:pulse 3s ease-in-out infinite}
+    .core-logo{font-family:var(--ff);font-weight:700;font-size:18px;margin-bottom:4px}
+    .core-logo span{color:var(--amber)}
+    .core-sub{font-size:10.5px;color:var(--g2);line-height:1.4}
+    .core-ring{position:absolute;inset:-8px;border-radius:26px;border:.5px solid rgba(200,122,16,.15);pointer-events:none}
+    .core-ring2{position:absolute;inset:-16px;border-radius:32px;border:.5px solid rgba(200,122,16,.08);pointer-events:none}
+
+    /* ARROWS BETWEEN */
+    .arch-arrows{display:flex;flex-direction:column;gap:20px;align-items:center;padding:0 20px}
+    .arrow-row{display:flex;align-items:center;gap:6px}
+    .arrow-label{font-size:9.5px;color:var(--g3);font-family:var(--ff-mono);white-space:nowrap}
+    .arrow-line{flex:1;height:1px;position:relative}
+    .arrow-line.amber{background:linear-gradient(90deg,transparent,rgba(200,122,16,.4),transparent)}
+    .arrow-line.green{background:linear-gradient(90deg,transparent,rgba(16,185,129,.4),transparent)}
+    .arrow-line.blue{background:linear-gradient(90deg,transparent,rgba(59,130,246,.4),transparent)}
+
+    /* FLOW STEPS */
+    .flow-steps{display:grid;grid-template-columns:repeat(5,1fr);gap:0;position:relative;margin-bottom:60px}
+    .flow-steps::before{content:'';position:absolute;top:32px;left:10%;right:10%;height:1px;background:linear-gradient(90deg,var(--amber),var(--green));opacity:.3}
+    .flow-step{text-align:center;padding:0 8px;position:relative}
+    .step-num{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-family:var(--ff-mono);font-weight:700;font-size:18px;position:relative;z-index:1}
+    .step-num.s1{background:linear-gradient(135deg,rgba(139,92,246,.2),rgba(139,92,246,.1));border:.5px solid rgba(139,92,246,.3);color:var(--purple)}
+    .step-num.s2{background:linear-gradient(135deg,rgba(200,122,16,.2),rgba(200,122,16,.1));border:.5px solid rgba(200,122,16,.3);color:var(--amber)}
+    .step-num.s3{background:linear-gradient(135deg,rgba(59,130,246,.2),rgba(59,130,246,.1));border:.5px solid rgba(59,130,246,.3);color:var(--blue)}
+    .step-num.s4{background:linear-gradient(135deg,rgba(16,185,129,.2),rgba(16,185,129,.1));border:.5px solid rgba(16,185,129,.3);color:var(--green)}
+    .step-num.s5{background:linear-gradient(135deg,rgba(200,122,16,.2),rgba(16,185,129,.1));border:.5px solid rgba(200,122,16,.3);color:var(--amber)}
+    .step-title{font-weight:700;font-size:13px;margin-bottom:5px}
+    .step-sub{font-size:11.5px;color:var(--g2);line-height:1.5}
+
+    /* CIRCLE TOOLS DETAIL */
+    .tools-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:60px}
+    .tool-card{background:var(--slate2);border:.5px solid var(--border);border-radius:16px;padding:22px;transition:border-color .2s,transform .2s}
+    .tool-card:hover{border-color:rgba(59,130,246,.25);transform:translateY(-2px)}
+    .tool-card-top{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+    .tool-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .tool-icon.blue{background:var(--blue-dim);border:.5px solid rgba(59,130,246,.2)}
+    .tool-icon.green{background:var(--green-dim);border:.5px solid rgba(16,185,129,.2)}
+    .tool-icon.amber{background:var(--amber-dim);border:.5px solid rgba(200,122,16,.2)}
+    .tool-name{font-weight:700;font-size:14px;margin-bottom:2px}
+    .tool-tag{font-size:10.5px;color:var(--g3);font-family:var(--ff-mono)}
+    .tool-desc{font-size:13px;color:var(--g2);line-height:1.6;margin-bottom:12px}
+    .tool-usage{font-size:12px;color:var(--g1);background:var(--slate3);border-radius:7px;padding:9px 12px;font-family:var(--ff-mono);border:.5px solid var(--border)}
+
+    /* TECH STACK */
+    .stack-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:60px}
+    .stack-item{background:var(--slate2);border:.5px solid var(--border);border-radius:12px;padding:16px;text-align:center;transition:border-color .2s}
+    .stack-item:hover{border-color:rgba(200,122,16,.2)}
+    .stack-icon{font-size:28px;margin-bottom:8px}
+    .stack-name{font-weight:700;font-size:13px;margin-bottom:3px}
+    .stack-role{font-size:11px;color:var(--g3)}
+
+    /* FEEDBACK */
+    .feedback-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:60px}
+    .feedback-card{background:var(--slate2);border:.5px solid var(--border);border-radius:14px;padding:22px}
+    .fb-title{font-weight:700;font-size:14px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+    .fb-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .fb-list{list-style:none;display:flex;flex-direction:column;gap:7px}
+    .fb-list li{font-size:13px;color:var(--g2);line-height:1.5;padding-left:14px;position:relative}
+    .fb-list li::before{content:'·';position:absolute;left:0;color:var(--amber);font-weight:700}
+
+    /* STATS */
+    .stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;background:var(--slate2);border:.5px solid rgba(200,122,16,.2);border-radius:16px;padding:28px;margin-bottom:60px}
+    .stat-item{text-align:center;border-right:.5px solid var(--border)}
+    .stat-item:last-child{border-right:none}
+    .stat-val{font-family:var(--ff-mono);font-size:28px;font-weight:700;color:var(--green);margin-bottom:4px}
+    .stat-lbl{font-size:12px;color:var(--g3)}
+
+    /* FOOTER */
+    footer{border-top:.5px solid var(--border);padding:32px 48px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+    .footer-left{font-size:13px;color:var(--g3)}
+    .footer-links{display:flex;gap:20px}
+    .footer-links a{font-size:13px;color:var(--g2);text-decoration:none}
+    .footer-links a:hover{color:var(--amber)}
+
+    @media(max-width:900px){
+      nav,section,footer{padding-left:24px;padding-right:24px}
+      .hero{padding:60px 24px 40px}
+      .arch-grid{grid-template-columns:1fr;gap:16px}
+      .arch-col.left,.arch-col.right{align-items:center}
+      .arch-arrows{display:none}
+      .tools-grid{grid-template-columns:1fr}
+      .flow-steps{grid-template-columns:1fr 1fr}
+      .stack-grid{grid-template-columns:1fr 1fr}
+      .feedback-grid{grid-template-columns:1fr}
+      .stats-bar{grid-template-columns:1fr 1fr}
+      .stat-item{border-right:none;border-bottom:.5px solid var(--border);padding-bottom:16px}
+      .stat-item:last-child{border-bottom:none;padding-bottom:0}
+    }
+  </style>
+</head>
+<body>
+<div class="grid-bg"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">
+    <svg width="22" height="22" viewBox="0 0 38 38" fill="none"><circle cx="15" cy="19" r="9" fill="none" stroke="#C87A10" stroke-width="2"/><text x="15" y="23.5" text-anchor="middle" font-family="Cantarell" font-weight="700" font-size="9" fill="#C87A10">$</text><line x1="26" y1="19" x2="37" y2="19" stroke="#C87A10" stroke-width="2" stroke-linecap="round"/></svg>
+    <span style="color:var(--amber)">Pay</span>Stream
+  </a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="login.html">App</a>
+    <a href="#circle-tools">Circle Tools</a>
+    <a href="#flow">User Flow</a>
+    <a href="#feedback">Feedback</a>
+  </div>
+  <div class="nav-badge"><div class="live-dot"></div>Live on Arc testnet</div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="#C87A10" stroke-width="1.5" stroke-linecap="round"><rect x="1" y="3" width="10" height="7" rx="1.5"/><path d="M4 3V2a2 2 0 0 1 4 0v1"/></svg>
+    Stablecoin Commerce Stack Challenge · Track 1
+  </div>
+  <h1>PayStream <span>Architecture</span></h1>
+  <p class="hero-sub">Real-time USDC salary streaming on Arc testnet. Workers earn by the second. Employers pay by the millisecond. Built on Circle's developer stack.</p>
+
+  <div class="tools-bar">
+    <div class="tool-pill"><div class="dot" style="background:#3B82F6"></div>USDC</div>
+    <div class="tool-pill"><div class="dot" style="background:#10B981"></div>Circle Wallets</div>
+    <div class="tool-pill"><div class="dot" style="background:#C87A10"></div>Circle Gateway</div>
+    <div class="tool-pill"><div class="dot" style="background:#8B5CF6"></div>CCTP Bridge Kit</div>
+    <div class="tool-pill"><div class="dot" style="background:#FF4D6A"></div>Nanopayments</div>
+    <div class="tool-pill"><div class="dot" style="background:#F59E0B"></div>Arc Testnet</div>
+  </div>
+</div>
+
+<!-- LIVE STATS -->
+<section>
+  <div class="stats-bar">
+    <div class="stat-item"><div class="stat-val">60s</div><div class="stat-lbl">Nanopayment interval</div></div>
+    <div class="stat-item"><div class="stat-val">$0.000005</div><div class="stat-lbl">Minimum payment unit</div></div>
+    <div class="stat-item"><div class="stat-val">Arc</div><div class="stat-lbl">Settlement chain</div></div>
+    <div class="stat-item"><div class="stat-val">USDC</div><div class="stat-lbl">Settlement currency</div></div>
+  </div>
+</section>
+
+<!-- ARCHITECTURE DIAGRAM -->
+<section>
+  <div class="sec-label amber">System Architecture</div>
+  <div class="sec-title">How PayStream works</div>
+  <div class="sec-sub">Three layers work together: a frontend that shows real-time earnings, a backend that coordinates Circle APIs, and the Arc blockchain where every payment settles.</div>
+
+  <div class="arch-diagram">
+    <div class="arch-grid">
+
+      <!-- LEFT COLUMN -->
+      <div class="arch-col left">
+        <div class="arch-node user" style="animation-delay:.1s">
+          <div class="node-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="#8B5CF6" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="8" r="4"/><path d="M4 20c0-3.9 3.1-7 7-7s7 3.1 7 7"/></svg></div>
+          <div class="node-title">Worker</div>
+          <div class="node-sub">Signs up with email, gets a Circle wallet automatically. Sees USDC counter tick every second.</div>
+          <div class="node-badge green"><div style="width:5px;height:5px;border-radius:50%;background:var(--green)"></div>Earns USDC/sec</div>
+        </div>
+
+        <div class="arch-node frontend" style="animation-delay:.2s">
+          <div class="node-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="#C87A10" stroke-width="1.5" stroke-linecap="round"><rect x="2" y="3" width="18" height="14" rx="2"/><path d="M7 21h8M11 17v4"/></svg></div>
+          <div class="node-title">Frontend — Vercel</div>
+          <div class="node-sub">Slate premium dark UI. Real-time counter. Withdraw and swap modals. Role-separated dashboards.</div>
+          <div class="node-badge amber">paystream-virid.vercel.app</div>
+        </div>
+
+        <div class="arch-node db" style="animation-delay:.3s">
+          <div class="node-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="#FF4D6A" stroke-width="1.5" stroke-linecap="round"><ellipse cx="11" cy="6" rx="8" ry="3"/><path d="M3 6v5c0 1.7 3.6 3 8 3s8-1.3 8-3V6"/><path d="M3 11v5c0 1.7 3.6 3 8 3s8-1.3 8-3v-5"/></ellipse></svg></div>
+          <div class="node-title">Supabase</div>
+          <div class="node-sub">Wallets, streams, payouts, agent log, users, withdrawals. 6 tables. Real-time queries.</div>
+          <div class="node-badge" style="background:var(--red-dim);color:var(--red)">PostgreSQL</div>
+        </div>
+      </div>
+
+      <!-- CENTER ARROWS LEFT -->
+      <div style="display:flex;flex-direction:column;gap:16px;align-items:center;padding:0 16px">
+        <!-- Core -->
+        <div class="arch-core">
+          <div class="core-ring"></div>
+          <div class="core-ring2"></div>
+          <svg width="32" height="32" viewBox="0 0 38 38" fill="none" style="margin:0 auto 6px"><circle cx="15" cy="19" r="9" fill="none" stroke="#C87A10" stroke-width="2"/><text x="15" y="23.5" text-anchor="middle" font-family="Cantarell" font-weight="700" font-size="9" fill="#C87A10">$</text><line x1="26" y1="19" x2="37" y2="19" stroke="#C87A10" stroke-width="2" stroke-linecap="round"/></svg>
+          <div class="core-logo"><span>Pay</span>Stream</div>
+          <div class="core-sub">Backend API<br>Render · Node.js</div>
+        </div>
+
+        <!-- Flow arrows -->
+        <div style="display:flex;flex-direction:column;gap:8px;width:100%">
+          <div style="display:flex;align-items:center;gap:6px;font-size:9.5px;color:var(--g3);font-family:var(--ff-mono)">
+            <div style="flex:1;height:1px;background:linear-gradient(90deg,rgba(200,122,16,.3),rgba(16,185,129,.3))"></div>
+            USDC flow
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:9.5px;color:var(--g3);font-family:var(--ff-mono)">
+            <div style="flex:1;height:1px;background:linear-gradient(90deg,rgba(59,130,246,.3),rgba(200,122,16,.3))"></div>
+            API calls
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:9.5px;color:var(--g3);font-family:var(--ff-mono)">
+            <div style="flex:1;height:1px;background:linear-gradient(90deg,rgba(16,185,129,.3),rgba(59,130,246,.3))"></div>
+            Webhooks
+          </div>
+        </div>
+
+        <div class="arch-node cron" style="width:160px;text-align:center;animation-delay:.4s">
+          <div style="display:flex;justify-content:center;margin-bottom:5px"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#10B981" stroke-width="1.4" stroke-linecap="round"><circle cx="10" cy="10" r="8"/><path d="M10 6v5l3 3"/></svg></div>
+          <div class="node-title" style="font-size:12px">Cron Engine</div>
+          <div class="node-sub" style="font-size:10px">Fires every 60s. AI agent every 5min.</div>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div class="arch-col right">
+        <div class="arch-node user" style="animation-delay:.1s">
+          <div class="node-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="#8B5CF6" stroke-width="1.5" stroke-linecap="round"><rect x="2" y="8" width="18" height="12" rx="2"/><path d="M7 8V6a4 4 0 0 1 8 0v2"/><circle cx="11" cy="14" r="1.5" fill="#8B5CF6"/></svg></div>
+          <div class="node-title">Employer</div>
+          <div class="node-sub">Creates salary streams. Sets rate and frequency. Controls pause, resume, stop per worker.</div>
+          <div class="node-badge" style="background:var(--purple-dim);color:var(--purple)">Full control</div>
+        </div>
+
+        <div class="arch-node circle" style="animation-delay:.2s">
+          <div class="node-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="#3B82F6" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="11" r="9"/><path d="M7 11h8M11 7v8"/></svg></div>
+          <div class="node-title">Circle API Stack</div>
+          <div class="node-sub">Developer-controlled wallets. USDC on Arc. CCTP bridge. Gateway treasury. Nanopayments.</div>
+          <div class="node-badge blue">5 products used</div>
+        </div>
+
+        <div class="arch-node blockchain" style="animation-delay:.3s">
+          <div class="node-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="#C87A10" stroke-width="1.5" stroke-linecap="round"><path d="M11 2L2 7v8l9 5 9-5V7L11 2z"/><path d="M2 7l9 5 9-5M11 12v10"/></svg></div>
+          <div class="node-title">Arc Testnet</div>
+          <div class="node-sub">Circle's purpose-built L1. Dollar-denominated fees. Deterministic finality. Every payment is a real on-chain tx.</div>
+          <div class="node-badge amber">Chain ID: 5042002</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- USER FLOW -->
+<section id="flow">
+  <div class="sec-label green">User Journey</div>
+  <div class="sec-title">From signup to first withdrawal</div>
+  <div class="sec-sub">The complete flow from a UAE expat worker signing up to receiving real USDC in their wallet — no crypto knowledge required.</div>
+
+  <div class="flow-steps">
+    <div class="flow-step">
+      <div class="step-num s1">1</div>
+      <div class="step-title">Sign up</div>
+      <div class="step-sub">Worker or employer creates account with email and password</div>
+    </div>
+    <div class="flow-step">
+      <div class="step-num s2">2</div>
+      <div class="step-title">Wallet created</div>
+      <div class="step-sub">Circle developer-controlled wallet deployed on Arc automatically</div>
+    </div>
+    <div class="flow-step">
+      <div class="step-num s3">3</div>
+      <div class="step-title">Stream starts</div>
+      <div class="step-sub">Employer creates salary stream at agreed rate. Cron starts firing.</div>
+    </div>
+    <div class="flow-step">
+      <div class="step-num s4">4</div>
+      <div class="step-title">USDC flows</div>
+      <div class="step-sub">Every 60 seconds a real Circle transaction confirms on Arc testnet</div>
+    </div>
+    <div class="flow-step">
+      <div class="step-num s5">5</div>
+      <div class="step-title">Withdraw</div>
+      <div class="step-sub">Worker withdraws to any external wallet via Circle CCTP. Real tx hash.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CIRCLE TOOLS -->
+<section id="circle-tools">
+  <div class="sec-label blue">Circle Developer Stack</div>
+  <div class="sec-title">Five Circle products, one cohesive system</div>
+  <div class="sec-sub">Each Circle tool was chosen deliberately for what it does uniquely well in the PayStream architecture.</div>
+
+  <div class="tools-grid">
+    <div class="tool-card">
+      <div class="tool-card-top">
+        <div class="tool-icon blue"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#3B82F6" stroke-width="1.4" stroke-linecap="round"><circle cx="10" cy="10" r="8"/><path d="M6 10h8M10 6v8"/></svg></div>
+        <div><div class="tool-name">USDC</div><div class="tool-tag">Primary settlement rail</div></div>
+      </div>
+      <div class="tool-desc">Every salary payment, every withdrawal, every stream is denominated and settled in USDC. Predictable, stable, globally accessible. No volatility risk for UAE expat workers.</div>
+      <div class="tool-usage">All nanopayments · Withdrawals · Employer float</div>
+    </div>
+
+    <div class="tool-card">
+      <div class="tool-card-top">
+        <div class="tool-icon green"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#10B981" stroke-width="1.4" stroke-linecap="round"><rect x="3" y="7" width="14" height="10" rx="2"/><path d="M7 7V5a3 3 0 0 1 6 0v2"/></svg></div>
+        <div><div class="tool-name">Circle Wallets</div><div class="tool-tag">Developer-controlled wallets</div></div>
+      </div>
+      <div class="tool-desc">Every signup creates a Circle developer-controlled wallet automatically. Workers never see a seed phrase. Employers never manage private keys. The wallet is invisible — just an account.</div>
+      <div class="tool-usage">Auto-created on signup · Holds USDC · Source of withdrawals</div>
+    </div>
+
+    <div class="tool-card">
+      <div class="tool-card-top">
+        <div class="tool-icon amber"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#C87A10" stroke-width="1.4" stroke-linecap="round"><circle cx="10" cy="10" r="8"/><path d="M6.5 10h7M10 6.5l3.5 3.5-3.5 3.5" opacity=".8"/></svg></div>
+        <div><div class="tool-name">Circle Gateway</div><div class="tool-tag">Treasury and routing</div></div>
+      </div>
+      <div class="tool-desc">Employer float management and unified balance display across chains. The Gateway unified balance panel shows workers their USDC across Arc, Ethereum, and Polygon in one view.</div>
+      <div class="tool-usage">Employer treasury · Unified balance panel · Routing layer</div>
+    </div>
+
+    <div class="tool-card">
+      <div class="tool-card-top">
+        <div class="tool-icon blue"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#3B82F6" stroke-width="1.4" stroke-linecap="round"><circle cx="5" cy="10" r="3"/><circle cx="15" cy="10" r="3"/><path d="M8 9h4M11 7l2 2-2 2M9 11l-2 2 2 2" opacity=".7"/></svg></div>
+        <div><div class="tool-name">CCTP Bridge Kit</div><div class="tool-tag">Cross-chain USDC transfer</div></div>
+      </div>
+      <div class="tool-desc">Workers can withdraw USDC from Arc to Ethereum, Polygon, Base, Arbitrum, or Avalanche in 8 to 20 seconds. The Bridge Kit handles the burn-and-mint cycle. Real Circle attestation.</div>
+      <div class="tool-usage">Withdraw modal · Cross-chain settlement · 6 destination chains</div>
+    </div>
+
+    <div class="tool-card">
+      <div class="tool-card-top">
+        <div class="tool-icon green"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#10B981" stroke-width="1.4" stroke-linecap="round"><path d="M2 10Q5.5 6.5 9 10Q12.5 13.5 16 10"/><circle cx="16" cy="10" r="2" fill="#10B981"/></svg></div>
+        <div><div class="tool-name">Nanopayments</div><div class="tool-tag">Sub-cent micro-transactions</div></div>
+      </div>
+      <div class="tool-desc">The cron engine fires every 60 seconds and dispatches a real Circle createTransaction call for each active stream. Amounts as small as $0.000005 USDC per second. Every tx confirmed on Arc.</div>
+      <div class="tool-usage">Cron every 60s · Real Arc tx hashes · AI agent monitors</div>
+    </div>
+
+    <div class="tool-card" style="background:linear-gradient(135deg,rgba(200,122,16,.06),rgba(16,185,129,.03));border-color:rgba(200,122,16,.15)">
+      <div class="tool-card-top">
+        <div class="tool-icon amber"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#C87A10" stroke-width="1.4" stroke-linecap="round"><path d="M10 2L3 6v7l7 5 7-5V6L10 2z"/></svg></div>
+        <div><div class="tool-name">Arc Testnet</div><div class="tool-tag">Circle's purpose-built L1</div></div>
+      </div>
+      <div class="tool-desc">All transactions settle on Arc — Circle's L1 blockchain designed for stablecoin applications. Dollar-denominated fees. Deterministic finality. Every nanopayment is a real on-chain transaction verifiable on Arcscan.</div>
+      <div class="tool-usage">Chain ID: 5042002 · RPC: rpc.testnet.arc.network · arcscan.app</div>
+    </div>
+  </div>
+</section>
+
+<!-- TECH STACK -->
+<section>
+  <div class="sec-label purple">Technical Stack</div>
+  <div class="sec-title">Built with production-grade tools</div>
+
+  <div class="stack-grid">
+    <div class="stack-item">
+      <div class="stack-icon">⚡</div>
+      <div class="stack-name">Node.js + Express</div>
+      <div class="stack-role">Backend API · Render</div>
+    </div>
+    <div class="stack-item">
+      <div class="stack-icon">🌐</div>
+      <div class="stack-name">HTML + CSS + JS</div>
+      <div class="stack-role">Frontend · Vercel</div>
+    </div>
+    <div class="stack-item">
+      <div class="stack-icon">🗄️</div>
+      <div class="stack-name">Supabase</div>
+      <div class="stack-role">PostgreSQL database</div>
+    </div>
+    <div class="stack-item">
+      <div class="stack-icon">🔵</div>
+      <div class="stack-name">Circle SDK v3</div>
+      <div class="stack-role">Developer-controlled wallets</div>
+    </div>
+    <div class="stack-item">
+      <div class="stack-icon">⏰</div>
+      <div class="stack-name">node-cron</div>
+      <div class="stack-role">60s nanopayment engine</div>
+    </div>
+    <div class="stack-item">
+      <div class="stack-icon">🔐</div>
+      <div class="stack-name">JWT + bcryptjs</div>
+      <div class="stack-role">Auth · Email login</div>
+    </div>
+    <div class="stack-item">
+      <div class="stack-icon">🤖</div>
+      <div class="stack-name">AI Agent</div>
+      <div class="stack-role">Activity monitor · 5min cycle</div>
+    </div>
+    <div class="stack-item">
+      <div class="stack-icon">⛓️</div>
+      <div class="stack-name">Arc Testnet</div>
+      <div class="stack-role">On-chain settlement</div>
+    </div>
+  </div>
+</section>
+
+<!-- CIRCLE PRODUCT FEEDBACK -->
+<section id="feedback">
+  <div class="sec-label amber">Circle Product Feedback</div>
+  <div class="sec-title">Honest developer experience review</div>
+  <div class="sec-sub">Required for submission. Our genuine assessment of each Circle product after building PayStream over the hackathon period.</div>
+
+  <div class="feedback-grid">
+    <div class="feedback-card">
+      <div class="fb-title">
+        <div class="fb-icon" style="background:var(--green-dim);border:.5px solid rgba(16,185,129,.2)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#10B981" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7L5.5 10.5L12 3"/></svg></div>
+        What worked well
+      </div>
+      <ul class="fb-list">
+        <li>Circle developer-controlled wallets are the right mental model for PayStream. Creating a wallet on signup with one API call makes the user experience frictionless. Non-crypto users never see a seed phrase.</li>
+        <li>The Arc testnet USDC contract at <code style="font-family:var(--ff-mono);font-size:11px;color:var(--amber)">0x3600...0000</code> is predictable and easy to hardcode. No ABI lookup needed.</li>
+        <li>The <code style="font-family:var(--ff-mono);font-size:11px;color:var(--amber)">createTransaction</code> SDK method is clean and the polling pattern for confirmation works reliably.</li>
+        <li>Arc testnet faucet is fast. USDC arrives within seconds. Critical for hackathon development speed.</li>
+        <li>Arcscan is readable and developer-friendly. Sharing tx hashes with judges is straightforward.</li>
+        <li>The SDK handles idempotency keys well. Re-running the cron with the same key does not duplicate payments.</li>
+      </ul>
+    </div>
+
+    <div class="feedback-card">
+      <div class="fb-title">
+        <div class="fb-icon" style="background:var(--amber-dim);border:.5px solid rgba(200,122,16,.2)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#C87A10" stroke-width="1.5" stroke-linecap="round"><path d="M7 2v5M7 9.5v.5"/><circle cx="7" cy="7" r="6"/></svg></div>
+        What could be improved
+      </div>
+      <ul class="fb-list">
+        <li>The SDK response format is inconsistent. <code style="font-family:var(--ff-mono);font-size:11px;color:var(--amber)">createWalletSet</code> returns the ID differently than <code style="font-family:var(--ff-mono);font-size:11px;color:var(--amber)">createWallets</code>. Took multiple debugging sessions to resolve.</li>
+        <li>The entity secret registration flow is not clearly documented for new accounts. A first-time setup wizard in the Circle console would save hours.</li>
+        <li>CCTP cross-chain status is hard to poll. A webhook that fires on attestation confirmation would be cleaner than polling <code style="font-family:var(--ff-mono);font-size:11px;color:var(--amber)">getTransaction</code> in a loop.</li>
+        <li>The Arc testnet has occasional RPC timeouts under load. A retry mechanism in the SDK would help production reliability.</li>
+        <li>StableFX and USYC access requires enterprise approval. For hackathons, a sandbox mode with simulated responses would let builders design around these products without waiting for approval.</li>
+        <li>The Circle developer console could show a live view of wallet balances and transaction history — similar to Stripe's dashboard. Currently requires building your own admin view.</li>
+      </ul>
+    </div>
+
+    <div class="feedback-card">
+      <div class="fb-title">
+        <div class="fb-icon" style="background:var(--blue-dim);border:.5px solid rgba(59,130,246,.2)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#3B82F6" stroke-width="1.5" stroke-linecap="round"><path d="M7 2v5M7 9.5v.5"/></svg></div>
+        Why we chose these products
+      </div>
+      <ul class="fb-list">
+        <li>USDC was the only choice for a UAE payroll product. Expat workers need a stable currency. Volatile tokens would undermine trust in real-time salary streaming.</li>
+        <li>Developer-controlled wallets are correct for this use case. Workers in construction or hospitality will not manage seed phrases. The wallet must be invisible.</li>
+        <li>Nanopayments are the core differentiator. Traditional payroll is monthly. PayStream pays by the second. Only Circle's infrastructure makes this economically viable at sub-cent amounts.</li>
+        <li>CCTP was chosen because UAE workers need to off-ramp to Ethereum or Polygon where more exchanges and swaps are available. Arc-only USDC would limit utility.</li>
+        <li>Gateway provides the unified balance view that makes the employer treasury dashboard make sense. Seeing USDC across chains in one number is exactly what a payroll manager needs.</li>
+      </ul>
+    </div>
+
+    <div class="feedback-card">
+      <div class="fb-title">
+        <div class="fb-icon" style="background:var(--purple-dim);border:.5px solid rgba(139,92,246,.2)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#8B5CF6" stroke-width="1.5" stroke-linecap="round"><path d="M7 2v10M2 7h10"/></svg></div>
+        Recommendations for Circle
+      </div>
+      <ul class="fb-list">
+        <li>A streaming payments primitive in the SDK would be powerful. Right now builders must implement their own cron-based approximation. A native <code style="font-family:var(--ff-mono);font-size:11px;color:var(--amber)">createStream</code> SDK method with rate and recipient would unlock many use cases.</li>
+        <li>An official Arc testnet block explorer API would help builders build richer history views without scraping Arcscan.</li>
+        <li>The Arc testnet should have a public faucet that accepts wallet addresses directly — the current UI requires connecting a browser wallet which adds friction for developer testing.</li>
+        <li>A webhook for transaction confirmation would replace the polling pattern and reduce API calls significantly. Essential for production-grade nanopayment systems.</li>
+        <li>Consider a developer sandbox with fake USDC that never touches real testnet. Faster iteration during development without faucet rate limits.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    PayStream · Stablecoin Commerce Stack Challenge 2026 · Track 1: Cross-Border Payments
+  </div>
+  <div class="footer-links">
+    <a href="https://paystream-virid.vercel.app" target="_blank">Live App</a>
+    <a href="https://github.com/mimisco-git/Paystream" target="_blank">GitHub</a>
+    <a href="https://paystream-9xtb.onrender.com/api/v1/health" target="_blank">API Health</a>
+    <a href="https://testnet.arcscan.app" target="_blank">Arcscan</a>
+  </div>
+</footer>
+
+</body>
+</html>
