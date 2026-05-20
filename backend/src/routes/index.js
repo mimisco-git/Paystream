@@ -16,6 +16,7 @@ import {
   getEarnedSince,
 } from '../services/streamService.js'
 import { getAgentLog } from '../services/agentService.js'
+import { createWithdrawal, listWithdrawals } from '../services/withdrawalService.js'
 import { db }          from '../config/db.js'
 
 const router = Router()

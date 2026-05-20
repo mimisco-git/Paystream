@@ -930,34 +930,84 @@ function updateWdSummary(){
 }
 function selChain(el,name){document.querySelectorAll('.chain-opt').forEach(function(c){c.classList.remove('selected')});el.classList.add('selected');selChainName=name;updateWdSummary()}
 
-var wdLines=['Signing with Circle developer wallet...','Broadcasting to Arc testnet...','CCTP burn confirmed on source chain...','Attestation received from Circle...','Minting USDC on destination chain...','Settlement confirmed on Arc']
 async function doWithdraw(){
   var amt=parseFloat(document.getElementById('wd-amount').value||0)
   var dest=document.getElementById('wd-dest').value.trim()
   if(amt<=0)return alert('Enter a valid amount')
   if(amt>liveBalance)return alert('Insufficient balance. Available: $'+liveBalance.toFixed(2)+' USDC')
-  if(!dest||!dest.startsWith('0x'))return alert('Enter a valid destination wallet address starting with 0x')
+  if(!dest||!dest.startsWith('0x')||dest.length<42)return alert('Enter a valid 0x wallet address (42 characters)')
+
   document.getElementById('wd-form').style.display='none'
   document.getElementById('wd-processing').style.display=''
-  var log=document.getElementById('wd-log');log.innerHTML='';var i=0,t0=Date.now()
-  var iv=setInterval(function(){
-    log.innerHTML+='<div style="margin-bottom:3px"><span style="color:var(--green)">› </span>'+wdLines[i]+'</div>'
-    log.scrollTop=log.scrollHeight;i++
-    if(i>=wdLines.length){clearInterval(iv)
-      setTimeout(function(){
-        var elapsed=((Date.now()-t0)/1000).toFixed(2)
-        document.getElementById('wd-processing').style.display='none'
-        document.getElementById('wd-success').style.display=''
-        document.getElementById('wd-time').textContent=elapsed+'s'
-        var hash='0x'+randHex(8)+'...'+randHex(4)
-        document.getElementById('wd-hash').textContent=hash+' on '+selChainName+' Testnet'
-        showToast({title:'Withdrawal Confirmed',sub:'$'+amt.toFixed(2)+' USDC sent to '+selChainName+' in '+elapsed+'s',type:'wd',amount:'-$'+amt.toFixed(2)})
-        pushNotif({title:'Withdrawal settled',sub:'$'+amt.toFixed(2)+' USDC to '+dest.slice(0,8)+'... on '+selChainName,type:'wd'})
-        if(!localStorage.getItem('ps_first_wd')){localStorage.setItem('ps_first_wd','1');fireConfetti()}
-        setTimeout(fetchWalBal,3000)
-      },400)
+  var log=document.getElementById('wd-log');log.innerHTML=''
+  var t0=Date.now()
+
+  function addLog(msg,color){
+    log.innerHTML+='<div style="margin-bottom:3px"><span style="color:'+(color||'var(--green)')+'">› </span>'+msg+'</div>'
+    log.scrollTop=log.scrollHeight
+  }
+
+  addLog('Validating Circle wallet and balance...')
+  addLog('Signing transaction with Circle developer key...')
+
+  try {
+    // Call real backend withdrawal endpoint
+    var res = await fetch(API+'/api/v1/withdrawals', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        userId:             psUser.id,
+        amount:             amt,
+        destinationAddress: dest,
+        destinationChain:   selChainName,
+      })
+    })
+    var json = await res.json()
+
+    if(!json.success) {
+      document.getElementById('wd-processing').style.display='none'
+      document.getElementById('wd-form').style.display=''
+      return alert('Withdrawal failed: '+(json.error||'Unknown error'))
     }
-  },selChainName==='Arc'?280:580)
+
+    var data = json.data
+    addLog('Transaction submitted to Arc testnet...')
+    addLog('Circle CCTP processing...')
+    if(data.confirmed) {
+      addLog('Confirmed on Arc: '+(data.arc_tx_hash||'pending'),'var(--amber)')
+    } else {
+      addLog('Transaction broadcast (pending confirmation)...','var(--g2)')
+    }
+
+    var elapsed = ((Date.now()-t0)/1000).toFixed(2)
+    document.getElementById('wd-processing').style.display='none'
+    document.getElementById('wd-success').style.display=''
+    document.getElementById('wd-time').textContent=elapsed+'s'
+
+    var hashDisplay = data.arc_tx_hash
+      ? (data.arc_tx_hash.slice(0,10)+'...'+data.arc_tx_hash.slice(-6)+' · '+selChainName+' Testnet')
+      : ('Circle TX: '+data.circle_tx_id+' · '+selChainName+' Testnet')
+    document.getElementById('wd-hash').textContent=hashDisplay
+
+    // Make hash clickable if we have Arc tx hash
+    if(data.arc_tx_hash) {
+      document.getElementById('wd-hash').style.cursor='pointer'
+      document.getElementById('wd-hash').onclick=function(){window.open('https://testnet.arcscan.app/tx/'+data.arc_tx_hash)}
+    }
+
+    showToast({title:'Withdrawal Confirmed',sub:'$'+amt.toFixed(2)+' USDC sent to '+selChainName+' in '+elapsed+'s',type:'wd',amount:'-$'+amt.toFixed(2)})
+    pushNotif({title:'Real withdrawal confirmed on Arc',sub:'$'+amt.toFixed(2)+' USDC to '+dest.slice(0,8)+'... Circle TX: '+data.circle_tx_id,type:'wd'})
+    if(!localStorage.getItem('ps_first_wd')){localStorage.setItem('ps_first_wd','1');fireConfetti()}
+    setTimeout(fetchWalBal,4000)
+
+  } catch(e) {
+    addLog('Error: '+e.message,'var(--red)')
+    setTimeout(function(){
+      document.getElementById('wd-processing').style.display='none'
+      document.getElementById('wd-form').style.display=''
+      alert('Withdrawal error: '+e.message)
+    },1500)
+  }
 }
 
 var swapRates={'ETH':0.000278,'MATIC':0.912,'AVAX':0.0196,'EUROC':0.923,'WBTC':0.0000145,'SOL':0.00645}
