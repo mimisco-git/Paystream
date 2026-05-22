@@ -16,6 +16,11 @@ import {
   getEarnedSince,
 } from '../services/streamService.js'
 import { getAgentLog } from '../services/agentService.js'
+import {
+  createDepartment, listDepartments, getDepartmentByInviteCode,
+  joinDepartment, getDepartmentWorkers, updateDepartment,
+  deleteDepartment, rateWorker, generatePayrollReport
+} from '../services/departmentService.js'
 import { createWithdrawal, listWithdrawals } from '../services/withdrawalService.js'
 import { db }          from '../config/db.js'
 
@@ -63,11 +68,14 @@ router.get('/wallets/:userId', wrap(async (req, res) => {
 
 // ── STREAMS ──
 router.post('/streams', wrap(async (req, res) => {
-  const { employerId, workerId, workerAddress, ratePerHour } = z.object({
+  const { employerId, workerId, workerAddress, ratePerHour, companyName, departmentId, workerTitle } = z.object({
     employerId:    z.string().min(1),
     workerId:      z.string().optional(),
     workerAddress: z.string().optional(),
     ratePerHour:   z.number().positive(),
+    companyName:   z.string().optional(),
+    departmentId:  z.string().optional(),
+    workerTitle:   z.string().optional(),
   }).parse(req.body)
 
   let resolvedWorkerId = workerId
@@ -82,7 +90,7 @@ router.post('/streams', wrap(async (req, res) => {
   if (!resolvedWorkerId) return err(res, 'Provide either workerId or workerAddress')
   if (resolvedWorkerId === employerId) return err(res, 'You cannot create a stream to yourself')
 
-  const stream = await createStream({ employerId, workerId: resolvedWorkerId, ratePerHour })
+  const stream = await createStream({ employerId, workerId: resolvedWorkerId, ratePerHour, companyName, departmentId, workerTitle })
   ok(res, stream)
 }))
 
@@ -153,22 +161,78 @@ router.get('/agent-log', wrap(async (req, res) => {
 }))
 
 
-// ── WITHDRAWALS ──
-router.post('/withdrawals', wrap(async (req, res) => {
-  const { userId, amount, destinationAddress, destinationChain } = z.object({
-    userId:             z.string().min(1),
-    amount:             z.number().positive().max(10000),
-    destinationAddress: z.string().min(10),
-    destinationChain:   z.string().default('Arc'),
+// ── DEPARTMENTS ──
+router.post('/departments', wrap(async (req, res) => {
+  const { employerId, name, description, ratePerHour, budgetMonthly, color } = z.object({
+    employerId:    z.string().min(1),
+    name:          z.string().min(1).max(60),
+    description:   z.string().optional(),
+    ratePerHour:   z.number().positive(),
+    budgetMonthly: z.number().positive().optional(),
+    color:         z.string().optional(),
   }).parse(req.body)
-  console.log('[Route] Withdrawal:', { userId, amount, destinationChain })
-  const result = await createWithdrawal({ userId, amount, destinationAddress, destinationChain })
+  const dept = await createDepartment({ employerId, name, description, ratePerHour, budgetMonthly, color })
+  ok(res, dept)
+}))
+
+router.get('/departments', wrap(async (req, res) => {
+  const { employerId } = req.query
+  if (!employerId) return err(res, 'employerId required')
+  const depts = await listDepartments(employerId)
+  ok(res, depts)
+}))
+
+router.get('/departments/invite/:code', wrap(async (req, res) => {
+  const dept = await getDepartmentByInviteCode(req.params.code)
+  ok(res, dept)
+}))
+
+router.post('/departments/join', wrap(async (req, res) => {
+  const { userId, inviteCode, jobTitle } = z.object({
+    userId:     z.string().min(1),
+    inviteCode: z.string().min(1),
+    jobTitle:   z.string().optional(),
+  }).parse(req.body)
+  const result = await joinDepartment({ userId, inviteCode, jobTitle })
   ok(res, result)
 }))
 
-router.get('/withdrawals/:userId', wrap(async (req, res) => {
-  const data = await listWithdrawals(req.params.userId)
-  ok(res, data)
+router.get('/departments/:id/workers', wrap(async (req, res) => {
+  const workers = await getDepartmentWorkers(req.params.id)
+  ok(res, workers)
+}))
+
+router.patch('/departments/:id', wrap(async (req, res) => {
+  const { employerId, ...updates } = req.body
+  const dept = await updateDepartment(req.params.id, employerId, updates)
+  ok(res, dept)
+}))
+
+router.delete('/departments/:id', wrap(async (req, res) => {
+  const { employerId } = req.query
+  const result = await deleteDepartment(req.params.id, employerId)
+  ok(res, result)
+}))
+
+router.post('/departments/rate', wrap(async (req, res) => {
+  const { employerId, workerId, rating, comment, period } = z.object({
+    employerId: z.string().min(1),
+    workerId:   z.string().min(1),
+    rating:     z.number().min(1).max(5),
+    comment:    z.string().optional(),
+    period:     z.string().optional(),
+  }).parse(req.body)
+  const result = await rateWorker({ employerId, workerId, rating, comment, period })
+  ok(res, result)
+}))
+
+router.get('/departments/payroll', wrap(async (req, res) => {
+  const { employerId, start, end } = req.query
+  if (!employerId) return err(res, 'employerId required')
+  const periodStart = start || new Date(new Date().setDate(1)).toISOString()
+  const periodEnd   = end   || new Date().toISOString()
+  const report = await generatePayrollReport(employerId, periodStart, periodEnd)
+  ok(res, report)
 }))
 
 export default router

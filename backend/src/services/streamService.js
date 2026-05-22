@@ -2,7 +2,7 @@
 import { db }              from '../config/db.js'
 import { getWalletByUserId, getWalletBalance } from './walletService.js'
 
-export async function createStream({ employerId, workerId, ratePerHour }) {
+export async function createStream({ employerId, workerId, ratePerHour, companyName, departmentId, workerTitle }) {
   const [empWallet, workerWallet] = await Promise.all([
     getWalletByUserId(employerId),
     getWalletByUserId(workerId),
@@ -30,6 +30,9 @@ export async function createStream({ employerId, workerId, ratePerHour }) {
       employer_wallet: empWallet.circle_wallet_id,
       worker_wallet:   workerWallet.circle_wallet_id,
       rate_per_hour:   ratePerHour,
+      company_name:    companyName || null,
+      department_id:   departmentId || null,
+      worker_title:    workerTitle || null,
       status:          'active',
       last_payout_at:  new Date().toISOString(),
     })
