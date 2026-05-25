@@ -3,14 +3,16 @@ import express from 'express'
 import { z } from 'zod'
 import { db } from '../config/db.js'
 import { getWalletByUserId, getWalletBalance } from '../services/walletService.js'
-import { createStream, pauseStream, resumeStream, stopStream, getStreamById, getEarnedSince } from '../services/streamService.js'
+import { createStream, pauseStream, resumeStream, stopStream, getStreamEarned } from '../services/streamService.js'
 import { createWithdrawal, listWithdrawals } from '../services/withdrawalService.js'
 import { getAgentLog } from '../services/agentService.js'
 import {
   createDepartment, listDepartments, getDepartmentByInviteCode,
   joinDepartment, getDepartmentWorkers, updateDepartment,
   deleteDepartment, rateWorker, generatePayrollReport,
-  streamFromDepartment, persistentPauseStream
+  streamFromDepartment, persistentPauseStream,
+  listApplications, approveApplication, rejectApplication,
+  getWorkerDepartmentStatus
 } from '../services/departmentService.js'
 
 const router = express.Router()
@@ -81,9 +83,7 @@ router.get('/streams/:id', wrap(async (req, res) => {
 }))
 
 router.get('/streams/:id/earned', wrap(async (req, res) => {
-  const stream = await getStreamById(req.params.id)
-  const earned = getEarnedSince(stream)
-  const result = { earned, status: stream.status, total_paid: stream.total_paid }
+  const result = await getStreamEarned(req.params.id)
   ok(res, result)
 }))
 
@@ -224,6 +224,38 @@ router.delete('/departments/:id', wrap(async (req, res) => {
   const { employerId } = req.query
   const result = await deleteDepartment(req.params.id, employerId)
   ok(res, result)
+}))
+
+
+// ── DEPARTMENT APPLICATIONS ──
+// GET /api/v1/departments/applications?employerId=&status=pending
+router.get('/departments/applications', wrap(async (req, res) => {
+  const { employerId, status } = req.query
+  if (!employerId) return err(res, 'employerId required')
+  const apps = await listApplications(employerId, status)
+  ok(res, apps)
+}))
+
+// POST /api/v1/departments/applications/:id/approve
+router.post('/departments/applications/:id/approve', wrap(async (req, res) => {
+  const { reviewedBy } = req.body
+  if (!reviewedBy) return err(res, 'reviewedBy required')
+  const result = await approveApplication(req.params.id, reviewedBy)
+  ok(res, result)
+}))
+
+// POST /api/v1/departments/applications/:id/reject
+router.post('/departments/applications/:id/reject', wrap(async (req, res) => {
+  const { reviewedBy, reason } = req.body
+  if (!reviewedBy) return err(res, 'reviewedBy required')
+  const result = await rejectApplication(req.params.id, reviewedBy, reason)
+  ok(res, result)
+}))
+
+// GET /api/v1/departments/my-status/:workerId
+router.get('/departments/my-status/:workerId', wrap(async (req, res) => {
+  const status = await getWorkerDepartmentStatus(req.params.workerId)
+  ok(res, status)
 }))
 
 // ── HEALTH ──

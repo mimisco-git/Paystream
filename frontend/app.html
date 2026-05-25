@@ -465,6 +465,18 @@
         <div style="height:5px;background:var(--g4);border-radius:3px;overflow:hidden"><div id="runway-fill" style="height:100%;border-radius:3px;transition:width 1s ease"></div></div>
         <div style="display:flex;justify-content:space-between;margin-top:5px;font-size:10px;color:var(--g3)"><span>Empty</span><span id="runway-hint">—</span><span>30 days</span></div>
       </div>
+      <!-- PENDING APPLICATIONS CARD -->
+      <div id="pending-apps-card" style="display:none;border-radius:14px;padding:18px 20px;border:.5px solid rgba(245,166,35,.25);background:linear-gradient(135deg,rgba(245,166,35,.07),rgba(245,166,35,.02))">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+          <div>
+            <div style="font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#F5A623;margin-bottom:4px">Pending Approval</div>
+            <div style="font-family:var(--ff);font-weight:700;font-size:16px">Department Applications</div>
+          </div>
+          <div id="pending-count-badge" style="background:rgba(245,166,35,.15);border:.5px solid rgba(245,166,35,.3);color:#F5A623;font-family:var(--ff-mono);font-weight:700;font-size:16px;padding:6px 14px;border-radius:8px">0</div>
+        </div>
+        <div id="pending-apps-list"></div>
+      </div>
+
       <div class="card"><div style="font-family:var(--ff);font-weight:700;font-size:15px;color:var(--g1);margin-bottom:3px">Your Treasury Wallet</div><div style="font-size:12px;color:var(--g3);margin-bottom:14px">Fund this wallet to pay workers. Get testnet USDC from the <a href="https://faucet.arc.testnet.circle.com" target="_blank" style="color:var(--amber)">Arc faucet</a>.</div><div class="wallet-addr-box" id="emp-wallet-addr">Loading...</div><button class="copy-btn" onclick="copyAddr()"><svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><path d="M1 7V1h6" opacity=".5"/></svg>Copy address</button></div>
       <!-- EMPLOYER ANALYTICS -->
       <div class="card" id="emp-analytics-card" style="display:none">
@@ -763,7 +775,7 @@ function showView(id){
   document.querySelectorAll('.mob-btn').forEach(function(b){b.classList.remove('active')})
   var mob=document.getElementById('mob-'+id);if(mob)mob.classList.add('active')
   if(id==='view-history')fetchPayouts()
-  if(id==='view-employer-dash')fetchEmpDash()
+  if(id==='view-employer-dash'){fetchEmpDash();fetchPendingApplications()}
   if(id==='view-my-employer')fetchMyEmployer()
   if(id==='view-departments'){fetchDepartments(true);fetchPayrollReport()}
 }
@@ -1915,6 +1927,178 @@ async function processPendingInvite() {
     }
   } catch(e) { console.warn('[Invite]', e.message) }
 }
+
+
+/* ══════════════════════════════════════════
+   DEPARTMENT STATUS + APPROVAL SYSTEM
+══════════════════════════════════════════ */
+
+/* ── WORKER: Fetch department membership status ── */
+async function fetchWorkerDeptStatus() {
+  if(isEmp || !psUser) return
+  try {
+    var j = await (await fetch(API+'/api/v1/departments/my-status/'+psUser.id)).json()
+    var card = document.getElementById('worker-dept-card')
+    if(!j.success || !j.data) { if(card) card.style.display='none'; return }
+
+    var data = j.data
+    var dept = data.department
+    if(!dept) { if(card) card.style.display='none'; return }
+
+    var color = dept.color||'#3B82F6'
+    var r=parseInt(color.slice(1,3),16),g=parseInt(color.slice(3,5),16),b=parseInt(color.slice(5,7),16)
+    var rgba15 = 'rgba('+r+','+g+','+b+',.15)'
+
+    // Update card
+    card.style.borderColor   = 'rgba('+r+','+g+','+b+',.25)'
+    card.style.background    = 'linear-gradient(135deg,rgba('+r+','+g+','+b+',.07),rgba('+r+','+g+','+b+',.02))'
+
+    var badge = document.getElementById('wdc-badge')
+    if(badge) { badge.textContent=dept.name.slice(0,2).toUpperCase(); badge.style.background=rgba15; badge.style.color=color }
+
+    var nameEl = document.getElementById('wdc-name')
+    if(nameEl) nameEl.textContent = dept.name
+
+    var empEl = document.getElementById('wdc-employer')
+    if(empEl) empEl.textContent = 'from '+(data.employer&&data.employer.name||'your employer')
+
+    var titleEl = document.getElementById('wdc-title')
+    if(titleEl) titleEl.textContent = data.job_title||'Team Member'
+
+    var rateEl = document.getElementById('wdc-rate')
+    if(rateEl) rateEl.textContent = '$'+parseFloat(dept.rate_per_hour||0).toFixed(2)+'/hr'
+
+    var adminEl = document.getElementById('wdc-admin')
+    if(adminEl) {
+      adminEl.textContent = data.is_admin ? 'Yes' : 'No'
+      adminEl.style.color = data.is_admin ? '#A78BFA' : 'var(--g2)'
+    }
+
+    // Status badge + message
+    var sbEl = document.getElementById('wdc-status-badge')
+    var status = data.status||'unknown'
+    var pendingMsg  = document.getElementById('wdc-pending-msg')
+    var approvedMsg = document.getElementById('wdc-approved-msg')
+    var rejectedMsg = document.getElementById('wdc-rejected-msg')
+    if(pendingMsg)  pendingMsg.style.display  = 'none'
+    if(approvedMsg) approvedMsg.style.display = 'none'
+    if(rejectedMsg) rejectedMsg.style.display = 'none'
+
+    if(status === 'pending') {
+      if(sbEl) { sbEl.textContent='Awaiting Approval'; sbEl.style.background='rgba(245,166,35,.12)'; sbEl.style.color='#F5A623'; sbEl.style.border='.5px solid rgba(245,166,35,.25)' }
+      if(pendingMsg) pendingMsg.style.display=''
+    } else if(status === 'approved') {
+      if(sbEl) { sbEl.textContent='Active Member'; sbEl.style.background='rgba(16,185,129,.12)'; sbEl.style.color='var(--green)'; sbEl.style.border='.5px solid rgba(16,185,129,.25)' }
+      if(approvedMsg) approvedMsg.style.display=''
+    } else if(status === 'rejected') {
+      if(sbEl) { sbEl.textContent='Rejected'; sbEl.style.background='rgba(255,77,106,.1)'; sbEl.style.color='var(--red)'; sbEl.style.border='.5px solid rgba(255,77,106,.2)' }
+      if(rejectedMsg) rejectedMsg.style.display=''
+    } else {
+      if(sbEl) { sbEl.textContent='Member'; sbEl.style.background='rgba(59,130,246,.12)'; sbEl.style.color='var(--blue)'; sbEl.style.border='.5px solid rgba(59,130,246,.25)' }
+    }
+
+    card.style.display = ''
+  } catch(e) { console.warn('[DeptStatus]', e.message) }
+}
+
+/* ── EMPLOYER: Fetch and render pending applications ── */
+async function fetchPendingApplications() {
+  if(!isEmp) return
+  try {
+    var j = await (await fetch(API+'/api/v1/departments/applications?employerId='+psUser.id+'&status=pending')).json()
+    var card    = document.getElementById('pending-apps-card')
+    var listEl  = document.getElementById('pending-apps-list')
+    var badge   = document.getElementById('pending-count-badge')
+
+    if(!j.success || !j.data || !j.data.length) {
+      if(card) card.style.display = 'none'
+      return
+    }
+
+    var apps = j.data
+    if(badge)  badge.textContent = apps.length
+    if(card)   card.style.display = ''
+
+    if(listEl) {
+      listEl.innerHTML = apps.map(function(app) {
+        var deptName = (app.departments && app.departments.name) || 'Department'
+        var deptColor= (app.departments && app.departments.color) || '#C87A10'
+        var rate     = parseFloat((app.departments && app.departments.rate_per_hour) || 0)
+        var timeAgo  = timeSince(new Date(app.created_at))
+        var ini      = (app.worker_name||'?').split(' ').map(function(w){return w[0]}).join('').toUpperCase().slice(0,2)
+
+        return '<div style="display:flex;align-items:center;gap:12px;padding:12px;background:rgba(255,255,255,.03);border:.5px solid rgba(255,255,255,.07);border-radius:10px;margin-bottom:8px" id="app-'+app.id+'">' +
+          '<div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--amber),var(--amber-lt));color:#000;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0">'+ini+'</div>' +
+          '<div style="flex:1">' +
+            '<div style="font-weight:600;font-size:13.5px;margin-bottom:2px">'+app.worker_name+'</div>' +
+            '<div style="font-size:12px;color:var(--g2)">'+app.worker_email+' · wants to join <strong style="color:#F5A623">'+deptName+'</strong> · '+timeAgo+'</div>' +
+            '<div style="font-size:11.5px;color:var(--green);margin-top:2px">Rate: $'+rate.toFixed(2)+'/hr · Stream starts on approval</div>' +
+          '</div>' +
+          '<div style="display:flex;gap:6px;flex-shrink:0">' +
+            '<button onclick="doHandleApp(this,&quot;approve&quot;)" data-appid="'+app.id+'" style="background:var(--green-dim);border:.5px solid rgba(16,185,129,.25);color:var(--green);font-family:var(--ff-body);font-size:12px;font-weight:600;padding:7px 14px;border-radius:7px;cursor:pointer;display:flex;align-items:center;gap:5px">' +
+              '<svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 5.5L4 8L9.5 2.5"/></svg>Approve' +
+            '</button>' +
+            '<button onclick="doHandleApp(this,&quot;reject&quot;)" data-appid="'+app.id+'" style="background:var(--red-dim);border:.5px solid rgba(255,77,106,.2);color:var(--red);font-family:var(--ff-body);font-size:12px;font-weight:600;padding:7px 12px;border-radius:7px;cursor:pointer">' +
+              '<svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M1 1L10 10M10 1L1 10"/></svg>' +
+            '</button>' +
+          '</div>' +
+        '</div>'
+      }).join('')
+    }
+
+    // Also show badge on bell icon
+    if(apps.length > 0) {
+      var bell = document.getElementById('bell-badge')
+      if(bell) bell.style.display = 'block'
+    }
+  } catch(e) { console.warn('[PendingApps]', e.message) }
+}
+
+/* ── APPROVE / REJECT APPLICATION ── */
+function doHandleApp(btn, action) {
+  var appId = btn.getAttribute('data-appid')
+  handleApplication(appId, action)
+}
+
+async function handleApplication(appId, action) {
+  var el = document.getElementById('app-'+appId)
+  if(el) el.style.opacity = '.4'
+
+  try {
+    var url = API+'/api/v1/departments/applications/'+appId+'/'+(action==='approve'?'approve':'reject')
+    var j   = await (await fetch(url, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ reviewedBy: psUser.id, reason: action==='reject'?'Rejected by employer':undefined })
+    })).json()
+
+    if(j.success) {
+      if(el) el.remove()
+      if(action === 'approve') {
+        showToast({title:'Application approved', sub:'Salary stream started automatically. Worker will start earning within 60 seconds.', type:'pay'})
+        pushNotif({title:'New team member approved', sub:'Stream created and running on Arc', type:'pay'})
+        setTimeout(function(){ fetchEmpDash(); fetchPendingApplications() }, 800)
+      } else {
+        showToast({title:'Application rejected', sub:'Worker has been notified', type:'wd'})
+        setTimeout(fetchPendingApplications, 800)
+      }
+      // Update badge count
+      var badge = document.getElementById('pending-count-badge')
+      if(badge) {
+        var n = parseInt(badge.textContent||0) - 1
+        badge.textContent = n
+        if(n <= 0) { var card = document.getElementById('pending-apps-card'); if(card) card.style.display='none' }
+      }
+    } else {
+      if(el) el.style.opacity = '1'
+      alert(j.error||'Action failed')
+    }
+  } catch(e) {
+    if(el) el.style.opacity = '1'
+    alert('Connection error')
+  }
+}
+
 
 // BOOT
 initUI()

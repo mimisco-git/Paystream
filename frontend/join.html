@@ -311,7 +311,12 @@ async function doJoin() {
     })).json()
 
     if (j.success) {
-      showSuccess()
+      var status = j.data && j.data.status
+      if (status === 'already_member') {
+        showSuccess('already')
+      } else {
+        showSuccess('pending')
+      }
     } else {
       msg.textContent = j.error || 'Failed to join. Try again.'
       msg.style.color = '#FF4D6A'
@@ -371,8 +376,7 @@ async function doSignupAndJoin() {
     })).json()
 
     // Show success whether join succeeded or not (wallet was created)
-    showSuccess()
-
+    showSuccess('pending')
   } catch(e) {
     msg.textContent = 'Connection error. Try again.'
     msg.style.color = '#FF4D6A'
@@ -422,8 +426,7 @@ async function doLoginAndJoin() {
       body: JSON.stringify({ userId: loginRes.data.user.id, inviteCode, jobTitle: '' })
     })).json()
 
-    showSuccess()
-
+    showSuccess('pending')
   } catch(e) {
     msg.textContent = 'Connection error. Try again.'
     msg.style.color = '#FF4D6A'
@@ -432,7 +435,7 @@ async function doLoginAndJoin() {
   }
 }
 
-function showSuccess() {
+function showSuccess(type) {
   var rate   = parseFloat((deptData && deptData.rate_per_hour) || 0)
   var perSec = rate / 3600
   var name   = (deptData && deptData.name) || deptParam || 'Department'
@@ -440,7 +443,19 @@ function showSuccess() {
   document.getElementById('s-dept-name').textContent = name
   document.getElementById('s-rate').textContent      = '$'+rate.toFixed(2)+'/hr'
   document.getElementById('s-per-sec').textContent   = '$'+perSec.toFixed(7)+'/s'
-  document.getElementById('success-sub').textContent = 'You joined '+name+'. Your USDC salary stream starts within 60 seconds. Welcome to the team.'
+
+  var statusRow = document.getElementById('stream-info').querySelector('.si-row:last-child')
+
+  if (type === 'pending') {
+    document.getElementById('success-sub').textContent = 'Application submitted to '+name+'. Your employer will review and approve your request. You will start earning once approved.'
+    // Update status row to show pending
+    if(statusRow) statusRow.innerHTML = '<span style="color:#6B7A99">Status</span><span style="font-family:monospace;font-weight:700;font-size:13px;color:#F5A623">Awaiting Approval</span>'
+  } else if (type === 'already') {
+    document.getElementById('success-sub').textContent = 'You are already a member of '+name+'. Head to your dashboard to see your earnings.'
+    if(statusRow) statusRow.innerHTML = '<span style="color:#6B7A99">Status</span><span style="font-family:monospace;font-weight:700;font-size:13px;color:#10B981">Active Member</span>'
+  } else {
+    document.getElementById('success-sub').textContent = 'You joined '+name+'. Your USDC salary stream starts within 60 seconds.'
+  }
 
   showState('success')
 }
