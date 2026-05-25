@@ -1860,18 +1860,60 @@ async function exportPayrollCSV() {
 /* ── WORKER: CHECK INVITE CODE ON LOGIN ── */
 /* ── WORKER: CHECK INVITE CODE ON LOGIN ── */
 async function checkInviteCode() {
-  if(isEmp) return
-  var params = new URLSearchParams(window.location.search)
+  // Works for both workers and new users joining via invite link
+  var params     = new URLSearchParams(window.location.search)
   var inviteCode = params.get('invite')
+  var deptName   = params.get('dept')
   if(!inviteCode) return
+
+  // Store in localStorage so it survives the login/signup redirect
+  localStorage.setItem('ps_pending_invite', inviteCode)
+  localStorage.setItem('ps_pending_dept', deptName||'')
+
+  showToast({title:'Department invite detected', sub:'Joining '+(deptName||'department')+'...', type:'arc'})
+  window.history.replaceState({}, '', window.location.pathname)
+  await processPendingInvite()
+}
+
+async function processPendingInvite() {
+  var inviteCode = localStorage.getItem('ps_pending_invite')
+  if(!inviteCode || !psUser) return
+
   try {
-    var j = await (await fetch(API+'/api/v1/departments/join', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userId:psUser.id,inviteCode,jobTitle:''})})).json()
+    // First check if already in this department
+    var deptInfo = await (await fetch(API+'/api/v1/departments/invite/'+inviteCode)).json()
+    if(!deptInfo.success) { localStorage.removeItem('ps_pending_invite'); return }
+
+    var dept = deptInfo.data
+
+    // Join the department
+    var j = await (await fetch(API+'/api/v1/departments/join', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({userId:psUser.id, inviteCode, jobTitle:''})
+    })).json()
+
     if(j.success) {
-      showToast({title:'Joined '+j.data.department.name, sub:'You have been added to this department automatically', type:'pay'})
-      // Clear invite param from URL
-      window.history.replaceState({}, '', window.location.pathname)
+      localStorage.removeItem('ps_pending_invite')
+      localStorage.removeItem('ps_pending_dept')
+
+      // Show success toast
+      showToast({title:'Joined ' + dept.name, sub:'Welcome to the team. Stream will start automatically.', type:'pay'})
+
+      // Refresh stream data after short delay
+      setTimeout(function(){fetchMyStream(); fetchWalBal()}, 2000)
+
+      // Show the employer info if stream was auto-created
+      if(dept.rate_per_hour) {
+        pushNotif({title:'Stream started', sub:'You are now earning $'+parseFloat(dept.rate_per_hour).toFixed(2)+'/hr in '+dept.name, type:'pay'})
+      }
+
+      // If employer viewing, refresh dashboard
+      if(isEmp) fetchEmpDash()
+    } else {
+      console.warn('[Invite] Join failed:', j.error)
     }
-  } catch(e) {}
+  } catch(e) { console.warn('[Invite]', e.message) }
 }
 
 // BOOT

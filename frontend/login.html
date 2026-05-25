@@ -227,7 +227,16 @@ const API = 'https://paystream-9xtb.onrender.com'
 let selectedRole = 'employer'
 
 // If already logged in redirect to app
-if (localStorage.getItem('ps_token')) window.location.href = 'app.html'
+if (localStorage.getItem('ps_token')) {
+  // Store invite before redirecting if present
+  var _p = new URLSearchParams(window.location.search)
+  var _ic = _p.get('invite')
+  if (_ic) {
+    localStorage.setItem('ps_pending_invite', _ic)
+    localStorage.setItem('ps_pending_dept', _p.get('dept')||'')
+  }
+  window.location.href = 'app.html'
+}
 
 // Handle invite link params
 const params      = new URLSearchParams(window.location.search)
@@ -309,6 +318,12 @@ async function doLogin() {
     localStorage.setItem('ps_user',   JSON.stringify(json.data.user))
     localStorage.setItem('ps_wallet', JSON.stringify(json.data.wallet))
 
+    // Store invite code so app.html picks it up after redirect
+    if (inviteCode) {
+      localStorage.setItem('ps_pending_invite', inviteCode)
+      localStorage.setItem('ps_pending_dept', inviteDept||'')
+    }
+
     showAlert('Welcome back! Redirecting...', 'success')
     setTimeout(function() { window.location.href = 'app.html' }, 900)
 
@@ -349,6 +364,12 @@ async function doSignup() {
     localStorage.setItem('ps_token',  json.data.token)
     localStorage.setItem('ps_user',   JSON.stringify(json.data.user))
     localStorage.setItem('ps_wallet', JSON.stringify(json.data.wallet))
+
+    // Store invite code so app.html picks it up after redirect
+    if (inviteCode) {
+      localStorage.setItem('ps_pending_invite', inviteCode)
+      localStorage.setItem('ps_pending_dept', inviteDept||'')
+    }
 
     document.getElementById('form-signup').style.display  = 'none'
     document.getElementById('form-success').style.display = ''
