@@ -9,319 +9,365 @@
   <link href="https://fonts.googleapis.com/css2?family=Cantarell:wght@400;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
   <style>
     :root{
-      --slate:#0F1117;--slate2:#1A1D27;--slate3:#151820;--slate4:#212433;
+      --obsidian:#06080F;--obs2:#0A0D1A;--obs3:#0E1223;--obs4:#141828;
       --amber:#C87A10;--amber-lt:#E8931A;--amber-dim:rgba(200,122,16,0.10);
       --green:#10B981;--green-dim:rgba(16,185,129,0.10);
       --red:#FF4D6A;--red-dim:rgba(255,77,106,0.10);
       --white:#FFFFFF;--g1:#B8C4D8;--g2:#6B7A99;--g3:#2E3650;--g4:#161C2E;
-      --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);
+      --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.12);
+      --glass:rgba(255,255,255,0.03);
       --ff:'Cantarell',sans-serif;--ff-body:'DM Sans',sans-serif;--ff-mono:'Space Mono',monospace;
     }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    html,body{min-height:100%;background:var(--slate);color:var(--white);font-family:var(--ff-body);-webkit-font-smoothing:antialiased}
-    a{text-decoration:none;color:inherit}
-    button{font-family:inherit;cursor:pointer;border:none;background:none}
-    @keyframes fade-in{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
-    @keyframes float{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.5}50%{transform:translate(-50%,-50%) scale(1.2);opacity:.8}}
-    @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+    html,body{height:100%;background:var(--obsidian);color:var(--white);font-family:var(--ff-body);-webkit-font-smoothing:antialiased}
+    @keyframes fade-in{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes orb-pulse{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.5}50%{transform:translate(-50%,-50%) scale(1.2);opacity:.8}}
     @keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
-    @keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
 
     .bg{position:fixed;inset:0;overflow:hidden;pointer-events:none}
     .orb{position:absolute;border-radius:50%}
-    .orb1{width:700px;height:700px;top:-250px;left:-200px;background:radial-gradient(ellipse,rgba(200,122,16,.07) 0%,transparent 65%);animation:float 12s ease-in-out infinite}
-    .orb2{width:500px;height:500px;bottom:-150px;right:-150px;background:radial-gradient(ellipse,rgba(16,185,129,.05) 0%,transparent 65%);animation:float 9s ease-in-out infinite reverse}
-    .grid{position:fixed;inset:0;background-image:linear-gradient(rgba(200,122,16,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(200,122,16,.018) 1px,transparent 1px);background-size:52px 52px;pointer-events:none}
+    .orb1{width:700px;height:700px;background:radial-gradient(ellipse,rgba(200,122,16,.08) 0%,transparent 65%);top:-200px;left:-200px}
+    .orb2{width:500px;height:500px;background:radial-gradient(ellipse,rgba(16,185,129,.05) 0%,transparent 65%);bottom:-100px;right:-100px;animation:orb-pulse 8s ease-in-out infinite}
+    .grid{position:fixed;inset:0;background-image:linear-gradient(rgba(200,122,16,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(200,122,16,.02) 1px,transparent 1px);background-size:56px 56px;pointer-events:none}
 
-    .page{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 16px;position:relative;z-index:1}
+    .page{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;position:relative;z-index:1}
 
-    .logo-wrap{display:flex;align-items:center;gap:12px;margin-bottom:36px;animation:fade-in .6s ease both}
-    .logo-text{font-family:var(--ff);font-weight:700;font-size:24px;letter-spacing:-.025em}
+    .logo-wrap{display:flex;align-items:center;gap:12px;margin-bottom:40px;animation:fade-in .6s ease both}
+    .logo-text{font-family:var(--ff);font-weight:700;font-size:26px;letter-spacing:-.025em}
     .logo-text .pay{color:var(--amber)}
 
-    .card{width:100%;max-width:420px;background:var(--slate2);border:.5px solid rgba(200,122,16,.18);border-radius:22px;overflow:hidden;position:relative;animation:fade-in .7s ease .1s both;box-shadow:0 24px 64px rgba(0,0,0,.4)}
-    .card::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:55%;height:1px;background:linear-gradient(90deg,transparent,var(--amber),transparent)}
+    .card{width:100%;max-width:420px;background:var(--glass);border:1px solid var(--border);border-radius:20px;padding:36px;backdrop-filter:blur(24px);position:relative;overflow:hidden;animation:fade-in .7s ease .1s both}
+    .card::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:60%;height:1px;background:linear-gradient(90deg,transparent,var(--amber),transparent)}
 
-    .card-top{padding:32px 32px 0}
-    .live-pill{display:inline-flex;align-items:center;gap:7px;background:rgba(16,185,129,.08);border:.5px solid rgba(16,185,129,.15);border-radius:100px;padding:5px 14px;font-size:11px;color:var(--green);font-weight:600;letter-spacing:.03em;margin-bottom:24px}
-    .live-dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:blink 1.6s infinite}
+    .tabs{display:flex;background:var(--obs3);border:1px solid var(--border);border-radius:10px;padding:3px;gap:2px;margin-bottom:28px}
+    .tab{flex:1;text-align:center;padding:9px;border-radius:8px;font-size:13.5px;font-weight:600;color:var(--g2);cursor:pointer;transition:all .2s;border:none;background:none;font-family:var(--ff-body)}
+    .tab.active{background:var(--amber-dim);color:var(--amber);border:1px solid rgba(200,122,16,.2)}
 
-    .tabs{display:flex;background:var(--slate);border:.5px solid var(--border);border-radius:10px;padding:3px;gap:2px;margin-bottom:26px}
-    .tab{flex:1;text-align:center;padding:9px;border-radius:8px;font-size:13px;font-weight:500;color:var(--g2);cursor:pointer;transition:all .2s;border:none;background:none;font-family:var(--ff-body)}
-    .tab.active{background:var(--amber-dim);color:var(--amber);border:.5px solid rgba(200,122,16,.22)}
-
-    .card-body{padding:0 32px 28px}
-    .form-title{font-family:var(--ff);font-weight:700;font-size:21px;letter-spacing:-.02em;margin-bottom:5px}
-    .form-sub{font-size:13px;color:var(--g2);line-height:1.55;margin-bottom:22px}
-
-    .field{margin-bottom:15px}
-    .field-lbl{font-size:11px;font-weight:600;color:var(--g2);letter-spacing:.08em;text-transform:uppercase;margin-bottom:7px;display:block}
-    .field-input{width:100%;background:var(--slate);border:.5px solid var(--border);border-radius:10px;padding:13px 15px;font-size:14.5px;color:var(--white);font-family:var(--ff-body);outline:none;transition:border-color .2s}
-    .field-input:focus{border-color:rgba(200,122,16,.4);box-shadow:0 0 0 3px rgba(200,122,16,.08)}
+    .form-title{font-family:var(--ff);font-weight:700;font-size:22px;margin-bottom:6px;letter-spacing:-.02em}
+    .form-sub{font-size:13px;color:var(--g2);margin-bottom:24px;line-height:1.5}
+    .field{margin-bottom:16px}
+    .field-label{font-size:11.5px;font-weight:600;color:var(--g2);letter-spacing:.06em;text-transform:uppercase;margin-bottom:7px;display:block}
+    .field-input{width:100%;background:var(--obs3);border:1px solid var(--border);border-radius:10px;padding:13px 16px;font-size:14.5px;color:var(--white);font-family:var(--ff-body);outline:none;transition:border-color .2s}
+    .field-input:focus{border-color:rgba(200,122,16,.4)}
     .field-input::placeholder{color:var(--g3)}
-    .field-input.has-error{border-color:var(--red)}
 
-    .role-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:16px}
-    .role-opt{border:.5px solid var(--border);border-radius:11px;padding:14px 12px;text-align:center;cursor:pointer;transition:all .2s;background:var(--slate)}
-    .role-opt:hover{border-color:rgba(200,122,16,.25)}
+    .role-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+    .role-opt{border:1px solid var(--border);border-radius:10px;padding:14px 12px;text-align:center;cursor:pointer;transition:all .2s;background:var(--obs3)}
+    .role-opt:hover{border-color:rgba(200,122,16,.3)}
     .role-opt.selected{border-color:var(--amber);background:var(--amber-dim)}
-    .role-icon{display:flex;justify-content:center;margin-bottom:7px}
-    .role-name{font-size:13px;font-weight:600;color:var(--g1);margin-bottom:2px}
-    .role-opt.selected .role-name{color:var(--amber)}
-    .role-desc{font-size:11px;color:var(--g3)}
-    .role-opt.selected .role-desc{color:rgba(200,122,16,.6)}
+    .role-opt-icon{margin-bottom:6px;display:flex;justify-content:center}
+    .role-opt-name{font-size:13px;font-weight:600;color:var(--g1)}
+    .role-opt.selected .role-opt-name{color:var(--amber)}
+    .role-opt-desc{font-size:11px;color:var(--g3);margin-top:3px}
+    .role-opt.selected .role-opt-desc{color:rgba(200,122,16,.7)}
 
-    .alert{border-radius:10px;padding:11px 15px;font-size:13px;margin-bottom:14px;display:none;line-height:1.45}
-    .alert.show{display:block}
-    .alert.error{background:var(--red-dim);border:.5px solid rgba(255,77,106,.2);color:var(--red)}
-    .alert.success{background:var(--green-dim);border:.5px solid rgba(16,185,129,.2);color:var(--green)}
-
-    .btn-submit{width:100%;background:linear-gradient(135deg,var(--amber),var(--amber-lt));color:#000;font-family:var(--ff-body);font-weight:700;font-size:15px;padding:14px;border-radius:11px;border:none;cursor:pointer;transition:opacity .15s,transform .15s;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:16px;box-shadow:0 0 24px rgba(200,122,16,.2)}
+    .btn-submit{width:100%;background:linear-gradient(135deg,var(--amber),var(--amber-lt));color:#000;font-family:var(--ff-body);font-weight:700;font-size:15px;padding:14px;border-radius:10px;border:none;cursor:pointer;transition:opacity .15s,transform .15s;box-shadow:0 0 24px rgba(200,122,16,.25);margin-top:8px;display:flex;align-items:center;justify-content:center;gap:8px}
     .btn-submit:hover{opacity:.88;transform:translateY(-1px)}
-    .btn-submit:disabled{opacity:.45;cursor:not-allowed;transform:none}
+    .btn-submit:disabled{opacity:.5;cursor:not-allowed;transform:none}
 
-    .switch-txt{text-align:center;font-size:12.5px;color:var(--g3)}
-    .switch-txt span{color:var(--amber);cursor:pointer;font-weight:500}
-    .switch-txt span:hover{text-decoration:underline}
+    .alert{border-radius:10px;padding:12px 16px;font-size:13px;margin-bottom:16px;display:none}
+    .alert.show{display:block}
+    .alert.error{background:var(--red-dim);border:1px solid rgba(255,77,106,.2);color:var(--red)}
+    .alert.success{background:var(--green-dim);border:1px solid rgba(16,185,129,.2);color:var(--green)}
 
-    .card-foot{background:var(--slate3);border-top:.5px solid var(--border);padding:14px 32px;text-align:center}
-    .foot-txt{font-size:11.5px;color:var(--g3);line-height:1.5}
-    .foot-txt a{color:var(--amber)}
+    .forgot-link{display:block;text-align:center;margin-top:16px;font-size:13px;color:var(--g2);text-decoration:none;transition:color .2s}
+    .forgot-link:hover{color:var(--amber)}
 
-    .success-view{text-align:center;padding:8px 0}
-    .success-icon{width:68px;height:68px;border-radius:50%;background:var(--green-dim);border:2px solid var(--green);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;animation:pop .4s cubic-bezier(.34,1.56,.64,1) both;box-shadow:0 0 24px rgba(16,185,129,.15)}
-    .success-title{font-family:var(--ff);font-weight:700;font-size:20px;margin-bottom:8px}
-    .success-sub{font-size:13px;color:var(--g2);line-height:1.6;margin-bottom:18px}
-    .wallet-box{font-family:var(--ff-mono);font-size:11px;color:var(--amber);background:var(--amber-dim);border:.5px solid rgba(200,122,16,.2);border-radius:9px;padding:11px;word-break:break-all;text-align:left;margin-bottom:18px}
-    .wallet-box-lbl{font-size:10px;color:var(--g3);margin-bottom:5px;letter-spacing:.06em;text-transform:uppercase;font-family:var(--ff-body)}
+    /* Invite banner */
+    .invite-banner{background:linear-gradient(135deg,rgba(16,185,129,.08),rgba(200,122,16,.04));border:1px solid rgba(16,185,129,.2);border-radius:10px;padding:12px 16px;margin-bottom:20px;display:none}
+    .ib-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-bottom:4px}
+    .ib-dept{font-weight:600;font-size:14px;margin-bottom:2px}
+    .ib-employer{font-size:12px;color:var(--g2)}
 
-    @media(max-width:480px){
-      .card-top{padding:24px 20px 0}
-      .card-body{padding:0 20px 24px}
-      .card-foot{padding:12px 20px}
-      .form-title{font-size:19px}
-    }
+    .ws-icon{width:64px;height:64px;border-radius:50%;background:var(--green-dim);border:2px solid var(--green);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:0 0 24px rgba(16,185,129,.2)}
+    .ws-title{font-family:var(--ff);font-weight:700;font-size:20px;margin-bottom:8px;text-align:center}
+    .ws-sub{font-size:13px;color:var(--g2);line-height:1.6;margin-bottom:20px;text-align:center}
+    .ws-address{font-family:var(--ff-mono);font-size:11px;color:var(--amber);background:var(--amber-dim);border:1px solid rgba(200,122,16,.2);border-radius:8px;padding:10px;word-break:break-all;margin-bottom:20px}
+
+    .page-footer{margin-top:28px;font-size:12px;color:var(--g3);text-align:center;animation:fade-in .8s ease .2s both;line-height:1.7}
+    .page-footer a{color:var(--amber);text-decoration:none}
+
+    @media(max-width:480px){.card{padding:24px 18px;border-radius:16px}.form-title{font-size:19px}}
   </style>
 </head>
 <body>
-<div class="bg"><div class="orb orb1"></div><div class="orb orb2"></div></div>
+
+<div class="bg">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+</div>
 <div class="grid"></div>
 
 <div class="page">
+  <!-- LOGO -->
   <div class="logo-wrap">
-    <svg width="40" height="40" viewBox="0 0 38 38" fill="none">
-      <circle cx="15" cy="19" r="9" fill="none" stroke="#C87A10" stroke-width="2.2"/>
-      <text x="15" y="23.5" text-anchor="middle" font-family="Cantarell,sans-serif" font-weight="700" font-size="9.5" fill="#C87A10">$</text>
-      <line x1="26" y1="15.5" x2="35" y2="15.5" stroke="#C87A10" stroke-width="1.7" stroke-linecap="round"/>
-      <line x1="26" y1="19" x2="37" y2="19" stroke="#C87A10" stroke-width="2.2" stroke-linecap="round"/>
-      <line x1="26" y1="22.5" x2="35" y2="22.5" stroke="#C87A10" stroke-width="1.7" stroke-linecap="round"/>
-      <path d="M33.5 13L37 19L33.5 25" fill="none" stroke="#C87A10" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      <line x1="8" y1="8" x2="8" y2="12" stroke="#C87A10" stroke-width="1.4" stroke-linecap="round" opacity=".4"/>
-      <line x1="12" y1="7" x2="12" y2="11" stroke="#C87A10" stroke-width="1.4" stroke-linecap="round" opacity=".65"/>
-      <line x1="15" y1="6" x2="15" y2="11" stroke="#C87A10" stroke-width="1.5" stroke-linecap="round"/>
-      <line x1="18" y1="7" x2="18" y2="11" stroke="#C87A10" stroke-width="1.4" stroke-linecap="round" opacity=".65"/>
-      <line x1="22" y1="8" x2="22" y2="12" stroke="#C87A10" stroke-width="1.4" stroke-linecap="round" opacity=".4"/>
+    <svg width="44" height="44" viewBox="0 0 38 38" fill="none">
+      <circle cx="15" cy="19" r="9" fill="none" stroke="#C87A10" stroke-width="2"/>
+      <text x="15" y="23.5" text-anchor="middle" font-family="Cantarell,sans-serif" font-weight="700" font-size="9" fill="#C87A10">$</text>
+      <line x1="26" y1="15.5" x2="35" y2="15.5" stroke="#C87A10" stroke-width="1.6" stroke-linecap="round"/>
+      <line x1="26" y1="19" x2="37" y2="19" stroke="#C87A10" stroke-width="2" stroke-linecap="round"/>
+      <line x1="26" y1="22.5" x2="35" y2="22.5" stroke="#C87A10" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M33.5 13L37 19L33.5 25" fill="none" stroke="#C87A10" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
     <div class="logo-text"><span class="pay">Pay</span>Stream</div>
   </div>
 
+  <!-- CARD -->
   <div class="card" id="auth-card">
-    <div class="card-top">
-      <div class="live-pill"><div class="live-dot"></div>Live on Arc testnet · Powered by Circle</div>
-      <div class="tabs">
-        <button class="tab active" id="tab-login" onclick="showTab('login')">Sign in</button>
-        <button class="tab" id="tab-signup" onclick="showTab('signup')">Create account</button>
-      </div>
+
+    <!-- INVITE BANNER (shown when ?invite= in URL) -->
+    <div class="invite-banner" id="invite-banner">
+      <div class="ib-label">Department Invite</div>
+      <div class="ib-dept" id="invite-dept-name">Loading...</div>
+      <div class="ib-employer" id="invite-employer-name">from your employer</div>
     </div>
 
-    <div class="card-body">
-      <div class="alert" id="alert"></div>
+    <!-- TABS -->
+    <div class="tabs">
+      <button class="tab active" id="tab-login"  onclick="showTab('login')">Sign In</button>
+      <button class="tab"        id="tab-signup" onclick="showTab('signup')">Create Account</button>
+    </div>
 
-      <!-- LOGIN -->
-      <div id="form-login">
-        <div class="form-title">Welcome back</div>
-        <div class="form-sub">Sign in to access your live USDC salary stream and real-time earnings.</div>
-        <div class="field">
-          <label class="field-lbl">Email address</label>
-          <input class="field-input" id="login-email" type="email" placeholder="you@example.com" autocomplete="email"/>
-        </div>
-        <div class="field">
-          <label class="field-lbl">Password</label>
-          <input class="field-input" id="login-password" type="password" placeholder="Your password" autocomplete="current-password"/>
-        </div>
-        <div style="margin-bottom:18px"></div>
-        <button class="btn-submit" id="btn-login" onclick="doLogin()">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 3H3a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h3M10 11l4-4-4-4M14 8H6"/></svg>
-          Sign in to PayStream
-        </button>
-        <div class="switch-txt">No account? <span onclick="showTab('signup')">Create one free</span></div>
+    <!-- ALERT -->
+    <div class="alert" id="alert"></div>
+
+    <!-- LOGIN FORM -->
+    <div id="form-login">
+      <div class="form-title">Welcome back</div>
+      <div class="form-sub">Sign in to your PayStream wallet and live earnings.</div>
+      <div class="field">
+        <label class="field-label">Email address</label>
+        <input class="field-input" id="login-email" type="email" placeholder="you@example.com" autocomplete="email"/>
       </div>
+      <div class="field">
+        <label class="field-label">Password</label>
+        <input class="field-input" id="login-password" type="password" placeholder="••••••••" autocomplete="current-password"/>
+      </div>
+      <button class="btn-submit" id="btn-login" onclick="doLogin()">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M6 3H3a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h3M10 11l4-4-4-4M14 8H6"/></svg>
+        Sign In
+      </button>
+      <a href="reset-password.html" class="forgot-link">Forgot password?</a>
+    </div>
 
-      <!-- SIGNUP -->
-      <div id="form-signup" style="display:none">
-        <div class="form-title">Get started free</div>
-        <div class="form-sub">A Circle wallet on Arc testnet is created automatically. No crypto knowledge needed.</div>
-        <div class="field">
-          <label class="field-lbl">Full name</label>
-          <input class="field-input" id="signup-name" type="text" placeholder="Ahmad Karimi" autocomplete="name"/>
-        </div>
-        <div class="field">
-          <label class="field-lbl">Email address</label>
-          <input class="field-input" id="signup-email" type="email" placeholder="you@example.com" autocomplete="email"/>
-        </div>
-        <div class="field">
-          <label class="field-lbl">Password</label>
-          <input class="field-input" id="signup-password" type="password" placeholder="Min. 6 characters" autocomplete="new-password"/>
-        </div>
-        <div class="field">
-          <label class="field-lbl">I am a</label>
-          <div class="role-grid">
-            <div class="role-opt" id="role-worker" onclick="selectRole('worker')">
-              <div class="role-icon">
-                <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="#C87A10" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="8" r="4"/><path d="M4 20c0-3.9 3.1-7 7-7s7 3.1 7 7"/></svg>
-              </div>
-              <div class="role-name">Worker</div>
-              <div class="role-desc">Earn USDC per second</div>
+    <!-- SIGNUP FORM -->
+    <div id="form-signup" style="display:none">
+      <div class="form-title">Get started</div>
+      <div class="form-sub" id="signup-sub">Create your account. A Circle wallet on Arc testnet is created automatically.</div>
+      <div class="field">
+        <label class="field-label">Full name</label>
+        <input class="field-input" id="signup-name" type="text" placeholder="Ahmad Karimi" autocomplete="name"/>
+      </div>
+      <div class="field">
+        <label class="field-label">Email address</label>
+        <input class="field-input" id="signup-email" type="email" placeholder="you@example.com" autocomplete="email"/>
+      </div>
+      <div class="field">
+        <label class="field-label">Password</label>
+        <input class="field-input" id="signup-password" type="password" placeholder="Min. 6 characters" autocomplete="new-password"/>
+      </div>
+      <!-- Role selector (hidden if invite code present) -->
+      <div class="field" id="role-field">
+        <label class="field-label">I am a</label>
+        <div class="role-grid">
+          <div class="role-opt" id="role-worker" onclick="selectRole('worker')">
+            <div class="role-opt-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C87A10" stroke-width="1.5" stroke-linecap="round">
+                <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+              </svg>
             </div>
-            <div class="role-opt selected" id="role-employer" onclick="selectRole('employer')">
-              <div class="role-icon">
-                <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="#C87A10" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="10" width="16" height="10" rx="2"/><path d="M8 10V8a3 3 0 0 1 6 0v2"/><circle cx="11" cy="15" r="1.5" fill="#C87A10"/></svg>
-              </div>
-              <div class="role-name">Employer</div>
-              <div class="role-desc">Pay team in real time</div>
+            <div class="role-opt-name">Worker</div>
+            <div class="role-opt-desc">Earn USDC per second</div>
+          </div>
+          <div class="role-opt selected" id="role-employer" onclick="selectRole('employer')">
+            <div class="role-opt-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C87A10" stroke-width="1.5" stroke-linecap="round">
+                <rect x="3" y="10" width="18" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>
+              </svg>
             </div>
+            <div class="role-opt-name">Employer</div>
+            <div class="role-opt-desc">Pay your team in real time</div>
           </div>
         </div>
-        <button class="btn-submit" id="btn-signup" onclick="doSignup()">
-          <svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M7.5 1v13M1 7.5h13"/></svg>
-          Create Account and Wallet
-        </button>
-        <div class="switch-txt">Already have an account? <span onclick="showTab('login')">Sign in</span></div>
       </div>
+      <button class="btn-submit" id="btn-signup" onclick="doSignup()">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M8 1v14M1 8h14"/></svg>
+        Create Account &amp; Wallet
+      </button>
+    </div>
 
-      <!-- SUCCESS -->
-      <div id="form-success" style="display:none">
-        <div class="success-view">
-          <div class="success-icon">
-            <svg width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="#10B981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 15L12 22L25 8"/></svg>
-          </div>
-          <div class="success-title">Wallet Created</div>
-          <div class="success-sub">Your Circle developer-controlled wallet is live on Arc testnet. Redirecting to your dashboard...</div>
-          <div class="wallet-box">
-            <div class="wallet-box-lbl">Your Arc wallet address</div>
-            <div id="wallet-address">0x...</div>
-          </div>
-          <div style="display:flex;align-items:center;justify-content:center;gap:7px;font-size:11.5px;color:var(--g3)">
-            <svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5" fill="#10B981"/></svg>
-            Arc Testnet · Powered by Circle
-          </div>
+    <!-- WALLET CREATED SUCCESS -->
+    <div id="form-success" style="display:none">
+      <div class="ws-icon">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#10B981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 14L11 20L23 8"/>
+        </svg>
+      </div>
+      <div class="ws-title">Wallet Created!</div>
+      <div class="ws-sub">Your Circle developer-controlled wallet is live on Arc testnet. Redirecting to your dashboard.</div>
+      <div class="ws-address" id="wallet-address">0x...</div>
+      <div style="font-size:12px;color:var(--g3);text-align:center">
+        <div style="display:flex;align-items:center;gap:6px;justify-content:center">
+          <svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="4" fill="#10B981"/></svg>
+          Arc Testnet · Powered by Circle
         </div>
       </div>
     </div>
 
-    <div class="card-foot">
-      <div class="foot-txt">
-        Built on <a href="https://docs.arc.network" target="_blank">Arc</a> ·
-        Powered by <a href="https://developers.circle.com" target="_blank">Circle USDC</a> ·
-        Stablecoin Commerce Stack Challenge 2026
-      </div>
-    </div>
+  </div>
+
+  <div class="page-footer">
+    By continuing you agree to PayStream's terms.<br>
+    Built on <a href="https://docs.arc.network" target="_blank">Arc</a> · Powered by <a href="https://developers.circle.com" target="_blank">Circle USDC</a>
   </div>
 </div>
 
 <script>
-  const API = 'https://paystream-9xtb.onrender.com'
-  let selectedRole = 'employer'
+const API = 'https://paystream-9xtb.onrender.com'
+let selectedRole = 'employer'
 
-  if (localStorage.getItem('ps_token')) window.location.href = 'app.html'
+// If already logged in redirect to app
+if (localStorage.getItem('ps_token')) window.location.href = 'app.html'
 
-  function showTab(t) {
-    document.getElementById('form-login').style.display  = t==='login'  ? '' : 'none'
-    document.getElementById('form-signup').style.display = t==='signup' ? '' : 'none'
-    document.getElementById('tab-login').classList.toggle('active',  t==='login')
-    document.getElementById('tab-signup').classList.toggle('active', t==='signup')
-    clearAlert()
+// Handle invite link params
+const params      = new URLSearchParams(window.location.search)
+const inviteCode  = params.get('invite')
+const inviteDept  = params.get('dept')
+const inviteEmp   = params.get('employer')
+
+if (inviteCode) {
+  // Show invite banner
+  document.getElementById('invite-banner').style.display = ''
+  document.getElementById('invite-dept-name').textContent  = inviteDept  || 'Department'
+  document.getElementById('invite-employer-name').textContent = 'from ' + (inviteEmp || 'your employer')
+  // Auto-switch to signup and set role to worker
+  showTab('signup')
+  selectRole('worker')
+  document.getElementById('role-field').style.display = 'none'
+  document.getElementById('signup-sub').textContent = 'Join ' + (inviteDept||'this department') + '. Your Circle wallet is created automatically.'
+}
+
+function showTab(tab) {
+  document.getElementById('form-login').style.display  = tab === 'login'  ? '' : 'none'
+  document.getElementById('form-signup').style.display = tab === 'signup' ? '' : 'none'
+  document.getElementById('tab-login').classList.toggle('active',  tab === 'login')
+  document.getElementById('tab-signup').classList.toggle('active', tab === 'signup')
+  clearAlert()
+}
+
+function selectRole(role) {
+  selectedRole = role
+  document.getElementById('role-worker').classList.toggle('selected',   role === 'worker')
+  document.getElementById('role-employer').classList.toggle('selected', role === 'employer')
+}
+
+function showAlert(msg, type) {
+  type = type || 'error'
+  const el = document.getElementById('alert')
+  el.textContent = msg
+  el.className = 'alert show ' + type
+}
+
+function clearAlert() {
+  document.getElementById('alert').className = 'alert'
+}
+
+function setLoading(btnId, loading, defaultHtml) {
+  const btn = document.getElementById(btnId)
+  btn.disabled = loading
+  if (loading) {
+    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="animation:spin 1s linear infinite"><path d="M8 2a6 6 0 0 1 6 6" stroke-linecap="round"/></svg> Please wait...'
+  } else if (defaultHtml) {
+    btn.innerHTML = defaultHtml
   }
+  return btn
+}
 
-  function selectRole(r) {
-    selectedRole = r
-    document.getElementById('role-worker').classList.toggle('selected',   r==='worker')
-    document.getElementById('role-employer').classList.toggle('selected', r==='employer')
-  }
+async function doLogin() {
+  clearAlert()
+  const email    = document.getElementById('login-email').value.trim()
+  const password = document.getElementById('login-password').value
+  if (!email || !password) return showAlert('Please fill in all fields')
 
-  function showAlert(msg, type='error') {
-    const el = document.getElementById('alert')
-    el.textContent = msg; el.className = 'alert show ' + type
-  }
-  function clearAlert() { document.getElementById('alert').className = 'alert' }
+  const defaultHtml = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M6 3H3a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h3M10 11l4-4-4-4M14 8H6"/></svg> Sign In'
+  setLoading('btn-login', true)
+  try {
+    const res  = await fetch(API + '/api/v1/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    })
+    const json = await res.json()
 
-  function setLoading(btnId, on) {
-    const btn = document.getElementById(btnId)
-    btn.disabled = on
-    if (on) btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="animation:spin 1s linear infinite"><path d="M8 2a6 6 0 0 1 6 6" stroke-linecap="round"/></svg> Please wait...'
-  }
-
-  async function doLogin() {
-    clearAlert()
-    const email    = document.getElementById('login-email').value.trim()
-    const password = document.getElementById('login-password').value
-    if (!email || !password) return showAlert('Please fill in all fields')
-    setLoading('btn-login', true)
-    try {
-      const res  = await fetch(API+'/api/v1/auth/login', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password})})
-      const json = await res.json()
-      if (!json.success) {
-        showAlert(json.error || 'Login failed')
-        document.getElementById('btn-login').innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 3H3a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h3M10 11l4-4-4-4M14 8H6"/></svg> Sign in to PayStream'
-        document.getElementById('btn-login').disabled = false
-        return
-      }
-      localStorage.setItem('ps_token',  json.data.token)
-      localStorage.setItem('ps_user',   JSON.stringify(json.data.user))
-      localStorage.setItem('ps_wallet', JSON.stringify(json.data.wallet))
-      showAlert('Welcome back! Redirecting...', 'success')
-      setTimeout(() => window.location.href = 'app.html', 900)
-    } catch(e) {
-      showAlert('Connection error. Is the server running?')
-      document.getElementById('btn-login').disabled = false
+    if (!json.success) {
+      showAlert(json.error || 'Login failed. Check your email and password.')
+      setLoading('btn-login', false, defaultHtml)
+      return
     }
-  }
 
-  async function doSignup() {
-    clearAlert()
-    const name     = document.getElementById('signup-name').value.trim()
-    const email    = document.getElementById('signup-email').value.trim()
-    const password = document.getElementById('signup-password').value
-    if (!name||!email||!password) return showAlert('Please fill in all fields')
-    if (password.length < 6) return showAlert('Password must be at least 6 characters')
-    setLoading('btn-signup', true)
-    try {
-      const res  = await fetch(API+'/api/v1/auth/signup', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,password,role:selectedRole})})
-      const json = await res.json()
-      if (!json.success) {
-        showAlert(json.error || 'Signup failed')
-        document.getElementById('btn-signup').innerHTML = '<svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M7.5 1v13M1 7.5h13"/></svg> Create Account and Wallet'
-        document.getElementById('btn-signup').disabled = false
-        return
-      }
-      localStorage.setItem('ps_token',  json.data.token)
-      localStorage.setItem('ps_user',   JSON.stringify(json.data.user))
-      localStorage.setItem('ps_wallet', JSON.stringify(json.data.wallet))
-      document.getElementById('form-signup').style.display  = 'none'
-      document.getElementById('form-success').style.display = ''
-      document.getElementById('wallet-address').textContent  = json.data.wallet.address
-      setTimeout(() => window.location.href = 'app.html', 3000)
-    } catch(e) {
-      showAlert('Connection error. Please try again.')
-      document.getElementById('btn-signup').disabled = false
+    localStorage.setItem('ps_token',  json.data.token)
+    localStorage.setItem('ps_user',   JSON.stringify(json.data.user))
+    localStorage.setItem('ps_wallet', JSON.stringify(json.data.wallet))
+
+    showAlert('Welcome back! Redirecting...', 'success')
+    setTimeout(function() { window.location.href = 'app.html' }, 900)
+
+  } catch (e) {
+    showAlert('Connection error. Is the server running?')
+    setLoading('btn-login', false, defaultHtml)
+  }
+}
+
+async function doSignup() {
+  clearAlert()
+  const name     = document.getElementById('signup-name').value.trim()
+  const email    = document.getElementById('signup-email').value.trim()
+  const password = document.getElementById('signup-password').value
+
+  if (!name || !email || !password) return showAlert('Please fill in all fields')
+  if (password.length < 6) return showAlert('Password must be at least 6 characters')
+
+  const defaultHtml = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M8 1v14M1 8h14"/></svg> Create Account &amp; Wallet'
+  setLoading('btn-signup', true)
+  try {
+    const body = { name, email, password, role: selectedRole }
+    if (inviteCode) body.inviteCode = inviteCode
+
+    const res  = await fetch(API + '/api/v1/auth/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    })
+    const json = await res.json()
+
+    if (!json.success) {
+      showAlert(json.error || 'Signup failed. Try again.')
+      setLoading('btn-signup', false, defaultHtml)
+      return
     }
-  }
 
-  document.addEventListener('keydown', e => {
-    if (e.key !== 'Enter') return
-    const loginOn = document.getElementById('form-login').style.display !== 'none'
-    if (loginOn) doLogin(); else doSignup()
-  })
+    localStorage.setItem('ps_token',  json.data.token)
+    localStorage.setItem('ps_user',   JSON.stringify(json.data.user))
+    localStorage.setItem('ps_wallet', JSON.stringify(json.data.wallet))
+
+    document.getElementById('form-signup').style.display  = 'none'
+    document.getElementById('form-success').style.display = ''
+    document.getElementById('wallet-address').textContent = json.data.wallet.address || '0x...'
+
+    setTimeout(function() { window.location.href = 'app.html' }, 3000)
+
+  } catch (e) {
+    showAlert('Connection error. Please try again.')
+    setLoading('btn-signup', false, defaultHtml)
+  }
+}
+
+// Enter key support
+document.addEventListener('keydown', function(e) {
+  if (e.key !== 'Enter') return
+  if (document.getElementById('form-login').style.display !== 'none') doLogin()
+  else doSignup()
+})
 </script>
 </body>
 </html>
