@@ -1373,8 +1373,8 @@ async function fetchDepartments() {
         '<div class="dept-header">' +
         '<div class="dept-icon" style="background:'+hexToRgba(color,.15)+';color:'+color+'">'+d.name.slice(0,2).toUpperCase()+'</div>' +
         '<div style="flex:1"><div class="dept-name">'+d.name+'</div><div class="dept-desc">'+(d.description||'No description')+'</div></div>' +
-        '<button onclick="editDept(''+d.id+'',''+d.name+'',''+d.description+'','+d.rate_per_hour+','+d.budget_monthly+')" style="background:none;border:.5px solid var(--border);border-radius:7px;padding:5px 10px;cursor:pointer;color:var(--g2);font-size:12px;font-family:var(--ff-body)">Edit</button>' +
-        '<button onclick="confirmDeleteDept(''+d.id+'',''+d.name+'')" style="background:var(--red-dim);border:.5px solid rgba(255,77,106,.2);border-radius:7px;padding:5px 10px;cursor:pointer;color:var(--red);font-size:12px;font-family:var(--ff-body);margin-left:5px">Delete</button>' +
+        '<button onclick="openEditDept(this)" data-id="'+d.id+'" data-name="'+d.name+'" data-desc="'+(d.description||'')+'" data-rate="'+d.rate_per_hour+'" data-budget="'+(d.budget_monthly||'')+'" style="background:none;border:.5px solid var(--border);border-radius:7px;padding:5px 10px;cursor:pointer;color:var(--g2);font-size:12px;font-family:var(--ff-body)">Edit</button>' +
+        '<button onclick="doDeleteDept(this)" data-id="'+d.id+'" data-name="'+d.name+'" style="background:var(--red-dim);border:.5px solid rgba(255,77,106,.2);border-radius:7px;padding:5px 10px;cursor:pointer;color:var(--red);font-size:12px;font-family:var(--ff-body);margin-left:5px">Delete</button>' +
         '</div>' +
         '<div class="dept-stats">' +
         '<div class="dept-stat"><div class="lbl">Rate</div><div class="val" style="color:'+color+'">$'+parseFloat(d.rate_per_hour).toFixed(2)+'/hr</div></div>' +
@@ -1385,9 +1385,9 @@ async function fetchDepartments() {
         '</div>' +
         '<div class="invite-box">' +
         '<div><div style="font-size:10px;color:var(--g3);margin-bottom:3px;letter-spacing:.06em;text-transform:uppercase">Invite link</div><div class="invite-code">'+inviteUrl.slice(0,50)+'...</div></div>' +
-        '<button onclick="copyInvite(''+inviteUrl+'')" style="background:var(--blue-dim);border:.5px solid rgba(59,130,246,.25);color:var(--blue);font-family:var(--ff-body);font-size:11.5px;font-weight:600;padding:6px 12px;border-radius:6px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;gap:5px"><svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><path d="M1 7V1h6" opacity=".5"/></svg>Copy link</button>' +
+        '<button onclick="doCopyInvite(this)" data-url="'+encodeURIComponent(inviteUrl)+'" style="background:var(--blue-dim);border:.5px solid rgba(59,130,246,.25);color:var(--blue);font-family:var(--ff-body);font-size:11.5px;font-weight:600;padding:6px 12px;border-radius:6px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;gap:5px"><svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><path d="M1 7V1h6" opacity=".5"/></svg>Copy link</button>' +
         '</div>' +
-        '<button onclick="showDeptWorkers(''+d.id+'',''+d.name+'')" class="btn-secondary" style="width:100%;justify-content:center;margin-top:10px;font-size:12px;padding:8px">View workers in this department</button>' +
+        '<button onclick="doShowDeptWorkers(this)" data-id="'+d.id+'" data-name="'+d.name+'" class="btn-secondary" style="width:100%;justify-content:center;margin-top:10px;font-size:12px;padding:8px">View workers in this department</button>' +
         '</div>'
     }).join('')
   } catch(e) { console.warn('[Dept]', e.message) }
@@ -1405,6 +1405,48 @@ function copyInvite(url) {
 }
 
 /* ── CREATE DEPARTMENT MODAL ── */
+function doSubmitRating(btn) {
+  var wid = btn.getAttribute('data-wid')
+  submitRating(wid)
+}
+
+function doRateWorker(el) {
+  var wid   = el.getAttribute('data-wid')
+  var wname = decodeURIComponent(el.getAttribute('data-wname')||'')
+  openRateWorker(wid, wname)
+}
+
+function doSelDeptColor(el) {
+  var color = el.getAttribute('data-color')
+  selDeptColor(el, color)
+}
+
+function doCopyInvite(btn) {
+  var url = decodeURIComponent(btn.getAttribute('data-url'))
+  copyInvite(url)
+}
+
+function doShowDeptWorkers(btn) {
+  var id   = btn.getAttribute('data-id')
+  var name = btn.getAttribute('data-name')
+  showDeptWorkers(id, name)
+}
+
+function openEditDept(btn) {
+  var id     = btn.getAttribute('data-id')
+  var name   = btn.getAttribute('data-name')
+  var desc   = btn.getAttribute('data-desc')
+  var rate   = parseFloat(btn.getAttribute('data-rate'))
+  var budget = parseFloat(btn.getAttribute('data-budget')) || null
+  editDept(id, name, desc, rate, budget)
+}
+
+function doDeleteDept(btn) {
+  var id   = btn.getAttribute('data-id')
+  var name = btn.getAttribute('data-name')
+  confirmDeleteDept(id, name)
+}
+
 function openCreateDept() {
   deptModalMode = 'create'; editDeptId = null
   showDeptModal('Create Department', '', '', 18.50, null, null)
@@ -1420,12 +1462,12 @@ function showDeptModal(title, name, desc, rate, budget, color) {
   if(existing) existing.remove()
 
   var colorBtns = DEPT_COLORS.map(function(c,i) {
-    return '<div onclick="selDeptColor(this,''+c+'')" style="width:24px;height:24px;border-radius:50%;background:'+c+';cursor:pointer;border:2px solid transparent;flex-shrink:0;transition:border-color .15s" data-color="'+c+'"></div>'
+    return '<div onclick="doSelDeptColor(this)" style="width:24px;height:24px;border-radius:50%;background:'+c+';cursor:pointer;border:2px solid transparent;flex-shrink:0;transition:border-color .15s" data-color="'+c+'"></div>'
   }).join('')
 
-  var html = '<div id="dept-modal" class="modal-overlay open" onclick="if(event.target===this)document.getElementById('dept-modal').remove()">' +
+  var html = '<div id="dept-modal" class="modal-overlay open" onclick="if(event.target===this)document.getElementById(&quot;dept-modal&quot;).remove()">' +
     '<div class="modal" style="max-width:440px">' +
-    '<button class="modal-close" onclick="document.getElementById('dept-modal').remove()"><svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M1 1L10 10M10 1L1 10"/></svg></button>' +
+    '<button class="modal-close" onclick="document.getElementById(&quot;dept-modal&quot;).remove()"><svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M1 1L10 10M10 1L1 10"/></svg></button>' +
     '<div class="modal-title">'+title+'</div>' +
     '<div class="modal-sub">Department members share a rate and get a unique invite link.</div>' +
     '<label class="field-lbl">Department name</label>' +
@@ -1494,9 +1536,9 @@ async function showDeptWorkers(deptId, deptName) {
   var existing = document.getElementById('dept-workers-modal')
   if(existing) existing.remove()
 
-  var html = '<div id="dept-workers-modal" class="modal-overlay open" onclick="if(event.target===this)document.getElementById('dept-workers-modal').remove()">' +
+  var html = '<div id="dept-workers-modal" class="modal-overlay open" onclick="if(event.target===this)document.getElementById(&quot;dept-workers-modal&quot;).remove()">' +
     '<div class="modal" style="max-width:540px">' +
-    '<button class="modal-close" onclick="document.getElementById('dept-workers-modal').remove()"><svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M1 1L10 10M10 1L1 10"/></svg></button>' +
+    '<button class="modal-close" onclick="document.getElementById(&quot;dept-workers-modal&quot;).remove()"><svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M1 1L10 10M10 1L1 10"/></svg></button>' +
     '<div class="modal-title">'+deptName+'</div>' +
     '<div class="modal-sub">All workers in this department</div>' +
     '<div id="dwm-list"><div class="loading-row"><div class="spinner"></div>Loading...</div></div>' +
@@ -1525,7 +1567,7 @@ async function showDeptWorkers(deptId, deptName) {
         '<div style="flex:1"><div class="wc-name">'+wName+'</div><div class="wc-title">'+title+'</div></div>' +
         '<div style="text-align:right">' +
         '<div style="font-family:var(--ff-mono);font-size:12px;color:var(--green);margin-bottom:3px">$'+parseFloat(s.rate_per_hour||0).toFixed(2)+'/hr</div>' +
-        '<div class="star-rating" onclick="openRateWorker(''+s.worker_id+'',''+wName+'')">'+stars+'</div>' +
+        '<div class="star-rating" onclick="doRateWorker(this)" data-wid="'+s.worker_id+'" data-wname="'+encodeURIComponent(wName)+'" style="justify-content:flex-end">'+stars+'</div>' +
         '</div>' +
         '<div class="wc-status '+sc+'">'+stTxt+'</div>' +
         '</div>'
@@ -1542,15 +1584,15 @@ function openRateWorker(workerId, workerName) {
     return '<span class="star" data-val="'+n+'" onclick="setRating('+n+')" onmouseover="hoverRating('+n+')" onmouseout="resetRatingHover()" style="font-size:28px;cursor:pointer">★</span>'
   }).join('')
 
-  var html = '<div id="rate-modal" class="modal-overlay open" onclick="if(event.target===this)document.getElementById('rate-modal').remove()">' +
+  var html = '<div id="rate-modal" class="modal-overlay open" onclick="if(event.target===this)document.getElementById(&quot;rate-modal&quot;).remove()">' +
     '<div class="modal" style="max-width:380px;text-align:center">' +
-    '<button class="modal-close" onclick="document.getElementById('rate-modal').remove()"><svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M1 1L10 10M10 1L1 10"/></svg></button>' +
+    '<button class="modal-close" onclick="document.getElementById(&quot;rate-modal&quot;).remove()"><svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M1 1L10 10M10 1L1 10"/></svg></button>' +
     '<div class="modal-title">Rate '+workerName+'</div>' +
-    '<div class="modal-sub">Rate this worker's performance this period</div>' +
+    '<div class="modal-sub">Rate this worker performance this period</div>' +
     '<div class="star-rating" style="justify-content:center;gap:8px;margin-bottom:18px" id="rate-stars">'+stars+'</div>' +
     '<input type="hidden" id="rate-val" value="5"/>' +
     '<textarea class="field-input" id="rate-comment" placeholder="Optional feedback..." style="height:80px;resize:none;margin-bottom:14px"></textarea>' +
-    '<button class="btn-primary btn-full" onclick="submitRating(''+workerId+'')">Submit Rating</button>' +
+    '<button class="btn-primary btn-full" onclick="doSubmitRating(this)" data-wid="'+workerId+'">Submit Rating</button>' +
     '</div></div>'
 
   document.body.insertAdjacentHTML('beforeend', html)
@@ -1594,7 +1636,7 @@ async function fetchPayrollReport() {
       var bcolor = pct>80?'var(--red)':pct>60?'var(--amber)':'var(--green)'
       return '<div class="payroll-row"><div><div style="font-weight:600;font-size:13.5px;margin-bottom:2px">'+d.department+'</div><div style="font-size:11.5px;color:var(--g2)">'+d.workers+' workers'+(d.budget?' · Budget: $'+d.budget:'')+'</div>'+(d.budget?'<div class="budget-bar" style="width:200px;margin-top:6px"><div class="budget-fill" style="width:'+pct+'%;background:'+bcolor+'"></div></div>':'')+' </div><div style="text-align:right"><div style="font-family:var(--ff-mono);font-size:16px;font-weight:700;color:var(--green)">$'+d.total_usdc.toFixed(4)+'</div><div style="font-size:11px;color:var(--g3)">AED '+d.total_aed.toFixed(2)+'</div></div></div>'
     }).join('') +
-    '<div style="display:flex;justify-content:space-between;padding:14px 16px;background:linear-gradient(135deg,rgba(200,122,16,.08),rgba(16,185,129,.04));border:.5px solid rgba(200,122,16,.2);border-radius:10px;margin-top:8px"><div style="font-weight:700">Grand Total — '+now.toLocaleString('default',{month:'long',year:'numeric'})+'</div><div style="text-align:right"><div style="font-family:var(--ff-mono);font-size:18px;font-weight:700;color:var(--green)">$'+j.data.grand_total.toFixed(4)+'</div><div style="font-size:11px;color:var(--g3)">AED '+totalAed.toFixed(2)+'</div></div></div>'
+    '<div style="display:flex;justify-content:space-between;padding:14px 16px;background:linear-gradient(135deg,rgba(200,122,16,.08),rgba(16,185,129,.04));border:.5px solid rgba(200,122,16,.2);border-radius:10px;margin-top:8px"><div style="font-weight:700">Grand Total — '+now.toLocaleDateString('en',{month:'long',year:'numeric'})+'</div><div style="text-align:right"><div style="font-family:var(--ff-mono);font-size:18px;font-weight:700;color:var(--green)">$'+j.data.grand_total.toFixed(4)+'</div><div style="font-size:11px;color:var(--g3)">AED '+totalAed.toFixed(2)+'</div></div></div>'
   } catch(e) { console.warn('[Payroll]', e.message) }
 }
 
