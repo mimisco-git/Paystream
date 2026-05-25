@@ -246,6 +246,32 @@
       .mob-btn.active{color:var(--amber)}
       .mob-btn svg{width:18px;height:18px}
 
+    /* ── MESSAGING ── */
+    .msg-modal{max-width:540px;padding:0;display:flex;flex-direction:column;height:92vh;max-height:680px}
+    .msg-modal-head{padding:20px 24px 16px;border-bottom:.5px solid var(--border);flex-shrink:0;position:relative}
+    .msg-modal-head::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:50%;height:1px;background:linear-gradient(90deg,transparent,var(--amber),transparent)}
+    .msg-list{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px}
+    .msg-bubble{max-width:80%;padding:10px 14px;border-radius:14px;font-size:13.5px;line-height:1.5;position:relative}
+    .msg-bubble.sent{background:linear-gradient(135deg,var(--amber),var(--amber-lt));color:#000;align-self:flex-end;border-radius:14px 14px 4px 14px}
+    .msg-bubble.recv{background:var(--slate3);border:.5px solid var(--border);color:var(--white);align-self:flex-start;border-radius:14px 14px 14px 4px}
+    .msg-time{font-size:10px;opacity:.6;margin-top:4px}
+    .msg-input-row{display:flex;gap:8px;padding:14px 16px;border-top:.5px solid var(--border);flex-shrink:0;background:var(--slate2)}
+    .msg-input{flex:1;background:var(--slate3);border:.5px solid var(--border);border-radius:10px;padding:11px 14px;font-size:14px;color:var(--white);font-family:var(--ff-body);outline:none;resize:none;height:44px;transition:border-color .2s}
+    .msg-input:focus{border-color:rgba(200,122,16,.4)}
+    .msg-send-btn{width:44px;height:44px;background:linear-gradient(135deg,var(--amber),var(--amber-lt));border:none;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity .15s}
+    .msg-send-btn:hover{opacity:.85}
+    .msg-empty{text-align:center;padding:32px 16px;color:var(--g3)}
+    .msg-empty svg{margin:0 auto 10px;display:block;opacity:.3}
+    .inbox-item{display:flex;gap:12px;padding:12px;border-radius:10px;cursor:pointer;border:.5px solid var(--border);background:var(--glass);transition:border-color .2s;align-items:center}
+    .inbox-item:hover{border-color:rgba(200,122,16,.2)}
+    .inbox-item.unread{border-color:rgba(200,122,16,.15);background:rgba(200,122,16,.03)}
+    .inbox-avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0}
+    .inbox-name{font-weight:600;font-size:13.5px;margin-bottom:2px}
+    .inbox-preview{font-size:12px;color:var(--g2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:280px}
+    .inbox-time{font-size:10.5px;color:var(--g3);font-family:var(--ff-mono);margin-left:auto;flex-shrink:0}
+    .unread-badge{background:var(--amber);color:#000;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;margin-left:6px}
+    .broadcast-bar{background:linear-gradient(135deg,rgba(139,92,246,.08),rgba(139,92,246,.03));border:.5px solid rgba(139,92,246,.2);border-radius:10px;padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+
     /* ── PREMIUM DEPT CARDS ── */
     .dept-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;margin-bottom:18px}
     .dept-premium-card{border-radius:18px;padding:0;overflow:hidden;position:relative;transition:transform .2s,box-shadow .2s;cursor:default}
@@ -591,6 +617,14 @@
       </div>
     </div>
 
+    <!-- ═══ WORKER: MESSAGES ═══ -->
+    <div class="view" id="view-messages">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+        <div><div style="font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);margin-bottom:5px">Inbox</div><div style="font-family:var(--ff);font-weight:700;font-size:20px">Messages</div></div>
+      </div>
+      <div id="worker-inbox"><div class="loading-row"><div class="spinner"></div>Loading messages...</div></div>
+    </div>
+
     <!-- ═══ SHARED: HISTORY ═══ -->
     <div class="view" id="view-history">
       <div class="card">
@@ -736,8 +770,9 @@ let selChainName='Arc',selTokenName='ETH',selTokenChain='Ethereum'
 let notifications=[],unread=0,lastPayoutCount=0,notifOpen=false
 
 const workerNav=[
-  {id:'view-earn',label:'My Earnings',icon:'<circle cx="7" cy="7" r="2.5"/><circle cx="7" cy="7" r="5.5" opacity=".35"/>'},
+  {id:'view-earn',label:'Earnings',icon:'<circle cx="7" cy="7" r="2.5"/><circle cx="7" cy="7" r="5.5" opacity=".35"/>'},
   {id:'view-my-employer',label:'My Employer',icon:'<rect x="1.5" y="6" width="11" height="6.5" rx="1.5"/><path d="M4 6V4.5a3 3 0 0 1 6 0V6"/>'},
+  {id:'view-messages',label:'Messages',icon:'<rect x="1" y="2" width="12" height="8" rx="1.5"/><path d="M4 10v2l3-2h4"/>'},
   {id:'view-history',label:'History',icon:'<rect x="1.5" y="2.5" width="11" height="9" rx="1.5"/><path d="M4 6.5h6M4 9h4"/>'}
 ]
 const empNav=[
@@ -775,6 +810,7 @@ function showView(id){
   document.querySelectorAll('.mob-btn').forEach(function(b){b.classList.remove('active')})
   var mob=document.getElementById('mob-'+id);if(mob)mob.classList.add('active')
   if(id==='view-history')fetchPayouts()
+  if(id==='view-messages'){fetchWorkerInbox()}
   if(id==='view-employer-dash'){fetchEmpDash();fetchPendingApplications()}
   if(id==='view-my-employer')fetchMyEmployer()
   if(id==='view-departments'){fetchDepartments(true);fetchPayrollReport()}
@@ -1564,6 +1600,9 @@ function renderDepartments(depts) {
             '<button onclick="doDeleteDept(this)" data-id="'+d.id+'" data-name="'+d.name+'" style="background:rgba(255,77,106,.08);border:.5px solid rgba(255,77,106,.18);color:#FF4D6A;font-family:var(--ff-body);font-size:12px;font-weight:600;padding:7px 11px;border-radius:7px;cursor:pointer">' +
               '<svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M1 3h9M4 3V1.5h3V3M2 3l.7 7h5.6L9 3"/></svg>' +
             '</button>' +
+            '<button onclick="openBroadcast(&quot;'+d.id+'&quot;,&quot;'+d.name+'&quot;)" style="background:rgba(139,92,246,.08);border:.5px solid rgba(139,92,246,.2);color:#A78BFA;font-family:var(--ff-body);font-size:12px;font-weight:600;padding:7px 11px;border-radius:7px;cursor:pointer" title="Broadcast message to all workers">' +
+              '<svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 1L1 4l3 2 1 4 5-9z"/></svg>' +
+            '</button>' +
           '</div>' +
 
         '</div>' +
@@ -1664,6 +1703,7 @@ async function showDeptWorkers(deptId, deptName) {
           '<div class="wc-status '+sc+'">'+stTxt+'</div>' +
           '<div style="display:flex;gap:5px">'+actions+'</div>' +
           '<button onclick="doRateWorker(this)" data-wid="'+s.worker_id+'" data-wname="'+encodeURIComponent(name)+'" style="font-size:10.5px;color:var(--g2);background:none;border:.5px solid var(--border);border-radius:5px;padding:3px 8px;cursor:pointer;font-family:var(--ff-body)">Rate</button>' +
+        '<button onclick="openMsgModal(this)" data-wid="'+s.worker_id+'" data-wname="'+encodeURIComponent(name)+'" style="font-size:10.5px;color:#60A5FA;background:rgba(59,130,246,.08);border:.5px solid rgba(59,130,246,.2);border-radius:5px;padding:3px 8px;cursor:pointer;font-family:var(--ff-body);margin-left:4px">Msg</button>' +
         '</div>' +
       '</div>'
     }).join('')
@@ -2097,6 +2137,279 @@ async function handleApplication(appId, action) {
     if(el) el.style.opacity = '1'
     alert('Connection error')
   }
+}
+
+
+
+/* ══════════════════════════════════════════
+   MESSAGING SYSTEM
+══════════════════════════════════════════ */
+
+var activeMsgEmployerId = null
+var activeMsgWorkerId   = null
+var activeMsgWorkerName = ''
+var msgPollInterval     = null
+
+/* ── OPEN MESSAGE MODAL (employer -> worker) ── */
+function openMsgModal(btn) {
+  activeMsgWorkerId   = btn.getAttribute('data-wid')
+  activeMsgWorkerName = decodeURIComponent(btn.getAttribute('data-wname')||'Worker')
+  activeMsgEmployerId = psUser.id
+
+  var existing = document.getElementById('msg-modal')
+  if(existing) existing.remove()
+
+  var ini = activeMsgWorkerName.split(' ').map(function(w){return w[0]}).join('').toUpperCase().slice(0,2)
+
+  var html = '<div id="msg-modal" class="modal-overlay open" onclick="if(event.target===this)closeMsgModal()">' +
+    '<div class="modal msg-modal">' +
+    '<div class="msg-modal-head">' +
+      '<div style="display:flex;align-items:center;gap:12px">' +
+        '<div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--amber),var(--amber-lt));color:#000;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0">'+ini+'</div>' +
+        '<div>' +
+          '<div style="font-weight:700;font-size:15px">'+activeMsgWorkerName+'</div>' +
+          '<div style="font-size:12px;color:var(--g2);display:flex;align-items:center;gap:5px"><div class="stream-dot"></div>Stream active</div>' +
+        '</div>' +
+        '<button onclick="closeMsgModal()" style="margin-left:auto;background:var(--slate4);border:.5px solid var(--border);color:var(--g2);width:30px;height:30px;border-radius:7px;cursor:pointer;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M1 1L10 10M10 1L1 10"/></svg></button>' +
+      '</div>' +
+    '</div>' +
+    '<div class="msg-list" id="msg-list"><div class="msg-empty"><svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="6" y="8" width="36" height="24" rx="3"/><path d="M14 32v8l8-8h12"/></svg><div style="font-size:14px;font-weight:600;color:var(--g2);margin-bottom:4px">No messages yet</div><div style="font-size:12.5px">Send the first message to '+activeMsgWorkerName+'</div></div></div>' +
+    '<div class="msg-input-row">' +
+      '<textarea class="msg-input" id="msg-input" placeholder="Type a message..." rows="1"></textarea>' +
+      '<button class="msg-send-btn" onclick="sendMsg()">' +
+        '<svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 2L2 7l5 3 2 6 7-14z"/><path d="M7 10l3-3"/></svg>' +
+      '</button>' +
+    '</div>' +
+    '</div></div>'
+
+  document.body.insertAdjacentHTML('beforeend', html)
+  loadMessages()
+  msgPollInterval = setInterval(loadMessages, 8000)
+  // Add enter key handler
+  setTimeout(function(){
+    var inp = document.getElementById('msg-input')
+    if(inp) inp.addEventListener('keydown', function(e){
+      if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg()}
+    })
+  }, 100)
+}
+
+function closeMsgModal() {
+  var el = document.getElementById('msg-modal')
+  if(el) el.remove()
+  if(msgPollInterval) { clearInterval(msgPollInterval); msgPollInterval = null }
+}
+
+/* ── LOAD MESSAGES IN MODAL ── */
+async function loadMessages() {
+  if(!activeMsgEmployerId || !activeMsgWorkerId) return
+  var listEl = document.getElementById('msg-list')
+  if(!listEl) return
+
+  try {
+    var j = await (await fetch(
+      API+'/api/v1/messages/conversation?employerId='+activeMsgEmployerId+'&workerId='+activeMsgWorkerId+'&role='+(isEmp?'employer':'worker')
+    )).json()
+
+    if(!j.success) return
+    var msgs = j.data
+
+    if(!msgs || !msgs.length) {
+      listEl.innerHTML = '<div class="msg-empty"><svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.3" style="margin:0 auto 10px;display:block"><rect x="6" y="8" width="36" height="24" rx="3"/><path d="M14 32v8l8-8h12"/></svg><div style="font-size:14px;font-weight:600;color:var(--g2);margin-bottom:4px">No messages yet</div><div style="font-size:12.5px">Send the first message</div></div>'
+      return
+    }
+
+    var myRole = isEmp ? 'employer' : 'worker'
+    var wasAtBottom = listEl.scrollHeight - listEl.scrollTop < listEl.clientHeight + 60
+
+    listEl.innerHTML = msgs.map(function(m) {
+      var isMine = m.sender_role === myRole
+      var time   = new Date(m.created_at).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})
+      var date   = new Date(m.created_at).toLocaleDateString()
+      return '<div style="display:flex;flex-direction:column;align-items:'+(isMine?'flex-end':'flex-start')+'">' +
+        '<div class="msg-bubble '+(isMine?'sent':'recv')+'">' +
+          '<div>'+escHtml(m.body)+'</div>' +
+          '<div class="msg-time">'+time+' · '+date+(isMine?'':' · '+(m.sender_role==='employer'?'Employer':'Worker'))+'</div>' +
+        '</div>' +
+      '</div>'
+    }).join('')
+
+    // Auto scroll to bottom
+    listEl.scrollTop = listEl.scrollHeight
+  } catch(e) { console.warn('[Messages]', e.message) }
+}
+
+/* ── SEND MESSAGE ── */
+async function sendMsg() {
+  var input = document.getElementById('msg-input')
+  if(!input) return
+  var body = input.value.trim()
+  if(!body) return
+
+  input.value = ''
+  input.disabled = true
+
+  // Optimistic UI
+  var listEl = document.getElementById('msg-list')
+  var time = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})
+  if(listEl) {
+    // Remove empty state if present
+    var empty = listEl.querySelector('.msg-empty')
+    if(empty) empty.remove()
+    var div = document.createElement('div')
+    div.style.cssText = 'display:flex;flex-direction:column;align-items:flex-end'
+    div.innerHTML = '<div class="msg-bubble sent"><div>'+escHtml(body)+'</div><div class="msg-time">'+time+' · Sending...</div></div>'
+    listEl.appendChild(div)
+    listEl.scrollTop = listEl.scrollHeight
+  }
+
+  try {
+    await fetch(API+'/api/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        employerId: activeMsgEmployerId,
+        workerId:   activeMsgWorkerId,
+        senderId:   psUser.id,
+        senderRole: isEmp ? 'employer' : 'worker',
+        body,
+      })
+    })
+    loadMessages()
+  } catch(e) { console.warn('[SendMsg]', e.message) }
+
+  input.disabled = false
+  input.focus()
+}
+
+/* ── WORKER INBOX ── */
+async function fetchWorkerInbox() {
+  if(isEmp) return
+  var el = document.getElementById('worker-inbox')
+  if(!el) return
+
+  try {
+    var j = await (await fetch(API+'/api/v1/messages/inbox?userId='+psUser.id+'&role=worker')).json()
+    if(!j.success || !j.data || !j.data.length) {
+      el.innerHTML = '<div class="empty-state"><svg width="52" height="52" viewBox="0 0 52 52" fill="none" stroke="currentColor" stroke-width="1.3" opacity=".3" style="margin:0 auto 12px;display:block"><rect x="6" y="8" width="40" height="26" rx="3"/><path d="M14 34v10l10-10h16"/></svg><h4>No messages yet</h4><p>Your employer can send you messages directly from the dashboard.</p></div>'
+      return
+    }
+
+    el.innerHTML = j.data.map(function(c) {
+      var ini  = (c.employer_name||'E').split(' ').map(function(w){return w[0]}).join('').toUpperCase().slice(0,2)
+      var time = timeSince(new Date(c.created_at))
+      var preview = c.body.length > 60 ? c.body.slice(0,60)+'...' : c.body
+      var isMe = c.sender_role === 'worker'
+      return '<div class="inbox-item'+(c.unread_count>0?' unread':'')+'" onclick="openWorkerReply(this)" data-eid="'+c.employer_id+'" data-ename="'+encodeURIComponent(c.employer_name||'Employer')+'">' +
+        '<div class="inbox-avatar" style="background:linear-gradient(135deg,var(--amber),var(--amber-lt));color:#000">'+ini+'</div>' +
+        '<div style="flex:1;min-width:0">' +
+          '<div style="display:flex;align-items:center">' +
+            '<div class="inbox-name">'+c.employer_name+'</div>' +
+            (c.unread_count>0 ? '<span class="unread-badge">'+c.unread_count+'</span>' : '') +
+          '</div>' +
+          '<div class="inbox-preview">'+(isMe?'You: ':'')+escHtml(preview)+'</div>' +
+        '</div>' +
+        '<div class="inbox-time">'+time+'</div>' +
+      '</div>'
+    }).join('')
+
+    // Update unread count on bell
+    var totalUnread = j.data.reduce(function(s,c){return s+(c.unread_count||0)},0)
+    if(totalUnread > 0) {
+      var bell = document.getElementById('bell-badge')
+      if(bell) bell.style.display='block'
+    }
+  } catch(e) { console.warn('[WorkerInbox]', e.message) }
+}
+
+/* ── WORKER REPLY MODAL ── */
+function openWorkerReply(el) {
+  activeMsgEmployerId = el.getAttribute('data-eid')
+  activeMsgWorkerId   = psUser.id
+  var empName = decodeURIComponent(el.getAttribute('data-ename')||'Employer')
+  activeMsgWorkerName = empName
+
+  var existing = document.getElementById('msg-modal')
+  if(existing) existing.remove()
+  var ini = empName.split(' ').map(function(w){return w[0]}).join('').toUpperCase().slice(0,2)
+
+  var html = '<div id="msg-modal" class="modal-overlay open" onclick="if(event.target===this)closeMsgModal()">' +
+    '<div class="modal msg-modal">' +
+    '<div class="msg-modal-head">' +
+      '<div style="display:flex;align-items:center;gap:12px">' +
+        '<div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--amber),var(--amber-lt));color:#000;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0">'+ini+'</div>' +
+        '<div><div style="font-weight:700;font-size:15px">'+empName+'</div><div style="font-size:12px;color:var(--g2)">Your employer</div></div>' +
+        '<button onclick="closeMsgModal()" style="margin-left:auto;background:var(--slate4);border:.5px solid var(--border);color:var(--g2);width:30px;height:30px;border-radius:7px;cursor:pointer;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M1 1L10 10M10 1L1 10"/></svg></button>' +
+      '</div>' +
+    '</div>' +
+    '<div class="msg-list" id="msg-list"></div>' +
+    '<div class="msg-input-row">' +
+      '<textarea class="msg-input" id="msg-input" placeholder="Reply to your employer..." rows="1"></textarea>' +
+      '<button class="msg-send-btn" onclick="sendMsg()"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 2L2 7l5 3 2 6 7-14z"/><path d="M7 10l3-3"/></svg></button>' +
+    '</div>' +
+    '</div></div>'
+
+  document.body.insertAdjacentHTML('beforeend', html)
+  loadMessages()
+  msgPollInterval = setInterval(loadMessages, 8000)
+  // Add enter key handler
+  setTimeout(function(){
+    var inp = document.getElementById('msg-input')
+    if(inp) inp.addEventListener('keydown', function(e){
+      if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg()}
+    })
+  }, 100)
+}
+
+/* ── BROADCAST MODAL ── */
+function openBroadcast(deptId, deptName) {
+  var existing = document.getElementById('broadcast-modal')
+  if(existing) existing.remove()
+
+  var html = '<div id="broadcast-modal" class="modal-overlay open" onclick="if(event.target===this)document.getElementById(&quot;broadcast-modal&quot;).remove()">' +
+    '<div class="modal" style="max-width:420px">' +
+    '<button class="modal-close" onclick="document.getElementById(&quot;broadcast-modal&quot;).remove()"><svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M1 1L10 10M10 1L1 10"/></svg></button>' +
+    '<div class="modal-title">Broadcast to '+deptName+'</div>' +
+    '<div class="modal-sub">Send a message to all workers in this department at once.</div>' +
+    '<textarea class="field-input" id="broadcast-body" placeholder="e.g. Team, rate increases to $22/hr starting Monday." style="height:100px;resize:none"></textarea>' +
+    '<button class="btn-primary btn-full" onclick="doBroadcast(&quot;'+deptId+'&quot;,&quot;'+deptName+'&quot;)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M13 1L1 5l4 3 2 5 6-12z"/></svg>Send to all workers</button>' +
+    '<div id="broadcast-msg" style="font-size:12px;text-align:center;margin-top:10px"></div>' +
+    '</div></div>'
+
+  document.body.insertAdjacentHTML('beforeend', html)
+}
+
+async function doBroadcast(deptId, deptName) {
+  var body = document.getElementById('broadcast-body').value.trim()
+  var msgEl = document.getElementById('broadcast-msg')
+  if(!body) { msgEl.textContent='Write a message first'; msgEl.style.color='var(--red)'; return }
+
+  try {
+    var j = await (await fetch(API+'/api/v1/messages/broadcast', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ employerId: psUser.id, departmentId: deptId, body })
+    })).json()
+
+    if(j.success) {
+      document.getElementById('broadcast-modal').remove()
+      showToast({title:'Broadcast sent', sub:'Message delivered to '+j.data.sent+' workers in '+deptName, type:'arc'})
+    } else { msgEl.textContent=j.error||'Failed'; msgEl.style.color='var(--red)' }
+  } catch(e) { msgEl.textContent='Connection error'; msgEl.style.color='var(--red)' }
+}
+
+/* ── CHECK UNREAD (updates bell badge) ── */
+async function checkUnreadMessages() {
+  try {
+    var j = await (await fetch(API+'/api/v1/messages/unread?userId='+psUser.id+'&role='+(isEmp?'employer':'worker'))).json()
+    if(j.success && j.data.count > 0) {
+      var bell = document.getElementById('bell-badge')
+      if(bell) bell.style.display = 'block'
+    }
+  } catch(e) {}
+}
+
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
 }
 
 

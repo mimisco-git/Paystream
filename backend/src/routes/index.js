@@ -3,9 +3,14 @@ import express from 'express'
 import { z } from 'zod'
 import { db } from '../config/db.js'
 import { getWalletByUserId, getWalletBalance } from '../services/walletService.js'
-import { createStream, pauseStream, resumeStream, stopStream, getEarnedSince } from '../services/streamService.js'
+import { createStream, pauseStream, resumeStream, stopStream, getStreamEarned } from '../services/streamService.js'
 import { createWithdrawal, listWithdrawals } from '../services/withdrawalService.js'
 import { getAgentLog } from '../services/agentService.js'
+import {
+  sendMessage, getConversation, getEmployerConversations,
+  getWorkerInbox, markRead, getUnreadCount, broadcastToDepartment
+} from '../services/messageService.js'
+
 import {
   createDepartment, listDepartments, getDepartmentByInviteCode,
   joinDepartment, getDepartmentWorkers, updateDepartment,
@@ -83,7 +88,7 @@ router.get('/streams/:id', wrap(async (req, res) => {
 }))
 
 router.get('/streams/:id/earned', wrap(async (req, res) => {
-  const result = await getEarnedSince(req.params.id)
+  const result = await getStreamEarned(req.params.id)
   ok(res, result)
 }))
 
@@ -256,6 +261,61 @@ router.post('/departments/applications/:id/reject', wrap(async (req, res) => {
 router.get('/departments/my-status/:workerId', wrap(async (req, res) => {
   const status = await getWorkerDepartmentStatus(req.params.workerId)
   ok(res, status)
+}))
+
+
+// ── MESSAGES ──
+// POST /api/v1/messages
+router.post('/messages', wrap(async (req, res) => {
+  const { employerId, workerId, senderId, senderRole, body, streamId } = z.object({
+    employerId:  z.string().min(1),
+    workerId:    z.string().min(1),
+    senderId:    z.string().min(1),
+    senderRole:  z.enum(['employer','worker','admin']),
+    body:        z.string().min(1).max(2000),
+    streamId:    z.string().optional(),
+  }).parse(req.body)
+  const msg = await sendMessage({ employerId, workerId, senderId, senderRole, body, streamId })
+  ok(res, msg)
+}))
+
+// GET /api/v1/messages/conversation?employerId=&workerId=
+router.get('/messages/conversation', wrap(async (req, res) => {
+  const { employerId, workerId } = req.query
+  if (!employerId || !workerId) return err(res, 'employerId and workerId required')
+  const msgs = await getConversation(employerId, workerId)
+  // Mark as read based on who is fetching
+  await markRead(employerId, workerId, req.query.role || 'employer')
+  ok(res, msgs)
+}))
+
+// GET /api/v1/messages/inbox?userId=&role=
+router.get('/messages/inbox', wrap(async (req, res) => {
+  const { userId, role } = req.query
+  if (!userId) return err(res, 'userId required')
+  const inbox = role === 'employer'
+    ? await getEmployerConversations(userId)
+    : await getWorkerInbox(userId)
+  ok(res, inbox)
+}))
+
+// GET /api/v1/messages/unread?userId=&role=
+router.get('/messages/unread', wrap(async (req, res) => {
+  const { userId, role } = req.query
+  if (!userId) return err(res, 'userId required')
+  const count = await getUnreadCount(userId, role || 'worker')
+  ok(res, { count })
+}))
+
+// POST /api/v1/messages/broadcast
+router.post('/messages/broadcast', wrap(async (req, res) => {
+  const { employerId, departmentId, body } = z.object({
+    employerId:   z.string().min(1),
+    departmentId: z.string().min(1),
+    body:         z.string().min(1).max(2000),
+  }).parse(req.body)
+  const result = await broadcastToDepartment({ employerId, departmentId, body })
+  ok(res, result)
 }))
 
 // ── HEALTH ──
