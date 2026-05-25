@@ -1239,7 +1239,7 @@ function timeSince(d){var s=Math.floor((Date.now()-d)/1000);if(s<60)return s+'s 
 
 /* ── INVITE LINK ── */
 function copyInviteLink() {
-  var baseUrl = 'https://paystream-virid.vercel.app/login.html'
+  var baseUrl = 'https://paystream-virid.vercel.app/join.html'
   var inviteUrl = baseUrl + '?ref=' + psUser.id + '&employer=' + encodeURIComponent(psUser.name||'PayStream Employer')
   navigator.clipboard ? navigator.clipboard.writeText(inviteUrl).then(function(){
     showToast({title:'Invite link copied', sub:'Share with your worker. They sign up and get a wallet instantly.', type:'arc'})
@@ -1460,7 +1460,7 @@ function renderDepartments(depts) {
     var color  = d.color || DEPT_COLORS[i % DEPT_COLORS.length]
     var pct    = d.budget_monthly ? Math.min(100,(parseFloat(d.total_paid||0)/d.budget_monthly)*100) : 0
     var bcolor = pct>80?'#FF4D6A':pct>60?'#C87A10':'#10B981'
-    var baseUrl= 'https://paystream-virid.vercel.app/login.html'
+    var baseUrl= 'https://paystream-virid.vercel.app/join.html'
     var invite = baseUrl+'?invite='+d.invite_code+'&dept='+encodeURIComponent(d.name)+'&employer='+encodeURIComponent(psUser.name||'')
     var liveRph= parseFloat(d.live_rate_per_hour||0)
     var perSec = liveRph/3600
