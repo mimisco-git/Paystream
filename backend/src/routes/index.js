@@ -3,7 +3,7 @@ import express from 'express'
 import { z } from 'zod'
 import { db } from '../config/db.js'
 import { getWalletByUserId, getWalletBalance } from '../services/walletService.js'
-import { createStream, pauseStream, resumeStream, stopStream, getStreamEarned } from '../services/streamService.js'
+import { createStream, pauseStream, resumeStream, stopStream, getStreamById, getEarnedSince } from '../services/streamService.js'
 import { createWithdrawal, listWithdrawals } from '../services/withdrawalService.js'
 import { getAgentLog } from '../services/agentService.js'
 import {
@@ -88,7 +88,9 @@ router.get('/streams/:id', wrap(async (req, res) => {
 }))
 
 router.get('/streams/:id/earned', wrap(async (req, res) => {
-  const result = await getStreamEarned(req.params.id)
+  const stream = await getStreamById(req.params.id)
+  const earned = getEarnedSince(stream)
+  const result = { earned, status: stream.status, total_paid: stream.total_paid }
   ok(res, result)
 }))
 
