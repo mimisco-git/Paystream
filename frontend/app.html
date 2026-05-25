@@ -527,15 +527,15 @@
     <div class="view" id="view-add-stream">
       <div><div style="font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);margin-bottom:5px">New Stream</div><div style="font-family:var(--ff);font-weight:700;font-size:20px">Create Salary Stream</div></div>
       <div class="stream-form">
-        <div style="font-size:12px;color:var(--g3);margin-bottom:12px">Enter the worker's PayStream wallet address. Workers see your company name on their dashboard.</div>
+        <div style="font-size:12px;color:var(--g3);margin-bottom:12px">Add an individual worker privately to a salary stream. For team onboarding, use the <strong style="color:var(--amber)">Departments</strong> tab and copy the invite link.</div>
         <div class="form-row">
           <div>
             <label class="field-lbl">Company / Stream name</label>
-            <input class="field-input" id="w-company" type="text" placeholder="e.g. JAQ Construction Co."/>
+            <input class="field-input" id="w-company" type="text" placeholder="e.g. JAQ Construction Co. (workers see this)"/>
           </div>
           <div>
-            <label class="field-lbl">Department (optional)</label>
-            <select class="field-input" id="w-dept" style="color:var(--g2)"><option value="">No department</option></select>
+            <label class="field-lbl">Worker job title</label>
+            <input class="field-input" id="w-job-title" type="text" placeholder="e.g. Senior Engineer"/>
           </div>
         </div>
         <div style="background:var(--slate3);border:.5px solid rgba(59,130,246,.2);border-radius:9px;padding:12px 14px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
@@ -731,7 +731,7 @@ const workerNav=[
 const empNav=[
   {id:'view-employer-dash',label:'Dashboard',icon:'<rect x="1.5" y="1.5" width="4" height="6" rx="1"/><rect x="7.5" y="4" width="4" height="3" rx="1"/><rect x="1.5" y="9.5" width="10" height="2.5" rx="1"/>'},
   {id:'view-departments',  label:'Departments',icon:'<rect x="1.5" y="1.5" width="11" height="4" rx="1"/><rect x="1.5" y="7.5" width="5" height="5" rx="1"/><rect x="8.5" y="7.5" width="4" height="5" rx="1"/>'},
-  {id:'view-add-stream',   label:'Add Stream',icon:'<path d="M7 1v12M1 7h12"/>'},
+  {id:'view-add-stream',   label:'Add Worker',icon:'<path d="M7 1v12M1 7h12"/>'},
   {id:'view-history',      label:'History',icon:'<rect x="1.5" y="2.5" width="11" height="9" rx="1.5"/><path d="M4 6.5h6M4 9h4"/>'}
 ]
 const nav=isEmp?empNav:workerNav
@@ -765,6 +765,7 @@ function showView(id){
   if(id==='view-history')fetchPayouts()
   if(id==='view-employer-dash')fetchEmpDash()
   if(id==='view-my-employer')fetchMyEmployer()
+  if(id==='view-departments'){fetchDepartments(true);fetchPayrollReport()}
 }
 
 function initUI(){
@@ -994,8 +995,8 @@ async function createStream(){
   msg.textContent='Creating stream...';msg.style.color='var(--g2)'
   try{
     var companyName = document.getElementById('w-company')?.value?.trim() || psUser.name
-  var deptId = document.getElementById('w-dept')?.value || null
-  var j=await(await fetch(API+'/api/v1/streams',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({employerId:psUser.id,workerAddress:addr,ratePerHour:rph,companyName,departmentId:deptId})})).json()
+  var workerTitle = document.getElementById('w-job-title')?.value?.trim() || ''
+  var j=await(await fetch(API+'/api/v1/streams',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({employerId:psUser.id,workerAddress:addr,ratePerHour:rph,companyName,workerTitle})})).json()
     if(j.success){
       msg.textContent='Stream created! First payment in 60 seconds.';msg.style.color='var(--green)'
       document.getElementById('w-addr').value='';document.getElementById('w-rate').value=''
